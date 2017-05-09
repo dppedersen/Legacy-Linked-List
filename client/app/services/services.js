@@ -11,13 +11,14 @@ angular.module('app.services', [])
 				}
 			})
 			.then(function(res) {
+				console.log('$HTTP REQUEST', res.data);
 				return res.data;
 			})
 			.catch(function(err) {
-				console.log(err)
-			})
+				console.log(err);
+			});
 		}
-  }
+  };
 })
 .factory('News', ($http) => {
   var getNews = companiesArray => {
