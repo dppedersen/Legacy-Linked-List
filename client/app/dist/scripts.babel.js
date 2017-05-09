@@ -15,7 +15,7 @@ angular.module('app', ['ngRoute', 'ngMaterial', 'app.input', 'app.dashboard', 'a
   }).when('/logout', {
     redirectTo: '/'
   });
-}).controller('navController', function ($scope, $location, $interval) {
+}).controller('navController', function ($scope, $location) {
   $scope.showSignUp = false;
 
   $scope.renderNavButtons = function () {
@@ -34,10 +34,6 @@ angular.module('app', ['ngRoute', 'ngMaterial', 'app.input', 'app.dashboard', 'a
   $scope.handleLogoutClick = function () {
     $location.path('logout');
   };
-
-  $interval(function () {
-    $scope.showSignUp = $location.url() !== "/";
-  }, 500);
 }).run(function (Auth, $rootScope, $location, $http) {
   return Auth.status($rootScope, $location, $http);
 })
@@ -71,7 +67,6 @@ angular.module('app', ['ngRoute', 'ngMaterial', 'app.input', 'app.dashboard', 'a
 angular.module('calendarWidget', []).component('calendarWidget', {
   templateUrl: './app/components/calendarWidgetTemplate.html',
   controller: function calendarController($scope, $http, $route, $mdDialog) {
-    // $scope.date = new Date();
     $scope.today = new Date();
     $scope.dates = [];
 
@@ -89,6 +84,7 @@ angular.module('calendarWidget', []).component('calendarWidget', {
       });
     });
 
+    // Popup dialog upon clicking a date on the calendar
     $scope.showPrerenderedDialog = function (ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
       $scope.taskDate = new Date($scope.date);
@@ -104,6 +100,7 @@ angular.module('calendarWidget', []).component('calendarWidget', {
       });
     };
 
+    //Formula to show dates on the calendar (see calendar html "md-date-filter")
     $scope.filterDates = function (date) {
       var year = date.getFullYear();
       var month = date.getMonth();
@@ -428,9 +425,8 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
     }
 
     Companies.getInfo($scope.job.website).then(function (data) {
-      console.log(data);
-
       if (data === undefined) return;
+      console.log(data);
 
       $scope.job.imageUrl = data.logo;
       $scope.job.description = data.organization.overview;
@@ -440,8 +436,9 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
 
       var addr = data.organization.contactInfo.addresses[0];
 
-      $scope.job.address = addr.addressLine1 + ", " + addr.locality + ", " + addr.region.code + ", " + addr.postalCode + ", " + addr.country.code;
-
+      if (addr.code) {
+        $scope.job.address = addr.addressLine1 + ", " + addr.locality + ", " + addr.region.code + ", " + addr.postalCode + ", " + addr.country.code;
+      }
       Jobs.create($scope.job).then(function (res) {
         alert(res);
         $location.url('/dashboard');
@@ -449,6 +446,7 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
     });
   };
 });
+;
 angular.module('app.auth', ['ngMaterial', 'ngMessages', 'signInForm', 'signUpForm']).controller('authController', function ($rootScope, $scope, Auth) {
 
   Auth.logout();
@@ -523,6 +521,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
           domain: companyUrl
         }
       }).then(function (res) {
+        console.log('$HTTP REQUEST', res.data);
         return res.data;
       }).catch(function (err) {
         console.log(err);
@@ -533,7 +532,9 @@ angular.module('app.services', []).factory('Companies', function ($http) {
   var getNews = function getNews(companiesArray) {
     return Promise.all(companiesArray.map(function (comp) {
       return $http.get('/api/news/?company=' + comp);
-    })).then(function (data) {
+    }))
+    //based on number of companies, determine how many articles per company to include:
+    .then(function (data) {
       var companies = data.length;
       if (companies > 4) {
         return data.map(function (com) {
@@ -729,6 +730,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
     $http.get('/api/logout');
   };
 
+  // Use API to backend to check if user is logged in and session exists
   var status = function status($rootScope, $location, $http) {
     $rootScope.$on('$routeChangeStart', function (evt, next, current) {
       $http.get('/api/status').then(function (data) {

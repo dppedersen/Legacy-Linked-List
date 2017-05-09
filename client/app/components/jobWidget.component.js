@@ -177,9 +177,16 @@ angular.
                     <input ng-model="$ctrl.data.link" type="url">
                   </md-input-container>
                 </div>
-                <div layout="row">
-                  <span class="md-title">Contacts</span>
+                <div layout="row" layout-align="start center">
+                  <span flex class="md-title">Contacts</span>
+
+                  <md-button flex="none" ng-hide="$index>0" ng-click="addContact($ctrl.data)" class="md-fab md-mini" aria-label="Edit contact">
+                  <md-icon class="ng-scope material-icons" role="img" aria-hidden="true">add</md-icon>
+                  <md-tooltip>Add Contact</md-tooltip>
+                  </md-button>
+
                 </div>
+
                 <div layout="row" layout-padding ng-repeat="contact in $ctrl.data.contacts track by $index">
                   <md-input-container flex="35">
                     <label>Name</label>
@@ -198,10 +205,6 @@ angular.
                     <md-icon class="material-icons">email</md-icon>
                     <input ng-model="contact.email" type='email'>
                   </md-input-container>
-                  <md-button ng-hide="$index>0" ng-click="addContact($ctrl.data)" class="md-fab" aria-label="Edit contact">
-                    <i class="material-icons">add</i>
-                    <md-tooltip>Add Contact</md-tooltip>
-                  </md-button>
                 </div>
                 <div layout="row">
                   <span class="md-title">Modify Steps</span>

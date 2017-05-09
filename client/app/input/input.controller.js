@@ -3,7 +3,7 @@ angular.module('app.input', [
   'ngMessages'
 ])
 .controller('inputController', function($scope, $http, $location, News, Companies, Jobs) {
-  
+
   $scope.job = {
     company: undefined,
     salary: undefined,
@@ -22,7 +22,7 @@ angular.module('app.input', [
     address: undefined,
     currentStep: {name: undefined,
               comments:[],
-              dueDate: null}, 
+              dueDate: null},
     nextStep: {name: undefined,
               comments:[],
               dueDate: null}
@@ -45,9 +45,10 @@ angular.module('app.input', [
       $scope.job.contacts = [];
     }
 
-    Companies.getInfo($scope.job.website).then((data)=> {
-
+    Companies.getInfo($scope.job.website)
+    .then((data)=> {
       if(data === undefined) return;
+      console.log(data);
 
       $scope.job.imageUrl = data.logo;
       $scope.job.description = data.organization.overview;
@@ -57,17 +58,19 @@ angular.module('app.input', [
 
       var addr = data.organization.contactInfo.addresses[0];
 
+      if(addr.code) {
       $scope.job.address = addr.addressLine1 + ", "
         + addr.locality + ", "
         + addr.region.code + ", "
         + addr.postalCode + ", "
         + addr.country.code;
-
-      Jobs.create($scope.job).then((res) => {
+      }
+      Jobs.create($scope.job)
+        .then((res) => {
         alert(res);
         $location.url('/dashboard');
       });
     });
-  }
+  };
 
-})
+});

@@ -28,7 +28,7 @@ angular.module('app',[
       redirectTo: '/'
     })
 })
-.controller('navController', function($scope, $location, $interval) {
+.controller('navController', function($scope, $location) {
     $scope.showSignUp = false;
 
     $scope.renderNavButtons = function() {
@@ -48,9 +48,6 @@ angular.module('app',[
       $location.path('logout');
     }
 
-    $interval(function(){
-      $scope.showSignUp = $location.url() !== "/";
-    }, 500);
 })
 .run((Auth, $rootScope, $location, $http) => Auth.status($rootScope, $location, $http))
 
@@ -84,7 +81,6 @@ angular.module('calendarWidget', [])
 .component('calendarWidget', {
   templateUrl: './app/components/calendarWidgetTemplate.html',
   controller: function calendarController($scope, $http, $route, $mdDialog){
-    // $scope.date = new Date();
     $scope.today = new Date();
     $scope.dates = [];
 
@@ -101,6 +97,7 @@ angular.module('calendarWidget', [])
       });
     });
 
+    // Popup dialog upon clicking a date on the calendar
     $scope.showPrerenderedDialog = function(ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
       $scope.taskDate = new Date($scope.date);
@@ -114,6 +111,7 @@ angular.module('calendarWidget', [])
       });
     };
 
+    //Formula to show dates on the calendar (see calendar html "md-date-filter")
     $scope.filterDates = date => {
       var year = date.getFullYear();
       var month = date.getMonth();
@@ -695,7 +693,7 @@ angular.module('app.input', [
   'ngMessages'
 ])
 .controller('inputController', function($scope, $http, $location, News, Companies, Jobs) {
-  
+
   $scope.job = {
     company: undefined,
     salary: undefined,
@@ -714,7 +712,7 @@ angular.module('app.input', [
     address: undefined,
     currentStep: {name: undefined,
               comments:[],
-              dueDate: null}, 
+              dueDate: null},
     nextStep: {name: undefined,
               comments:[],
               dueDate: null}
@@ -737,10 +735,10 @@ angular.module('app.input', [
       $scope.job.contacts = [];
     }
 
-    Companies.getInfo($scope.job.website).then((data)=> {
-      console.log(data);
-
+    Companies.getInfo($scope.job.website)
+    .then((data)=> {
       if(data === undefined) return;
+      console.log(data);
 
       $scope.job.imageUrl = data.logo;
       $scope.job.description = data.organization.overview;
@@ -750,20 +748,23 @@ angular.module('app.input', [
 
       var addr = data.organization.contactInfo.addresses[0];
 
+      if(addr.code) {
       $scope.job.address = addr.addressLine1 + ", "
         + addr.locality + ", "
         + addr.region.code + ", "
         + addr.postalCode + ", "
         + addr.country.code;
-
-      Jobs.create($scope.job).then((res) => {
+      }
+      Jobs.create($scope.job)
+        .then((res) => {
         alert(res);
         $location.url('/dashboard');
       });
     });
-  }
+  };
 
 });
+;
 angular.module('app.auth', [
   'ngMaterial',
   'ngMessages',
@@ -952,19 +953,21 @@ angular.module('app.services', [])
 				}
 			})
 			.then(function(res) {
+				console.log('$HTTP REQUEST', res.data);
 				return res.data;
 			})
 			.catch(function(err) {
-				console.log(err)
-			})
+				console.log(err);
+			});
 		}
-  }
+  };
 })
 .factory('News', ($http) => {
   var getNews = companiesArray => {
     return Promise.all(companiesArray.map(comp => {
       return $http.get('/api/news/?company='+comp)
     }))
+    //based on number of companies, determine how many articles per company to include:
     .then(data=>{
       var companies = data.length;
       if(companies>4){
@@ -1180,6 +1183,7 @@ angular.module('app.services', [])
     $http.get('/api/logout');
   }
 
+  // Use API to backend to check if user is logged in and session exists
   var status = ($rootScope, $location, $http) => {
     $rootScope.$on('$routeChangeStart', function (evt, next, current) {
       $http.get('/api/status').then(function(data){
