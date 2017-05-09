@@ -1,0 +1,18 @@
+<div class="landingContainer" layout="row" layout-align="center center" style="margin-top:0%">
+
+  <div ng-if="showWelcomeMessage" class="landing-content" flex="60">
+        <span class="logo">
+          <i class="material-icons" style="margin-right:20px">assignment</i>
+          <h2 style="font-weight:300">Linked</h2>
+          <i class="material-icons">compare_arrows</i>
+          <h2 style="font-weight:300">List</h2>
+        </span>
+        <p class="md-title" layout-padding>Organize, manage, and plan your entire job application process with our slick dashboard and easy-to-use job creation form.</p>
+        <br>
+        <md-button ng-click="handleGetStarted()" class="landing-btn md-raised md-primary" layout-padding>GET STARTED</md-button>
+  </div>
+
+  <sign-in-form ng-if="showSignIn" flex="60"></sign-in-form>
+  <sign-up-form ng-if="showSignUp" flex="75"></sign-up-form>
+</div>
+<div class="landingBackground" style="background-image: url('assets/landing-bg.jpeg')"></div>

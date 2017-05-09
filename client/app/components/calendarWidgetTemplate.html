@@ -1,0 +1,17 @@
+<md-calendar flex='noshrink' class="jobCalWidget" ng-if='dates.length>0' ng-click="showPrerenderedDialog($event)" ng-model="date" md-min-date="today" md-max-date="maxDate" md-date-filter="filterDates">
+</md-calendar>
+
+<!-- below is the dialog that pops up upon clicking a date -->
+<div style="visibility: hidden">
+  <div class="md-dialog-container" id="myDialog">
+    <md-dialog layout-padding>
+      <h2>Tasks for {{date}}</h2>
+	    <div layout-padding class="md-headline" ng-repeat="x in task track by $index">
+	        Task #{{$index+1}}: {{x.name}}
+	        <li class="md-subhead" ng-repeat="y in x.comments">
+	        	Task Comments: {{y}}
+	        </li>
+	    </div>
+    </md-dialog>
+  </div>
+</div>

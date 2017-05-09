@@ -1,0 +1,52 @@
+
+<!-- For the brave souls who get this far: You are the chosen ones,
+the valiant knights of programming who toil away, without rest,
+fixing our most awful code. To you, true saviors, kings of men,
+I say this: never gonna give you up, never gonna let you down,
+never gonna run around and desert you. Never gonna make you cry,
+never gonna say goodbye. Never gonna tell a lie and hurt you. -->
+
+<div layout="row" layout-wrap layout-padding>
+
+  <div flex-gt-md="66" flex="100" layout-wrap flex-order-gt-md="1">
+
+    <div layout-margin  flex="100" style="height:90px; background-color:white" layout="center center">
+      <md-input-container flex="85" style="margin:auto">
+        <label>Filter Jobs by Company Name or Position</label>
+        <md-icon class="material-icons">search</md-icon>
+        <input type="text" ng-model="search">
+      </md-input-container>
+    </div>
+
+    <job-widget flex="100" data="job" ng-repeat="job in jobs | filter: filterJobs" ng-if="jobs.length !== 0"></job-widget>
+
+    <md-card ng-if="jobs.length === 0">
+      <md-card-header>
+        <md-card-header-text>
+          <span class="md-headline">Getting Started with Linked List...</span>
+          <span class="md-headline">Click on 'Add Job' on the menu above to track your first application!</span>
+        </md-card-header-text>
+      </md-card-header>
+    </md-card>
+  </div>
+
+  <div flex-gt-md="33" flex="100" flex-order-gt-md="-1" >
+
+    <div layout-gt-md="row" flex="100" class="widget-container">
+        <profile-widget flex></profile-widget>
+    </div>
+
+    <div layout-gt-md="row" flex="100" class="widget-container">
+        <news-widget flex></news-widget>
+    </div>
+
+    <div layout-gt-md="row" flex="100" class="widget-container">
+        <tasks-widget flex></tasks-widget>
+    </div>
+
+    <div layout-gt-md="row" flex="100" class="widget-container">
+        <calendar-widget flex></calendar-widget>
+    </div>
+
+  </div>
+</div>

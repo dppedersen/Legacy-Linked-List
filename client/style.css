@@ -1,0 +1,444 @@
+* {
+  /*border: 1px solid red;*/
+  box-sizing: border-box;
+
+  font-family: 'Roboto';
+}
+
+html, body {
+  margin:0;
+  padding:0;
+
+  background-color: rgb(55, 64, 70);
+}
+
+.wrapper {
+  width: 100%;
+  margin:0;
+  padding:0;
+}
+
+/*
+NAV BAR
+*/
+
+#main-nav {
+  min-height: 70pt;
+  height: 10%;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+}
+
+#navbar-tools {
+  display: flex;
+
+  width: 95%;
+  margin: auto;
+
+  font-size: 7pt;
+
+  align-items: center;
+  justify-content: space-between;
+}
+
+#navbar-tools md-icon {
+  margin-right: 2pt;
+}
+
+#navbar-tools h2 {
+  margin: 0;
+  font-size: 37pt;
+  font-weight: 300;
+}
+
+#navbar-tools i {
+  font-size: 37pt;
+}
+
+.logo {
+  display: flex;
+
+  align-items: center;
+}
+
+.nav-btn {
+  font-weight: 700;
+}
+
+/*
+LANDING
+*/
+
+.landingBackground {
+  width: 100%;
+  height: 91vh;
+
+  background-image: url('assets/landing-bg.jpeg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: sepia(80%) brightness(20%) opacity(65%);
+}
+
+.landingCard {
+  /*width: 50%;*/
+  margin: auto;
+  text-align: left;
+  padding: 2.5%;
+}
+
+.landingContainer {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 91vh;
+  margin: auto;
+}
+
+.landing-content {
+  text-align: left;
+  color: white;
+  font-size: 20pt;
+  margin: auto;
+}
+
+.landing-content .logo {
+  justify-content: left;
+  font-size: 70pt;
+}
+
+.landing-content .logo h2{
+  font-size: 50pt;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+  margin-bottom: 15pt;
+}
+
+.landing-content p{
+  font-size: 20pt;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+  margin-bottom: 25px;
+}
+
+.landing-content .logo i {
+  font-size: 50pt;
+  margin-top: 20pt;
+}
+
+.landing-btn {
+  font-weight: 700;
+  font-size: 10pt;
+}
+
+#signin,
+#signup {
+
+}
+#signup md-input-container {
+  margin: 5px;
+}
+
+/*
+SIDEBAR
+*/
+
+.sidebar-row {
+  display: flex;
+
+  height: 450px;
+}
+
+.sidebar-col {
+  width: 50%;
+  height: 450px;
+}
+
+.sidebar-row-small {
+  width: 100%;
+  height: 225px;
+}
+
+.widget-container {
+  padding: 7.5px;
+}
+
+.widget {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+WIDGETS
+*/
+
+.settings-btn {
+  position: absolute;
+}
+
+/*
+PROFILE WIDGET
+*/
+
+#profile-widget {
+  padding: 16px;
+}
+
+.profile-img-container {
+  display: flex;
+  align-items: center;
+}
+
+.profile-img {
+    width: 100px;
+    height: 100px;
+    margin: 0;
+    margin-right: 32px;
+    border-radius: 50%;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+    object-fit: cover;
+}
+
+#profile-widget p {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+/*
+GOALS WIDGET
+*/
+
+#goals-widget {
+  position: relative;
+
+  padding: 10px;
+
+  text-align: center;
+}
+
+#goals-widget md-menu {
+  position: relative;
+}
+
+#goals-widget-settings {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+
+.progress-bar-back {
+  width: 90%;
+  height: 40px;
+  margin: auto;
+
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, .15);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+}
+
+.progress-bar-front {
+  display: flex;
+
+  width: 40%;
+  height: 100%;
+  padding-left: 20px;
+
+  color: white;
+  border-radius: 20px;
+  background-color: rgb(41,98,255);
+
+  font-weight: bold;
+
+  align-items: center;
+}
+
+/*
+TASKS WIDGET
+*/
+
+#tasks-widget {
+  padding: 10px;
+
+  text-align: center;
+}
+
+#tasks-widget .md-headline{
+  margin-bottom: 10px;
+}
+
+#tasks-widget .input-container {
+  display: flex;
+
+  margin-top: 16px;
+  margin-bottom: 16px;
+
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#tasks-widget input {
+  width: 75%;
+  height: 36px;
+  margin: auto;
+
+  text-align: center;
+
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+}
+
+#tasks-widget md-content {
+  /*border-top: 1px solid lightgray;*/
+  background-color: white;
+}
+
+#tasks-widget ul {
+  text-align: left;
+}
+
+#tasks-widget .task-container {
+  display: flex;
+
+  align-items: top;
+}
+
+#tasks-widget li {
+  list-style: none;
+}
+
+#tasks-widget md-checkbox {
+  display: block;
+}
+
+/*
+NEWS WIDGET
+*/
+
+#news-widget .news-settings {
+  position: relative;
+
+  display: none;
+  float: right;
+
+  margin-top: 10px;
+  margin-right: 10px;
+
+  border-radius: 50%;
+}
+
+#news-widget .news-img-container {
+  /*max-height: 125px;*/
+
+  min-height: 150px;
+
+  background-image: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+
+  margin-top: 16px;
+  /*margin-bottom: 16px;*/
+}
+
+#news-widget md-content {
+  padding: 16px;
+
+  background-color: white;
+}
+
+#news-widget span {
+  text-align: center;
+
+  font-size: 24px;
+  font-weight: normal;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#news-widget md-footer {
+  max-height: 40px;
+
+  text-align: center;
+}
+
+#news-widget button {
+  min-width: 50px;
+  min-height: 30px;
+  margin: 0;
+}
+
+#news-widget p {
+  font-size: 12pt;
+}
+
+#news-widget div {
+  margin: 0;
+
+  font-size: 9pt;
+}
+
+.jobCalWidget .md-calendar-date:not(.md-disabled) .md-calendar-date-selection-indicator {
+  color: white;
+  border-radius: 50%;
+  background-color: rgb(0,150,136);
+
+  font-weight: bold;
+}
+
+.md-calendar-date:not(.md-disabled) .md-calendar-date-selection-indicator:hover{
+  background-color: rgb(50,200,170);
+}
+
+/*
+DASHBOARD
+*/
+
+/*.search-input-container {
+  height: 36px;
+  width: 90%;
+
+  margin: 0;
+  text-align: center;
+}
+
+.search-input {
+  height: 100%;
+  width: 100%;
+
+  border-radius: 18px;
+  border: none;
+}*/
+
+.job-card .md-card-header {
+  display: flex;
+  align-items: center;
+}
+
+.job-widget-image {
+  height: 125px;
+  width: 125px;
+  background-position: center;
+  background-size: contain  !important;
+}
+
+.contact-divider {
+  position: relative;
+  padding: 16px;
+}
+
+.contact-info {
+  margin: 5px 0;
+}
+
+.contact-info md-icon {
+  margin-right: 10px;
+}
+
+.job-card md-content {
+  margin: 0 10px 10px 10px;
+  padding: 16px;
+}
+
+.job-card contact-divider {
+  padding-left: 0;
+}

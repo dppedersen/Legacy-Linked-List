@@ -1,0 +1,54 @@
+  <!DOCTYPE html>
+<html lang="en" ng-app='app'>
+  <head>
+    <meta charset="utf-8">
+    <meta name="'viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FAVICON -->
+    <link rel="icon" href="assets/favicon.ico">
+
+    <!-- FONTS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+
+    <!-- STYLESHEETS -->
+    <!-- <link rel="stylesheet" href="lib/angular-material/angular-material.min.css"> -->
+    <link rel="stylesheet" href="app/dist/style.min.css">
+
+    <!-- ANGULAR -->
+    <script type="text/javascript" src="lib/moment/moment.js"></script>
+    <script type="text/javascript" src="lib/angular/angular.min.js"></script>
+    <script type="text/javascript" src="lib/angular-route/angular-route.min.js"></script>
+    <script type="text/javascript" src="lib/angular-animate/angular-animate.min.js"></script>
+    <script type="text/javascript" src="lib/angular-aria/angular-aria.min.js"></script>
+    <script type="text/javascript" src="lib/angular-messages/angular-messages.min.js"></script>
+    <script type="text/javascript" src="lib/angular-mocks/angular-mocks.js"></script>
+    <script type="text/javascript" src="lib/angular-material/angular-material.min.js"></script>
+
+    <title>Job Search Tool</title>
+  </head>
+  <body>
+
+    <!-- NAV BAR -->
+    <md-toolbar id="main-nav" ng-controller="navController">
+      <div id="navbar-tools" class="md-toolbar-tools">
+
+        <div class="logo">
+          <i class="material-icons" style="margin-right:15px">assignment</i>
+          <h2 md-truncate style="font-weight:300">Linked</h2>
+          <i class="material-icons">compare_arrows</i>
+          <h2 md-truncate style="font-weight:300">List</h2>
+        </div>
+
+        <div id="buttons" ng-if="renderNavButtons()">
+          <md-button ng-click="handleDashboardClick()" class="nav-btn md-raised md-accent"><md-icon>dashboard</md-icon>DASHBOARD</md-button>
+          <md-button ng-click="handleInputClick()" class="nav-btn md-raised md-accent"><md-icon>note_add</md-icon>ADD JOB</md-button>
+          <md-button ng-click="handleLogoutClick()"class="nav-btn md-raised md-accent"><md-icon>chevron_right</md-icon>LOGOUT</md-button>
+        </div>
+      </div>
+    </md-toolbar>
+    <div class="wrapper container" ng-view></div>
+
+    <script type="text/javascript" src="app/dist/scripts.concat.js"></script>
+  </body>
+</html>

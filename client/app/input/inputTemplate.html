@@ -1,0 +1,142 @@
+<div layout="column" ng-cloak class="md-inline-form" layout-margin>
+
+  <md-content layout-padding layout-margin>
+    <div layout="row">
+      <span flex="80" class="md-display-1">Application Form</span>
+      <md-input-container flex="20">
+          <label>App Date</label>
+          <md-datepicker ng-model="job.dateCreated" md-hide-icons="calendar"></md-datepicker>
+      </md-input-container>
+    </div>
+
+    <form name="jobForm" ng-submit="submitJob()">
+
+      <div layout="row">
+        <span class="md-title">Application Information</span>
+      </div>
+
+      <div layout="row">
+        <md-input-container flex="40">
+          <label>Position Title</label>
+          <md-icon class="material-icons">assignment</md-icon>
+          <input ng-model="job.position" required>
+        </md-input-container>
+
+        <md-input-container flex="30">
+          <label>Company Name</label>
+          <md-icon class="material-icons">business</md-icon>
+          <input ng-model="job.company" required>
+        </md-input-container>
+
+        <md-input-container flex="30">
+          <label>Salary</label>
+          <md-icon class="material-icons">attach_money</md-icon>
+          <input ng-model="job.salary" type="number">
+        </md-input-container>
+      </div>
+
+      <div layout="row">
+        <md-input-container flex="50">
+          <label>Application Link</label>
+          <md-icon class="material-icons">web</md-icon>
+          <input ng-model="job.link" type="url">
+        </md-input-container>
+
+        <md-input-container flex="50">
+          <label>Company Website</label>
+          <md-icon class="material-icons">web</md-icon>
+          <input ng-model="job.website" required type="url">
+        </md-input-container>
+      </div>
+
+      <div layout="row">
+        <span class="md-title">Contact Information</span>
+      </div>
+
+      <div layout="row" layout-padding ng-repeat="contact in job.contacts track by $index" layout-wrap>
+        <md-input-container flex="35">
+          <label>Contact's Name</label>
+          <md-icon class="material-icons">contacts</md-icon>
+          <input ng-model="contact.name">
+        </md-input-container>
+
+        <md-input-container flex="30">
+          <label>Contact's Phone Number</label>
+          <md-icon class="material-icons">call</md-icon>
+          <input ng-model="contact.phoneNumber" type="tel">
+        </md-input-container>
+
+        <md-input-container flex="30">
+          <label>Contact's E-mail </label>
+          <md-icon class="material-icons">email</md-icon>
+          <input ng-model="contact.email" type='email'>
+        </md-input-container>
+      </div>
+
+      <div layout="row" layout-align="end end"style="margin-top:-40px;margin-bottom:20px">
+        <md-button style="margin-right:40px" ng-hide="$index>0" ng-click="addContact()" class="md-fab" aria-label="Add contact">
+          <i class="material-icons"  style="margin-top:15px">add</i>
+          <md-tooltip>Add Contact</md-tooltip>
+        </md-button>
+      </div> 
+
+      <div layout="row">
+        <span class="md-title">Application Steps</span>
+      </div>
+      <br>
+
+      <div layout="row">
+        <span class="md-subhead">Current Step</span>
+      </div>
+
+      <div layout="row" layout-padding>
+        <md-input-container flex="75">
+          <md-icon class="material-icons">subject</md-icon>
+          <label>Current Step</label>
+          <input ng-model="job.currentStep.name" required>
+        </md-input-container>
+
+        <md-input-container flex="25">
+          <label>Due Date</label>
+          <md-datepicker ng-model="job.currentStep.dueDate" required md-hide-icons="calendar"></md-datepicker>
+        </md-input-container>
+      </div>
+
+      <div layout="row" layout-padding>
+        <md-input-container flex="90">
+          <label>Current Step Comments</label>
+          <md-icon class="material-icons">comment</md-icon>
+          <textarea ng-model="job.currentStep.comments[0]" md-maxlength="150" rows="1" md-select-on-focus></textarea>
+        </md-input-container>
+      </div>
+
+      <div layout="row">
+        <span class="md-subhead">Next Step</span>
+      </div>
+
+
+      <div layout="row" layout-padding>
+        <md-input-container flex="75">
+          <label>Next Step</label>
+          <md-icon class="material-icons">subject</md-icon>
+          <input ng-model="job.nextStep.name">
+        </md-input-container>
+
+        <md-input-container flex="25">
+          <label>Due Date</label>
+          <md-datepicker ng-model="job.nextStep.dueDate" md-hide-icons="calendar"></md-datepicker>
+        </md-input-container>
+      </div>
+
+      <div layout="row" layout-padding>
+        <md-input-container flex="90">
+          <label>Next Step Comments</label>
+          <md-icon class="material-icons">comment</md-icon>
+          <textarea ng-model="job.nextStep.comments[0]" md-maxlength="150" rows="1" md-select-on-focus></textarea>
+        </md-input-container>
+      </div>
+
+      <md-button type="submit" class="md-primary md-raised">Add New Job</md-button>
+    </form>
+  </md-content>
+</div>
