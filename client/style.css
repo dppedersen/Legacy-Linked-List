@@ -376,12 +376,13 @@ NEWS WIDGET
 
   font-size: 9pt;
 }
-
+body > div > div > div.flex-order-gt-md--1.flex-gt-md-33.flex-100 > div:nth-child(4) > calendar-widget > md-calendar > div {
+  min-width: 500px;
+}
 .jobCalWidget .md-calendar-date:not(.md-disabled) .md-calendar-date-selection-indicator {
   color: white;
   border-radius: 50%;
   background-color: rgb(0,150,136);
-
   font-weight: bold;
 }
 
@@ -441,4 +442,37 @@ DASHBOARD
 
 .job-card contact-divider {
   padding-left: 0;
+}
+
+.googleCalendar {
+  display: flex !important;
+  color: white !important;
+  justify-content: center !important;
+}
+.googleDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+}
+.googleSignIn {
+  background: url('../../assets/google-button.png') no-repeat 0 0;
+  background-size: contain;
+  outline: 0 !important;
+  width: 200px;
+  height: 48px;
+}
+
+.googleSignIn:hover {
+  background: url('../../assets/google-button-focus.png') no-repeat 0 0;
+  background-size: contain;
+  outline: 0 !important;
+  border-radius: 5px;
+}
+
+.googleSignIn:active {
+  background: url('../../assets/google-button-pressed.png') no-repeat 0 0;
+  background-size: contain;
+  outline: 0 !important;
 }

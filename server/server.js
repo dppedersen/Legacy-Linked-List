@@ -4,13 +4,14 @@ var morgan = require('morgan');
 var request = require('request');
 
 // auth dependencies
+var config = require('./config/config');
 var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
 var mongoose = require('mongoose');
 var hash = require('bcrypt-nodejs');
 var passport = require('passport');
 var localStrategy = require('passport-local' ).Strategy;
-
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
 // adding favicon in express
 var favicon = require('serve-favicon');
 
@@ -50,6 +51,33 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// Google Authentication
+passport.use(new GoogleStrategy({
+  clientID: config.googleAuth.clientID,
+  clientSecret: config.googleAuth.clientSecret,
+  callbackURL: config.googleAuth.callbackURL,
+  scope: config.googleAuth.scope
+  },
+  (accessToken, refreshToken, profile, done) => {
+    profile.accessToken = accessToken;
+    User.findOne({googleId: profile.id}, (err, res) => {
+      if(err) {
+        User.createOne({
+          email: profile.emails[0].value,
+          googleId: profile.id
+        }, (err, res) => {
+          if(err) {
+            console.log('Error during User Creation');
+          } else {
+            console.log('User Successfully Created!');
+          }
+        })
+      } else {
+        done(null, profile);
+      }
+    })
+  })
+);
 
 //set up routes
 var routes = require('./routes/routes.js')(app, express);
@@ -75,7 +103,7 @@ console.log('server listening on port ' + port);
 console.log('serving static files from' + __dirname + '/../client');
 
 
-// ██╗    ██╗██╗  ██╗███████╗███╗   ██╗    ██╗    ██╗    ██╗██████╗  ██████╗ ████████╗███████╗    ████████╗██╗  ██╗██╗███████╗                                                                       
+// ██╗    ██╗██╗  ██╗███████╗███╗   ██╗    ██╗    ██╗    ██╗██████╗  ██████╗ ████████╗███████╗    ████████╗██╗  ██╗██╗███████╗
 // ██║    ██║██║  ██║██╔════╝████╗  ██║    ██║    ██║    ██║██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝    ╚══██╔══╝██║  ██║██║██╔════╝
 // ██║ █╗ ██║███████║█████╗  ██╔██╗ ██║    ██║    ██║ █╗ ██║██████╔╝██║   ██║   ██║   █████╗         ██║   ███████║██║███████╗
 // ██║███╗██║██╔══██║██╔══╝  ██║╚██╗██║    ██║    ██║███╗██║██╔══██╗██║   ██║   ██║   ██╔══╝         ██║   ██╔══██║██║╚════██║

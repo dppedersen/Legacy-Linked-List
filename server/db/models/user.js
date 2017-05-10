@@ -25,6 +25,10 @@ var UserSchema = new Schema({
 		type: String,
 	 	default: 'NY'
 	},
+	googleId: {
+		type: String,
+		default: ''
+	},
 	tasks: [Task.schema],
 	jobs: [Job.schema]
 });
