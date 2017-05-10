@@ -29,7 +29,10 @@ angular.
         <div layout="row">
           <md-button flex='100' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>
         </div>
-
+        <h3 style="text-align: center;">Or <br /></h3>
+        <div class="googleDiv">
+          <a href="/auth/google" class="googleSignIn"></a>
+        </div>
         <div layout="row">
           <md-button flex='100' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>
         </div>

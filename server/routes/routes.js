@@ -399,7 +399,13 @@ module.exports = function(app, express) {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                    Authentication
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	app.get('/auth/google', passport.authenticate('google', { session: false }));
 
+	app.get('/auth/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/login' }),
+  function(req, res) {
+    req.session.access_token = req.user.accessToken;
+    res.redirect('/');
+  });
 	//in req.body: (username: password: )
 	app.post('/api/register', function(req, res) {
 		console.log('attempting to register', req.body.username, req.body.password);
