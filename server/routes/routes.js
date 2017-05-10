@@ -197,7 +197,9 @@ module.exports = function(app, express) {
 				var jobToSave = user[0].jobs.filter((job) => {
 					return job._id.toString() === req.body._id;
 				})[0];
-				user[0].savedJobs.push(jobToSave);
+				if (jobToSave !== null && jobToSave !== undefined) {
+					user[0].savedJobs.push(jobToSave);
+				}
 				// console.log('jobtosave:',jobToSave);
 
 

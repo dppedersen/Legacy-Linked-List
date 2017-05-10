@@ -134,7 +134,7 @@ angular.
             Jobs.saveAndDelete(query)
               .then(function(res) {
                 $route.reload();
-                $window.alert(res);
+                // $window.alert(res);
               })
               .catch(function(err) {
                 console.log(err);
