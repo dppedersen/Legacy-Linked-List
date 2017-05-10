@@ -229,7 +229,30 @@ angular.module('app.services', [])
 	}
 })
 .factory('SavedJobs', function($http) {
-	return {};
+	return {
+			get: function() {
+				return $http({
+					method: 'GET',
+					url: 'api/savedJobs'
+				})
+				.then(function(res) {
+					return res.data;
+				})
+			},
+			delete: function(data) {
+				return $http({
+					method: 'DELETE',
+					url: '/api/savedJobs',
+					data: data,
+					headers: {
+						'Content-type': 'application/json;charset=utf-8'
+					}
+				})
+				.then(function(res) {
+					return res.data;
+				});
+		}
+	}
 	// return {
 	// 	create: function() {
 	// 		return $http({
@@ -244,18 +267,7 @@ angular.module('app.services', [])
 	// 			return res.data;
 	// 		});
 	// 	},
-	// 	get: function() {
-	// 		return $http({
-	// 			method: 'GET',
-	// 			api: '/api/savedJobs',
-	// 			headers: {
-	// 				'Content-type': 'application/json;charset=utf-8'
-	// 			}
-	// 		})
-	// 		.then(function(res) {
-	// 			return res.data;
-	// 		});
-	// 	},
+	// ,
 	// 	update: function() {
 	// 		return $http({
 	// 			method: 'PATCH',
@@ -269,18 +281,7 @@ angular.module('app.services', [])
 	// 			return res.data;
 	// 		});
 	// 	},
-	// 	delete: function() {
-	// 		return $http({
-	// 			method: 'DELETE',
-	// 			api: '/api/savedJobs',
-	// 			data: data,
-	// 			headers: {
-	// 				'Content-type': 'application/json;charset=utf-8'
-	// 			}
-	// 		})
-	// 		.then(function(res) {
-	// 			return res.data;
-	// 		});
+
 	// 	}
 	// }
 })

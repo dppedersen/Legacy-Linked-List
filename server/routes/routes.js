@@ -174,6 +174,11 @@ module.exports = function(app, express) {
 		});
 	});
 
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		//                    Saved Jobs
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	app.post('/api/savedJobs', function(req, res) {
 		var username = req.session.passport.user;
 
@@ -181,11 +186,11 @@ module.exports = function(app, express) {
 			if(user.length === 0) {
 				res.status(400).send('null');
 			} else {
-				console.log('user[0].jobs: ',user[0].jobs);
-				console.log('typeof req.body._id',typeof req.body._id);
+				// console.log('user[0].jobs: ',user[0].jobs);
+				// console.log('typeof req.body._id',typeof req.body._id);
 				for (var i = 0; i < user[0].jobs.length; i++) {
 					if (user[0].jobs[i]._id.toString() === req.body._id) {
-						console.log('ITS A MATCH', user[0].jobs[i]);
+						// console.log('ITS A MATCH', user[0].jobs[i]);
 					}
 				}
 
@@ -193,7 +198,7 @@ module.exports = function(app, express) {
 					return job._id.toString() === req.body._id;
 				})[0];
 				user[0].savedJobs.push(jobToSave);
-				console.log('jobtosave:',jobToSave);
+				// console.log('jobtosave:',jobToSave);
 
 
 				user[0].jobs = user[0].jobs.filter((job) => {
@@ -211,6 +216,48 @@ module.exports = function(app, express) {
 	        	}
 	        }
 			  );
+			}
+		});
+	});
+
+	app.get('/api/savedJobs', function(req, res) {
+		var username = req.session.passport.user;
+
+		User.find({ username: username }).exec(function(err, user){
+			if(user.length === 0) {
+				// console.log('unsuccessful retrieve jobs', username);
+				res.status(400).send('null');
+			} else {
+				// console.log('successful retrieve jobs', username, user[0].savedJobs);
+				res.send(user[0].savedJobs);
+			}
+		});
+	});
+
+	app.delete('/api/savedJobs', function(req, res) {
+
+		var username = req.session.passport.user;
+
+		User.find({ username: username }).exec(function(err, user){
+			if(user.length === 0) {
+				res.status(400).send('null');
+			} else {
+				user[0].savedJobs = user[0].savedJobs.filter((savedJob) => {
+					return savedJob._id != req.body._id;
+				});
+
+				User.findOneAndUpdate(
+							{ username: username },
+							{ $set: user[0] },
+							{ new: true },
+							function(err, model) {
+								if(err) {
+									res.status(401).send(err);
+								} else {
+									res.send('Job removed');
+								}
+							}
+					);
 			}
 		});
 	});
