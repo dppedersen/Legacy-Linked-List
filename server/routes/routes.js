@@ -1,6 +1,7 @@
 var db = require('../db/db-config.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
+var Twit = require('twit');
 
 // import mongoose models
 var User = require('../db/models/user.js');
@@ -368,6 +369,42 @@ module.exports = function(app, express) {
 			console.log('API call failed!');
 		});
 	});
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//                    Twitter
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	var twitter = new Twit(config.twitter);
+
+	app.post('/api/twitter', function(req, res) {
+		console.log('Req recieved')
+		console.log(req.body.handles)
+		console.log(Array.isArray(req.body.handles));
+
+		Promise.all(
+			req.body.handles.forEach(handle => {
+				let params = {
+					screen_name: handle,
+					count: 5,
+					exclude_replies: true
+				}
+
+				twitter.get('statuses/user_timeline', params, function(err, data, response) {
+					if(err) console.error(err);
+					console.log(data);
+					return data;
+				})
+			})
+		)
+		.then(data => {
+			console.log(data)
+		})
+		.catch(err => console.error(err));
+
+
+
+	})
+
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                  Company Information
