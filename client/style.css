@@ -255,7 +255,7 @@ GOALS WIDGET
 TASKS WIDGET
 */
 
-/*#tasks-widget {
+#tasks-widget {
   padding: 10px;
 
   text-align: center;
@@ -288,10 +288,10 @@ TASKS WIDGET
 }
 
 #tasks-widget md-content {
-  /*border-top: 1px solid lightgray;*/
-  /*background-color: white;
-}*/
-/*
+  border-top: 1px solid lightgray;
+  background-color: white;
+}
+
 #tasks-widget ul {
   text-align: left;
 }
@@ -308,7 +308,7 @@ TASKS WIDGET
 
 #tasks-widget md-checkbox {
   display: block;
-}*/
+}
 
 /*
 SAVED JOBS WIDGET
