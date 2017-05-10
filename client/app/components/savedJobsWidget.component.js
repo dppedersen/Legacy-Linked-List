@@ -11,7 +11,11 @@ angular.
       <md-divider></md-divider>
 
       <div class="input-container">
+<<<<<<< HEAD
         <input type="text" placeholder="Add a new task..." ng-model="inputValue"></input>
+=======
+        <!-- <input type="text" placeholder="Add a new task..." ng-model="inputValue"></input> -->
+>>>>>>> Begin Styling Saved Jobs
         <md-button class="md-icon-button" ng-click="$ctrl.createTask(inputValue); inputValue = null">
             <md-tooltip md-direction="top">Add Task</md-tooltip>
             <md-icon>add</md-icon>
@@ -50,7 +54,12 @@ angular.
           this.savedJobsList = data || [];
         });
       };
+<<<<<<< HEAD
       // this.getSavedJobs();
+=======
+
+      this.getSavedJobs();
+>>>>>>> Begin Styling Saved Jobs
       //
       // this.createSavedJob = function(data) {
       //   if(name && name.length > 0) {
