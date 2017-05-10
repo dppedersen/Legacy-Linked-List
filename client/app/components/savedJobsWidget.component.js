@@ -6,40 +6,29 @@ angular.
     template:
     `
     <md-card id="saved-jobs-widget" class='widget'>
-      <span class="md-headline">Saved Jobs</span>
+
+      <div style="display: flex; justify-content: space-between">
+        <span></span>
+        <span class="md-headline">Saved Jobs</span>
+        <md-button class="md-icon-button" ng-click="$ctrl.deleteAll()">
+            <md-icon>delete</md-icon>
+        </md-button>
+      </div>
 
       <md-divider></md-divider>
 
-      <div class="input-container">
-
-        <!-- <input type="text" placeholder="Add a new task..." ng-model="inputValue"></input> -->
-
-        <md-button class="md-icon-button" ng-click="$ctrl.createTask(inputValue); inputValue = null">
-            <md-tooltip md-direction="top">Add Task</md-tooltip>
-            <md-icon>add</md-icon>
-        </md-button>
-
-        <md-button class="md-icon-button" ng-click="$ctrl.deleteAllCompleted()">
-            <md-tooltip md-direction="top">Remove Completed Tasks</md-tooltip>
-            <md-icon>delete</md-icon>
-        </md-button>
-
-        <!-- <md-button class="md-icon-button" ng-click="">
-            <md-tooltip md-direction="top">Edit Mode</md-tooltip>
-            <md-icon>edit_mode</md-icon>
-        </md-button> -->
-      </div>
-
-      <md-divider ng-if="$ctrl.tasksList.length > 0"></md-divider>
-
-      <md-content>
+      <md-content">
 
         <ul>
-          <li ng-repeat="task in $ctrl.tasksList">
-            <md-checkbox ng-checked="task.completed" ng-click="$ctrl.toggleCompleted(task._id, task.completed)">{{task.name}}</md-checkbox>
+          <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">
+            <b>{{savedJob.company}}</b>
+            <p>{{savedJob.position}}</p>
+            <md-button class="md-primary md-raised" ng-click="showTabDialog($event)" >
+              Details
+            </md-button>
+            <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
           </li>
         </ul>
-
 
 
       </md-content>
@@ -49,12 +38,30 @@ angular.
 
       this.getSavedJobs = function() {
         SavedJobs.get().then(data => {
+          console.log(data);
           this.savedJobsList = data || [];
         });
       };
 
 
-      // this.getSavedJobs();
+      this.getSavedJobs();
+
+      this.toggleDelete = function(savedJob) {
+        savedJob.toDelete = !savedJob.toDelete;
+      };
+
+      this.deleteAll = function() {
+        this.savedJobsList.forEach(savedJob => {
+          if(savedJob.toDelete) {
+            SavedJobs.delete({ _id: savedJob._id })
+              .then(res => {
+                this.getSavedJobs();
+              });
+          }
+        });
+      };
+
+
       //
       // this.createSavedJob = function(data) {
       //   if(name && name.length > 0) {
@@ -91,18 +98,7 @@ angular.
       //     this.getTasks();
       //   });
       // }
-      //
-      // this.toggleCompleted = function(id, completed) {
-      //   this.updateTask(id, null, !completed);
-      // }
-      //
-      // this.deleteAllCompleted = function() {
-      //   this.tasksList.forEach(task => {
-      //     if(task.completed) {
-      //       this.deleteTask(task._id);
-      //     }
-      //   });
-      // }
+
 
     }
   });
