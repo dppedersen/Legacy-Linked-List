@@ -15,7 +15,9 @@ angular.module('app.services', [])
 				return res.data;
 			})
 			.catch(function(err) {
-				console.log(err);
+				alert('Your URL might be wrong! Try Again!');
+				$route.reload();
+				// console.log(err);
 			});
 		}
   };

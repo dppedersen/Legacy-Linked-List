@@ -2,7 +2,7 @@ angular.module('app.input', [
   'ngMaterial',
   'ngMessages'
 ])
-.controller('inputController', function($scope, $http, $location, News, Companies, Jobs) {
+.controller('inputController', function($scope, $http, $location, $route, News, Companies, Jobs) {
 
   $scope.job = {
     company: undefined,
@@ -75,6 +75,9 @@ angular.module('app.input', [
         alert(res);
         $location.url('/dashboard');
       });
+    })
+    .catch((err) => {
+      $route.reload();
     });
   };
 
