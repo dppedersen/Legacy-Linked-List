@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 // connect to database at europaDB
 // Or, use ours mongodb://europa:europa@ds133331.mlab.com:33331/europa
-var dbURI = 'mongodb://europa:europa@ds133331.mlab.com:33331/europa';
+var dbURI = 'mongodb://demo:demo@ds045694.mlab.com:45694/legacy';
 mongoose.connect(dbURI);
 
 var db = mongoose.connection;

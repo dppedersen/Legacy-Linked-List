@@ -20,6 +20,7 @@ angular.module('app.services', [])
 		}
   };
 })
+
 .factory('News', ($http) => {
   var getNews = companiesArray => {
     return Promise.all(companiesArray.map(comp => {
@@ -44,6 +45,23 @@ angular.module('app.services', [])
   return {
     getNews: getNews
   }
+})
+
+.factory('Tweets', function($http) {
+	var getTweets = function(handlesArray) {
+		$http.post('/api/twitter', handlesArray)
+			.then(function(data) {
+				return data
+			})
+			.catch(function(err) {
+				console.error("Failed Tweets.factory fetching tweets...");
+				console.error(err);
+			});
+	}
+
+	return {
+		getTweets : getTweets
+	}
 })
 
 .factory('User', function($http) {
@@ -215,6 +233,7 @@ angular.module('app.services', [])
 		}
 	}
 })
+
 .factory('Auth', ($http, $location) => {
 
   var register = (user) => {

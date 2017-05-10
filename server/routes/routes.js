@@ -391,13 +391,12 @@ module.exports = function(app, express) {
 
 				twitter.get('statuses/user_timeline', params, function(err, data, response) {
 					if(err) console.error(err);
-					console.log(data);
 					return data;
 				})
 			})
 		)
 		.then(data => {
-			console.log(data)
+			res.status(200).send(data);
 		})
 		.catch(err => console.error(err));
 
