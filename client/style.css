@@ -255,7 +255,7 @@ GOALS WIDGET
 TASKS WIDGET
 */
 
-#tasks-widget {
+/*#tasks-widget {
   padding: 10px;
 
   text-align: center;
@@ -289,9 +289,9 @@ TASKS WIDGET
 
 #tasks-widget md-content {
   /*border-top: 1px solid lightgray;*/
-  background-color: white;
-}
-
+  /*background-color: white;
+}*/
+/*
 #tasks-widget ul {
   text-align: left;
 }
@@ -308,7 +308,67 @@ TASKS WIDGET
 
 #tasks-widget md-checkbox {
   display: block;
+}*/
+
+/*
+SAVED JOBS WIDGET
+*/
+
+#saved-jobs-widget {
+  padding: 10px;
+
+  text-align: center;
 }
+
+#saved-jobs-widget .md-headline{
+  margin-bottom: 10px;
+}
+
+#saved-jobs-widget .input-container {
+  display: flex;
+
+  margin-top: 16px;
+  margin-bottom: 16px;
+
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#saved-jobs-widget input {
+  width: 75%;
+  height: 36px;
+  margin: auto;
+
+  text-align: center;
+
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+}
+
+#saved-jobs-widget md-content {
+  /*border-top: 1px solid lightgray;*/
+  background-color: white;
+}
+
+#saved-jobs-widget ul {
+  text-align: left;
+}
+
+#saved-jobs-widget .task-container {
+  display: flex;
+
+  align-items: top;
+}
+
+#saved-jobs-widget li {
+  list-style: none;
+}
+
+#saved-jobs-widget md-checkbox {
+  display: block;
+}
+
 
 /*
 NEWS WIDGET

@@ -30,7 +30,8 @@ var UserSchema = new Schema({
 		default: ''
 	},
 	tasks: [Task.schema],
-	jobs: [Job.schema]
+	jobs: [Job.schema],
+	savedJobs: [Job.schema]
 });
 
 UserSchema.plugin(passportLocalMongoose);

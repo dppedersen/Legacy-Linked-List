@@ -129,15 +129,26 @@ angular.
       this.deleteJob = function(job) {
         let query = JSON.stringify({_id : job._id});
 
-        if($window.confirm('Are you sure you want to delete this job?')) {
-          Jobs.delete(query)
-          .then(function(res) {
-            $route.reload()
-            $window.alert(res);
-          })
-          .catch(function(err) {
-            console.log(err)
-          })
+        if ($window.confirm('Are you sure you want to delete this job?')) {
+          if ($window.confirm('Would you like to add to Your Saved Jobs?')) {
+            Jobs.saveAndDelete(query)
+              .then(function(res) {
+                $route.reload();
+                $window.alert(res);
+              })
+              .catch(function(err) {
+                console.log(err);
+              })
+          } else {
+            Jobs.delete(query)
+            .then(function(res) {
+              $route.reload()
+              $window.alert(res);
+            })
+            .catch(function(err) {
+              console.log(err)
+            })
+          }
         }
       }
 

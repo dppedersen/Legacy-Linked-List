@@ -174,6 +174,47 @@ module.exports = function(app, express) {
 		});
 	});
 
+	app.post('/api/savedJobs', function(req, res) {
+		var username = req.session.passport.user;
+
+		User.find({ username: username }).exec(function(err, user){
+			if(user.length === 0) {
+				res.status(400).send('null');
+			} else {
+				console.log('user[0].jobs: ',user[0].jobs);
+				console.log('typeof req.body._id',typeof req.body._id);
+				for (var i = 0; i < user[0].jobs.length; i++) {
+					if (user[0].jobs[i]._id.toString() === req.body._id) {
+						console.log('ITS A MATCH', user[0].jobs[i]);
+					}
+				}
+
+				var jobToSave = user[0].jobs.filter((job) => {
+					return job._id.toString() === req.body._id;
+				})[0];
+				user[0].savedJobs.push(jobToSave);
+				console.log('jobtosave:',jobToSave);
+
+
+				user[0].jobs = user[0].jobs.filter((job) => {
+					return job._id.toString() !== req.body._id;
+				});
+				User.findOneAndUpdate(
+					{ username: username },
+	        { $set: user[0] },
+	        { new: true },
+	        function(err, model) {
+	        	if(err) {
+	        		res.status(401).send(err);
+	        	} else {
+	        		res.send('Job Saved and Removed');
+	        	}
+	        }
+			  );
+			}
+		});
+	});
+
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                    Tasks
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

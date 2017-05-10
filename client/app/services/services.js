@@ -151,7 +151,20 @@ angular.module('app.services', [])
 				}
 			})
 			.then(function(res) {
-				return res.data
+				return res.data;
+			});
+		},
+		saveAndDelete: function(jobData) {
+			return $http({
+				method: 'POST',
+				url: 'api/savedJobs',
+				data: jobData,
+				headers: {
+					'Content-type': 'application/json;charset=utf-8'
+				}
+			})
+			.then(function(res) {
+				return res.data;
 			})
 		}
 	}
@@ -215,60 +228,61 @@ angular.module('app.services', [])
 		}
 	}
 })
-// .factory('SavedJobs', function($http) {
-// 	return {
-// 		create: function() {
-// 			return $http({
-// 				method: 'POST',
-// 				api: '/api/savedJobs',
-// 				data: data,
-// 				headers: {
-// 					'Content-type': 'application/json;charset=utf-8'
-// 				}
-// 			})
-// 			.then(function(res) {
-// 				return res.data;
-// 			});
-// 		},
-// 		get: function() {
-// 			return $http({
-// 				method: 'GET',
-// 				api: '/api/savedJobs',
-// 				headers: {
-// 					'Content-type': 'application/json;charset=utf-8'
-// 				}
-// 			})
-// 			.then(function(res) {
-// 				return res.data;
-// 			});
-// 		},
-// 		update: function() {
-// 			return $http({
-// 				method: 'PATCH',
-// 				api: '/api/savedJobs',
-// 				data: data,
-// 				headers: {
-// 					'Content-type': 'application/json;charset=utf-8'
-// 				}
-// 			})
-// 			.then(function(res) {
-// 				return res.data;
-// 			});
-// 		},
-// 		delete: function() {
-// 			return $http({
-// 				method: 'DELETE',
-// 				api: '/api/savedJobs',
-// 				data: data,
-// 				headers: {
-// 					'Content-type': 'application/json;charset=utf-8'
-// 				}
-// 			})
-			.then(function(res) {
-				return res.data;
-			});
-		}
-	}
+.factory('SavedJobs', function($http) {
+	return {};
+	// return {
+	// 	create: function() {
+	// 		return $http({
+	// 			method: 'POST',
+	// 			api: '/api/savedJobs',
+	// 			data: data,
+	// 			headers: {
+	// 				'Content-type': 'application/json;charset=utf-8'
+	// 			}
+	// 		})
+	// 		.then(function(res) {
+	// 			return res.data;
+	// 		});
+	// 	},
+	// 	get: function() {
+	// 		return $http({
+	// 			method: 'GET',
+	// 			api: '/api/savedJobs',
+	// 			headers: {
+	// 				'Content-type': 'application/json;charset=utf-8'
+	// 			}
+	// 		})
+	// 		.then(function(res) {
+	// 			return res.data;
+	// 		});
+	// 	},
+	// 	update: function() {
+	// 		return $http({
+	// 			method: 'PATCH',
+	// 			api: '/api/savedJobs',
+	// 			data: data,
+	// 			headers: {
+	// 				'Content-type': 'application/json;charset=utf-8'
+	// 			}
+	// 		})
+	// 		.then(function(res) {
+	// 			return res.data;
+	// 		});
+	// 	},
+	// 	delete: function() {
+	// 		return $http({
+	// 			method: 'DELETE',
+	// 			api: '/api/savedJobs',
+	// 			data: data,
+	// 			headers: {
+	// 				'Content-type': 'application/json;charset=utf-8'
+	// 			}
+	// 		})
+	// 		.then(function(res) {
+	// 			return res.data;
+	// 		});
+	// 	}
+	// }
 })
 .factory('Auth', ($http, $location) => {
 
