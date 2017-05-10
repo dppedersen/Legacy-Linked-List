@@ -198,9 +198,13 @@ module.exports = function(app, express) {
 					return job._id.toString() === req.body._id;
 				})[0];
 
+<<<<<<< HEAD
 				if (jobToSave !== null && jobToSave !== undefined) {
 					user[0].savedJobs.push(jobToSave);
 				}
+=======
+				user[0].savedJobs.push(jobToSave);
+>>>>>>> Implement Functionality to Save Jobs and Delete From Saved Jobs List
 				// console.log('jobtosave:',jobToSave);
 
 
