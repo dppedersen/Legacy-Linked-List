@@ -49,10 +49,11 @@ angular.module('app.services', [])
 
 .factory('Tweets', function($http) {
 	var getTweets = function(handlesArray) {
-		$http.post('/api/twitter', handlesArray)
-			.then(function(data) {
+		return $http.post('/api/twitter', handlesArray)
+			.then(function(res) {
 				console.log("Tweets recieved by factory");
-				return data
+				//console.log(res.data);
+				return res.data
 			})
 			.catch(function(err) {
 				console.error("Failed Tweets.factory fetching tweets...");
