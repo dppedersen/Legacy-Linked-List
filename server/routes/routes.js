@@ -8,7 +8,7 @@ var Task = require('../db/models/task.js');
 var Step = require('../db/models/step.js');
 var Contact = require('../db/models/contact.js');
 var Job = require('../db/models/job.js');
-
+var LocalStrategy = require('passport-local').Strategy;
 const rp = require('request-promise');
 const config = require('../config/config.js');
 
@@ -21,8 +21,7 @@ module.exports = function(app, express) {
 	app.get('/api/users', function(req, res) {
 		console.log('session info get /api/users', req.session.passport.user);
 		var username = req.session.passport.user;
-
-		User.find({ username: username }).exec(function(err, user){
+		User.find({ "local.username": username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve user', username);
 				res.status(400).send('null');
@@ -53,7 +52,7 @@ module.exports = function(app, express) {
 	app.delete('/api/users', function(req, res) {
 		var username = req.session.passport.user;
 
-		User.remove({ username: username }).exec(function(err, user){
+		User.remove({ "local.username": username.local.username }).exec(function(err, user){
 			if(err) {
 				console.log('unsuccessful remove user', username);
 				res.status(400).send('unsuccessful remove');
@@ -72,7 +71,7 @@ module.exports = function(app, express) {
 		console.log('session info get /api/jobs', req.session.passport.user);
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).exec(function(err, user){
+		User.find({ "local.username": username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
@@ -91,7 +90,7 @@ module.exports = function(app, express) {
 		var username = req.session.passport.user;
 
 		User.findOneAndUpdate(
-	        { username: username },
+	        { 'local.username': username.local.username },
 	        {$push: {"jobs": req.body}},
 	        {safe: true, upsert: true, new : true},
 	        function(err, model) {
@@ -112,7 +111,7 @@ module.exports = function(app, express) {
 
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).lean().exec(function(err, user){
+		User.find({ 'local.username': username.local.username }).lean().exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
@@ -126,7 +125,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-			        { username: username },
+			        { "local.username": username.local.username },
 			        { $set: user[0] },
 			        { new: true },
 			        function(err, model) {
@@ -149,7 +148,7 @@ module.exports = function(app, express) {
 
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).lean().exec(function(err, user){
+		User.find({ "local.username": username.local.username }).lean().exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
@@ -159,7 +158,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-			        { username: username },
+			        { "local.username": username.local.username },
 			        { $set: user[0] },
 			        { new: true },
 			        function(err, model) {
@@ -182,7 +181,7 @@ module.exports = function(app, express) {
 		console.log('session info get /api/tasks', req.session.passport.user);
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).exec(function(err, user){
+		User.find({ "local.username": username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve tasks', username);
 				res.status(400).send('null');
@@ -201,7 +200,7 @@ module.exports = function(app, express) {
 		var username = req.session.passport.user;
 
 		User.findOneAndUpdate(
-	        { username: username },
+	        { "local.username": username.local.username },
 	        {$push: {"tasks": req.body}},
 	        {safe: true, upsert: true, new: true},
 	        function(err, model) {
@@ -223,7 +222,7 @@ module.exports = function(app, express) {
 
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).lean().exec(function(err, user){
+		User.find({ "local.username": username.local.username }).lean().exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve tasks', username);
 				res.status(400).send('null');
@@ -237,7 +236,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-			        { username: username },
+			        { "local.username": username.local.username },
 			        { $set: user[0] },
 			        { new: true },
 			        function(err, model) {
@@ -261,7 +260,7 @@ module.exports = function(app, express) {
 
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).lean().exec(function(err, user){
+		User.find({ "local.username": username.local.username }).lean().exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve tasks', username);
 				res.status(400).send('null');
@@ -271,7 +270,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-			        { username: username },
+			        { username: username.local.username },
 			        { $set: user[0] },
 			        { new: true },
 			        function(err, model) {
@@ -294,7 +293,7 @@ module.exports = function(app, express) {
 		console.log('session info get /api/jobs', req.session.passport.user);
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).exec(function(err, user){
+		User.find({ "local.username": username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
@@ -316,7 +315,7 @@ module.exports = function(app, express) {
 		console.log('session info get /api/dates', req.session.passport.user);
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).exec(function(err, user){
+		User.find({ "local.username": username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve user', username);
 				res.status(400).send('null');
@@ -399,35 +398,35 @@ module.exports = function(app, express) {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                    Authentication
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 
-	//in req.body: (username: password: )
+			 // the callback after google has authorized the user
+	app.get('/auth/google/callback', passport.authenticate('google', { successRedirect : '/#/dashboard', failureRedirect : '/'}));
 	app.post('/api/register', function(req, res) {
 		console.log('attempting to register', req.body.username, req.body.password);
-
-	  User.register(new User({
-			username: req.body.username,
-			email: req.body.email,
-			city: req.body.city,
-			state: req.body.state,
-			profilePic: req.body.profilePic
-		 }),
-	    req.body.password, function(err, account) {
-	    if (err) {
-	      return res.status(500).json({
-	        err: err
-	      });
-	    }
+	  var newUser = new User({
+			'local.username': req.body.username,
+			'local.password': req.body.password
+		});
+			newUser.save(err => {
+				if(err) {
+					console.log('Save Error:', err);
+				} else {
+					console.log('User Successfully Saved!', newUser);
+				}
+			});
 	    passport.authenticate('local')(req, res, function () {
 	      return res.status(200).json({
 	        status: 'Registration successful!'
 	      });
 	    });
-	  });
+
 	});
 
 	//in req.body: (username: password: )
 	app.post('/api/login', function(req, res, next) {
 	  passport.authenticate('local', function(err, user, info) {
+			console.log('Login Post:', user);
 	    if (err) {
 	      return next(err);
 	    }

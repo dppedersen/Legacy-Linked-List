@@ -28,7 +28,7 @@ angular.module('app',[
       redirectTo: '/'
     })
 })
-.controller('navController', function($scope, $location, $interval) {
+.controller('navController', function($scope, $location) {
     $scope.showSignUp = false;
 
     $scope.renderNavButtons = function() {
@@ -48,9 +48,6 @@ angular.module('app',[
       $location.path('logout');
     }
 
-    $interval(function(){
-      $scope.showSignUp = $location.url() !== "/";
-    }, 500);
 })
 .run((Auth, $rootScope, $location, $http) => Auth.status($rootScope, $location, $http))
 
@@ -84,7 +81,6 @@ angular.module('calendarWidget', [])
 .component('calendarWidget', {
   templateUrl: './app/components/calendarWidgetTemplate.html',
   controller: function calendarController($scope, $http, $route, $mdDialog){
-    // $scope.date = new Date();
     $scope.today = new Date();
     $scope.dates = [];
 
@@ -101,6 +97,7 @@ angular.module('calendarWidget', [])
       });
     });
 
+    // Popup dialog upon clicking a date on the calendar
     $scope.showPrerenderedDialog = function(ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
       $scope.taskDate = new Date($scope.date);
@@ -114,6 +111,7 @@ angular.module('calendarWidget', [])
       });
     };
 
+    //Formula to show dates on the calendar (see calendar html "md-date-filter")
     $scope.filterDates = date => {
       var year = date.getFullYear();
       var month = date.getMonth();
@@ -516,12 +514,12 @@ angular.
     `
     <md-card id="profile-widget" class='widget' layout="row">
       <div class="profile-img-container">
-        <img class="profile-img" src="{{$ctrl.user.profilePic}}">
+        <img class="profile-img" src="{{$ctrl.user.local.profilePic}}">
       </div>
       <div class="profile-data-container">
-        <span class="md-headline">{{$ctrl.user.username}}</span>
-        <p>{{$ctrl.user.city}}, {{$ctrl.user.state}}</p>
-        <p>{{$ctrl.user.email}}</p>
+        <span class="md-headline">{{$ctrl.user.local.username}}</span>
+        <p>{{$ctrl.user.local.city}}, {{$ctrl.user.local.state}}</p>
+        <p>{{$ctrl.user.local.email}}</p>
         <p>Active Applications: {{$ctrl.user.jobs.length}}</p>
       </div>
       <!-- <button id="profile-add-job" ng-click="$ctrl.handleAddJobClick()">
@@ -738,7 +736,6 @@ angular.module('app.input', [
     }
 
     Companies.getInfo($scope.job.website).then((data)=> {
-      console.log(data);
 
       if(data === undefined) return;
 
@@ -773,7 +770,6 @@ angular.module('app.auth', [
 .controller('authController', function($rootScope, $scope, Auth) {
 
   Auth.logout();
-
   $rootScope.showWelcomeMessage = true;
   $rootScope.showSignUp = false;
   $rootScope.showSignIn = false;
@@ -965,6 +961,7 @@ angular.module('app.services', [])
     return Promise.all(companiesArray.map(comp => {
       return $http.get('/api/news/?company='+comp)
     }))
+    //based on number of companies, determine how many articles per company to include:
     .then(data=>{
       var companies = data.length;
       if(companies>4){
@@ -1180,6 +1177,7 @@ angular.module('app.services', [])
     $http.get('/api/logout');
   }
 
+  // Use API to backend to check if user is logged in and session exists
   var status = ($rootScope, $location, $http) => {
     $rootScope.$on('$routeChangeStart', function (evt, next, current) {
       $http.get('/api/status').then(function(data){

@@ -7,7 +7,6 @@ angular.module('app.auth', [
 .controller('authController', function($rootScope, $scope, Auth) {
 
   Auth.logout();
-
   $rootScope.showWelcomeMessage = true;
   $rootScope.showSignUp = false;
   $rootScope.showSignIn = false;
