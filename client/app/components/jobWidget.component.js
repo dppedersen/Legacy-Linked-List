@@ -127,30 +127,70 @@ angular.
       }
 
       this.deleteJob = function(job) {
-        let query = JSON.stringify({_id : job._id});
 
-        if ($window.confirm('Are you sure you want to delete this job?')) {
-          if ($window.confirm('Would you like to add to Your Saved Jobs?')) {
-            Jobs.saveAndDelete(query)
+
+        var showConfirm = function(ev) {
+          var query = JSON.stringify({_id : job._id});
+
+          // Appending dialog to document.body to cover sidenav in docs app
+          var confirmDelete = $mdDialog.confirm()
+          .title('Delete!')
+          .textContent('Delete Job?')
+          .ariaLabel('Confirm Delete')
+          .targetEvent(ev)
+          .ok('Yes')
+          .cancel('No');
+
+          var confirmSave = $mdDialog.confirm()
+          .title('Save!')
+          .textContent('Save Job?')
+          .ariaLabel('Confirm Save')
+          .targetEvent(ev)
+          .ok('Yes')
+          .cancel('No');
+
+          var promptForInterviewQuestions = $mdDialog.prompt()
+            .title('Were you asked any specific interview questions?')
+            .textContent('Write down some you would like to remember!')
+            .initialValue('Ex. Balance this search tree!')
+            .ok('Submit');
+
+          $mdDialog.show(confirmDelete).then(function() {
+            $mdDialog.show(confirmSave).then(function() {
+              $mdDialog.show(promptForInterviewQuestions)
+                .then(function(message) {
+                  console.log('message',message)
+                  query = JSON.parse(query);
+                  query.question = message;
+                  query = JSON.stringify(query);
+                  console.log('query',query);
+                  Jobs.saveAndDelete(query)
+                    .then(function(res) {
+                      $route.reload();
+                      // $window.alert(res);
+                    })
+                    .catch(function(err) {
+                      console.log(err);
+                    });
+                });
+            }, function() {
+              Jobs.delete(query)
               .then(function(res) {
                 $route.reload();
                 // $window.alert(res);
               })
               .catch(function(err) {
                 console.log(err);
-              })
-          } else {
-            Jobs.delete(query)
-            .then(function(res) {
-              $route.reload()
-              $window.alert(res);
-            })
-            .catch(function(err) {
-              console.log(err)
-            })
-          }
-        }
-      }
+              });
+            }
+          );
+          }, function() {
+          });
+        };
+
+        showConfirm();
+
+      };
 
       this.editJob = function($event) {
         var parentEl = angular.element(document.body)

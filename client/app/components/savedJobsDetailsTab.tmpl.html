@@ -1,0 +1,48 @@
+<md-dialog aria-label="Mango (Fruit)">
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{savedJob.company}}: {{savedJob.position}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="max-width:800px;max-height:810px;min-width:600px; ">
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Job Details and Salary">
+          <md-content class="md-padding" style="padding-left: 10px">
+            <b>Job Details:</b>
+            <p>None Yet!</p>
+            <b>Salary: </b><p>${{savedJob.salary}}</p>
+          </md-content>
+        </md-tab>
+        <!-- <md-tab label="Application Process">
+          <md-content class="md-padding" style="padding-left: 10px">
+            <b>Steps:</b>
+            <p>No Steps Added!</p>
+          </md-content>
+        </md-tab> -->
+        <md-tab label="Interview Questions">
+          <md-content class="md-padding" style="padding-left: 10px">
+            <b>Interview Questions:</b>
+            <p>{{savedJob.interviewQuestions}}</p>
+          </md-content>
+        </md-tab>
+        <md-tab label="Resume, Cover Letter">
+          <md-content class="md-padding" style="padding-left: 10px">
+            <b>Documents</b>
+            <p>No Documents Added!</p>
+          </md-content>
+        </md-tab>
+        <md-tab label="Comments">
+          <md-content class="md-padding" style="padding-left: 10px">
+            <b>Comments:</b>
+            <p>No Comments Added!</p>
+          </md-content>
+        </md-tab>
+      </md-tabs>
+    </md-dialog-content>
+  </form>
+</md-dialog>

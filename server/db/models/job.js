@@ -4,7 +4,7 @@ var Contact = require('./contact.js');
 var Step = require('./step.js');
 var Task = require('./task.js');
 
-var Job = mongoose.model('Job', { 
+var Job = mongoose.model('Job', {
 	company: {
 		type: String,
 		required: [true, 'Job needs a company field']
@@ -53,6 +53,9 @@ var Job = mongoose.model('Job', {
 	address: {
 		type: String,
 		default: 'address was not found from website link...'
+	},
+	interviewQuestions: {
+		type: [String]
 	},
 	currentStep: Step.schema,
 	nextStep: Step.schema
