@@ -2,7 +2,7 @@ angular.module('app.input', [
   'ngMaterial',
   'ngMessages'
 ])
-.controller('inputController', function($scope, $http, $location, News, Companies, Jobs) {
+.controller('inputController', function($scope, $http, $location, $route, News, Companies, Jobs) {
 
   $scope.job = {
     company: undefined,
@@ -44,6 +44,11 @@ angular.module('app.input', [
     if($scope.job.contacts[0].name === undefined) {
       $scope.job.contacts = [];
     }
+    //
+    // if ($scope.job.website.slice(0, 7) !== 'http://'
+    //   && $scope.job.website.slice(0, 8) !== 'http://') {
+    //   $scope.job.website = `http://${$scope.job.website}`;
+    // }
 
     Companies.getInfo($scope.job.website)
     .then((data)=> {
@@ -70,6 +75,9 @@ angular.module('app.input', [
         alert(res);
         $location.url('/dashboard');
       });
+    })
+    .catch((err) => {
+      $route.reload();
     });
   };
 
