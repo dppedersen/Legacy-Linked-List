@@ -10,13 +10,11 @@ var expressSession = require('express-session');
 var mongoose = require('mongoose');
 var hash = require('bcrypt-nodejs');
 var passport = require('passport');
-
 var localStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google-oauth20').Strategy
-
 // adding favicon in express
 var favicon = require('serve-favicon');
-
+var request = require('request');
 // user schema/model
 var User = require('./db/models/user.js');
 
@@ -93,7 +91,7 @@ passport.use(new GoogleStrategy({
 // facebook will send back the token and profile
 function(req, token, refreshToken, profile, done) {
   process.nextTick(function() {
-    console.log(req.user)
+    console.log('~~~~~~~~~',req.user.google.token)
     // check if the user is already logged in
     if (!req.user) {
 
@@ -167,8 +165,36 @@ function(req, token, refreshToken, profile, done) {
                   if (err) {
                     console.log('User Save Error:', err);
                   } else {
-                    console.log(user);
-                    console.log('User Updated!');
+                    var dueDate = req.user.jobs[0].currentStep.dueDate;
+                    var calendarDate = dueDate.slice(0, 10);
+                    console.log('THIS SHIT DUE:', calendarDate);
+                    var options = {
+                      url: `https://www.googleapis.com/calendar/v3/calendars/${req.user.google.email}/events`,
+                      method: 'GET',
+                      headers: {
+                        'User-Agent': 'request',
+                        'clientID': config.googleOAuth.clientID,
+                        'clientSecret': config.googleOAuth.clientSecret,
+                        'scope': 'https://www.googleapis.com/auth/calendar',
+                        'Authorization': 'Bearer ' + req.user.google.token,
+                        'Content-Type': 'application/json',
+                        'end': {
+                            'date': calendarDate
+                          },
+                        'start': {
+                          'date': calendarDate
+                        }
+                      }
+                    };
+
+                    request(options, (err, res, body) => {
+                      if(err) {
+                        console.log('Calendar Error:', err);
+                      } else {
+                        return done(null, body);
+                        console.log('Calendar:', body);
+                      }
+                    })
                     return done(null, user);
                   }
               });

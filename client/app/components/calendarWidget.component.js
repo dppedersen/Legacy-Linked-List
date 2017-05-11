@@ -12,12 +12,12 @@ angular.module('calendarWidget', [])
     $http.get('/api/dates')
     .then(data => {
       $scope.taskData = data;
+      console.log('API/DATES DATA:', $scope.taskData)
       var jsDates = data.data.map(date => new Date(date.dueDate));
       $scope.dates = jsDates.map(date=> {
         return [date.getFullYear(), date.getMonth(), date.getDate()]
       });
     });
-
     // Popup dialog upon clicking a date on the calendar
     $scope.showPrerenderedDialog = function(ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
