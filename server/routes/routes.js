@@ -199,6 +199,7 @@ module.exports = function(app, express) {
 
 
 				if (jobToSave !== null && jobToSave !== undefined) {
+					jobToSave.interviewQuestions = req.body.question;
 					user[0].savedJobs.push(jobToSave);
 				}
 
