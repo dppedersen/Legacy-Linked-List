@@ -78,7 +78,7 @@ module.exports = function(app, express) {
 				console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
 			} else {
-				console.log('successful retrieve jobs', username, user[0].jobs);
+				// console.log('successful retrieve jobs', username, user[0].jobs);
 				res.send(user[0].jobs);
 			}
 		});
@@ -378,30 +378,33 @@ module.exports = function(app, express) {
 
 	app.post('/api/twitter', function(req, res) {
 		console.error('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-		console.log('Req recieved')
-		console.log(req.body)
-
-		Promise.all(
-			req.body.forEach(handle => {
-				let params = {
-					screen_name: handle,
-					count: 5,
-					exclude_replies: true
-				}
-				console.log(params)
-				twitter.get('statuses/user_timeline', params, function(err, data, response) {
-					if(err) {
-						console.error('Failed twitter fetch');
-						console.error(err);
-					}
-					console.log(data)
-					return data;
-				})
-			})
-		)
+		console.log('Req recieved');
+		console.log(req.body);
+		return Promise.all(req.body.map(handle => {
+				return new Promise((resolve, reject) => {
+					let params = {
+						screen_name: handle,
+						count: 5,
+						exclude_replies: true
+					};
+					twitter.get('statuses/user_timeline', params, function(err, data, response) {
+						if(err) {
+							console.error('Failed twitter fetch');
+							reject(err);
+						}
+						console.log('Successful Twitter retrieval by server.')
+						console.log("Number of Tweets", data.length)
+						resolve(data);
+					});
+				});
+		}))
 		.then(data => {
-			console.log('Tweets Recieved', data)
-			res.status(200).send(data);
+			console.log('Tweets Promise resolved')
+			data = data.reduce((acc, item) => {
+				return acc.concat(item)
+			},[])
+			console.log(data);
+			res.status(200).send(JSON.stringify(data));
 		})
 		.catch(err => {
 			console.error('Promise Failed')

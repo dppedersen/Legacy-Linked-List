@@ -18,7 +18,7 @@ angular.module('twitterWidget')
     ,
     controller: function($scope, $mdDialog, Tweets, Jobs, InsertFactory) {
 
-
+      console.log($scope);
       Jobs.get()
         .then(data=> {
           // this.jobs = data;
@@ -29,7 +29,8 @@ angular.module('twitterWidget')
             }, []))
           }, [])
           console.log(handles)
-          this.stuff = Tweets.getTweets(handles)
+          $scope.stuff = Tweets.getTweets(handles)
+          console.log($scope.stuff);
         })
 
     }

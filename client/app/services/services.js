@@ -51,6 +51,7 @@ angular.module('app.services', [])
 	var getTweets = function(handlesArray) {
 		$http.post('/api/twitter', handlesArray)
 			.then(function(data) {
+				console.log("Tweets recieved by factory");
 				return data
 			})
 			.catch(function(err) {
