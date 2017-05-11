@@ -7,12 +7,12 @@ angular.
     `
     <md-card id="profile-widget" class='widget' layout="row">
       <div class="profile-img-container">
-        <img class="profile-img" src="{{$ctrl.user.profilePic}}">
+        <img class="profile-img" src="{{$ctrl.user.local.profilePic}}">
       </div>
       <div class="profile-data-container">
-        <span class="md-headline">{{$ctrl.user.username}}</span>
-        <p>{{$ctrl.user.city}}, {{$ctrl.user.state}}</p>
-        <p>{{$ctrl.user.email}}</p>
+        <span class="md-headline">{{$ctrl.user.local.username}}</span>
+        <p>{{$ctrl.user.local.city}}, {{$ctrl.user.local.state}}</p>
+        <p>{{$ctrl.user.local.email}}</p>
         <p>Active Applications: {{$ctrl.user.jobs.length}}</p>
       </div>
       <!-- <button id="profile-add-job" ng-click="$ctrl.handleAddJobClick()">
