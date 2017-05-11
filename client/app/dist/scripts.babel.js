@@ -76,6 +76,7 @@ angular.module('calendarWidget', []).component('calendarWidget', {
 
     $http.get('/api/dates').then(function (data) {
       $scope.taskData = data;
+      console.log('API/DATES DATA:', $scope.taskData);
       var jsDates = data.data.map(function (date) {
         return new Date(date.dueDate);
       });
@@ -83,7 +84,6 @@ angular.module('calendarWidget', []).component('calendarWidget', {
         return [date.getFullYear(), date.getMonth(), date.getDate()];
       });
     });
-
     // Popup dialog upon clicking a date on the calendar
     $scope.showPrerenderedDialog = function (ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
@@ -553,6 +553,7 @@ angular.module('signInForm', []);
 
 angular.module('signInForm').component('signInForm', {
   template: '\n    <md-card id="signin" class="landingCard" layout-margin>\n      <h2>Please Sign In</h2>\n\n      <form name="signInForm" ng-submit="">\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>User Name</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">account_circle</md-icon>\n            <input ng-model="$ctrl.user.username" ng-required="true">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>Password</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">lock</md-icon>\n            <input ng-model="$ctrl.user.password" ng-required="true" type="password">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>\n        </div>\n        <h3 style="text-align: center;">Or <br /></h3>\n        <div class="googleDiv">\n          <a href="/auth/google" class="googleSignIn"></a>\n        </div>\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>\n        </div>\n      </form>\n    </md-card>\n    ',
+
   controller: function controller($rootScope, Auth) {
     this.user = {
       username: undefined,
