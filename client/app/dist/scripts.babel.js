@@ -265,7 +265,7 @@ angular.module('newsWidget').component('newsWidget', {
 angular.module('profileWidget', []);
 
 angular.module('profileWidget').component('profileWidget', {
-  template: '\n    <md-card id="profile-widget" class=\'widget\' layout="row">\n      <div class="profile-img-container">\n        <img class="profile-img" src="{{$ctrl.user.profilePic}}">\n      </div>\n      <div class="profile-data-container">\n        <span class="md-headline">{{$ctrl.user.username}}</span>\n        <p>{{$ctrl.user.city}}, {{$ctrl.user.state}}</p>\n        <p>{{$ctrl.user.email}}</p>\n        <p>Active Applications: {{$ctrl.user.jobs.length}}</p>\n      </div>\n      <!-- <button id="profile-add-job" ng-click="$ctrl.handleAddJobClick()">\n        <md-icon>add</md-icon>Add New Job\n      </button> -->\n    </md-card>\n    ',
+  template: '\n    <md-card id="profile-widget" class=\'widget\' layout="row">\n      <div class="profile-img-container">\n        <img class="profile-img" src="{{$ctrl.user.local.profilePic}}">\n      </div>\n      <div class="profile-data-container">\n        <span class="md-headline">{{$ctrl.user.local.username}}</span>\n        <p>{{$ctrl.user.local.city}}, {{$ctrl.user.local.state}}</p>\n        <p>{{$ctrl.user.local.email}}</p>\n        <p>Active Applications: {{$ctrl.user.jobs.length}}</p>\n      </div>\n      <!-- <button id="profile-add-job" ng-click="$ctrl.handleAddJobClick()">\n        <md-icon>add</md-icon>Add New Job\n      </button> -->\n    </md-card>\n    ',
   controller: function controller($location, User) {
     var _this = this;
 
@@ -450,7 +450,6 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
 angular.module('app.auth', ['ngMaterial', 'ngMessages', 'signInForm', 'signUpForm']).controller('authController', function ($rootScope, $scope, Auth) {
 
   Auth.logout();
-
   $rootScope.showWelcomeMessage = true;
   $rootScope.showSignUp = false;
   $rootScope.showSignIn = false;
