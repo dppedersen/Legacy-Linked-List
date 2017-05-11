@@ -1,7 +1,7 @@
 var db = require('../db/db-config.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
-
+var request = require('request');
 // import mongoose models
 var User = require('../db/models/user.js');
 var Task = require('../db/models/task.js');
@@ -88,7 +88,7 @@ module.exports = function(app, express) {
 		console.log('attempting to create job', req.body);
 
 		var username = req.session.passport.user;
-
+		console.log('JOB', req.body);
 		User.findOneAndUpdate(
 	        { 'local.username': username.local.username },
 	        {$push: {"jobs": req.body}},
@@ -421,12 +421,43 @@ module.exports = function(app, express) {
         userSteps = userSteps.filter(step => !!step);
 
 				var dates = userSteps.filter(step => !!step.dueDate);
+				console.log('Dates:', dates);
+				var options = {
+					url: `https://www.googleapis.com/calendar/v3/calendars/${username.google.email}/events?maxResults=2500`,
+					method: 'GET',
+					headers: {
+						'User-Agent': 'request',
+						'clientID': config.googleOAuth.clientID,
+						'clientSecret': config.googleOAuth.clientSecret,
+						'scope': 'https://www.googleapis.com/auth/calendar',
+						'Authorization': 'Bearer ' + username.google.token,
+					},
+					json: true
+				}
 
-				res.send(dates);
+				request(options, (err, res, body) => {
+					if(err) {
+						console.log('Calendar Error:', err);
+					} else {
+						body.items.forEach(item => {
+							if(item.created && item.created.slice(0, 4) === '2017') {
+								newTask = new Task({
+									name: item.summary,
+									dueDate: item.end.dateTime,
+									dateCreated: item.created
+								});
+								console.log('NEWTASK:', newTask);
+								dates.push(newTask);
+							}
+						})
+					}
+				})
+				setTimeout(function() {
+					res.send(dates);
+				}, 1000);
 			}
 		});
 	});
-
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                        News
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -489,7 +520,7 @@ module.exports = function(app, express) {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                    Authentication
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+	app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email', 'https://www.googleapis.com/auth/calendar'] }));
 
 			 // the callback after google has authorized the user
 	app.get('/auth/google/callback', passport.authenticate('google', { successRedirect : '/#/dashboard', failureRedirect : '/'}));
