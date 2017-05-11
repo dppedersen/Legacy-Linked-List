@@ -248,7 +248,7 @@ module.exports = function(app, express) {
 				res.status(400).send('null');
 			} else {
 				user[0].savedJobs = user[0].savedJobs.filter((savedJob) => {
-					return savedJob._id != req.body._id;
+					return savedJob !== null && savedJob._id != req.body._id;
 				});
 
 				User.findOneAndUpdate(

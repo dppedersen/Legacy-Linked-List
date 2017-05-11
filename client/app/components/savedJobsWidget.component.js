@@ -21,12 +21,16 @@ angular.
 
         <ul>
           <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">
-            <b>{{savedJob.company}}</b>
-            <p>{{savedJob.position}}</p>
-            <md-button class="md-primary md-raised" ng-click="showTabDialog($event)" >
-              Details
-            </md-button>
-            <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
+            <div style="display: flex; justify-content: space-around; align-items: center;">
+              <b style="padding-right: 10px">{{savedJob.company}}</b>
+              <p>{{savedJob.position}}</p>
+            </div>
+            <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
+              <md-button class="md-primary md-raised" ng-click="showTabDialog($event)" >
+                Details
+              </md-button>
+              <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
+            </div>
           </li>
         </ul>
 
@@ -39,7 +43,7 @@ angular.
       this.getSavedJobs = function() {
         SavedJobs.get().then(data => {
           console.log(data);
-          this.savedJobsList = data || [];
+          this.savedJobsList = data.filter(item => { return item !== null; }) || [];
         });
       };
 

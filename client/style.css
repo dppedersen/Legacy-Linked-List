@@ -366,7 +366,7 @@ SAVED JOBS WIDGET
 }
 
 #saved-jobs-widget md-checkbox {
-  display: block;
+  display: flex;
 }
 
 
