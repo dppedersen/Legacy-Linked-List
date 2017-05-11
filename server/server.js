@@ -10,10 +10,8 @@ var expressSession = require('express-session');
 var mongoose = require('mongoose');
 var hash = require('bcrypt-nodejs');
 var passport = require('passport');
-
 var localStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google-oauth20').Strategy
-
 // adding favicon in express
 var favicon = require('serve-favicon');
 

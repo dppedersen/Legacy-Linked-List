@@ -494,7 +494,6 @@ module.exports = function(app, express) {
 
 	app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 
-			 // the callback after google has authorized the user
 	app.get('/auth/google/callback', passport.authenticate('google', { successRedirect : '/#/dashboard', failureRedirect : '/'}));
 
 	app.post('/api/register', function(req, res) {
