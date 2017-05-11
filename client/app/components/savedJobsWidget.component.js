@@ -26,7 +26,7 @@ angular.
               <p>{{savedJob.position}}</p>
             </div>
             <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
-              <md-button class="md-primary md-raised" ng-click="showTabDialog($event)" >
+              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog($event)" >
                 Details
               </md-button>
               <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
@@ -38,7 +38,7 @@ angular.
       </md-content>
     </md-card>
     `,
-    controller: function($log, SavedJobs) {
+    controller: function($log, $mdDialog, SavedJobs) {
 
       this.getSavedJobs = function() {
         SavedJobs.get().then(data => {
@@ -65,44 +65,33 @@ angular.
         });
       };
 
-
-      //
-      // this.createSavedJob = function(data) {
-      //   if(name && name.length > 0) {
-      //     Tasks.create({ name: name }).then(res => {
-      //       this.getTasks();
-      //     });
-      //   }
-      // }
-      //
-      //
-      // this.deleteSavedJob = function(id) {
-      //   var query = JSON.stringify({ _id: id });
-      //
-      //   Tasks.delete(query).then(res => {
-      //     this.getTasks();
-      //   });
-      // }
-      //
-      //
-      //
-      // this.updateSavedJob = function(id, name, completed) {
-      //
-      //   var query = { _id: id };
-      //   if(name) {
-      //     query.name = name;
-      //   }
-      //
-      //   if(typeof completed === 'boolean') {
-      //     query.completed = completed;
-      //   }
-      //   query = JSON.stringify(query);
-      //
-      //   Tasks.update(query).then(res => {
-      //     this.getTasks();
-      //   });
-      // }
+      this.showTabDialog = function(ev) {
+        $mdDialog.show({
+          // controller: this,
+          templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose:true
+        })
+        .then(function(answer) {
+          this.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          this.status = 'You cancelled the dialog.';
+        });
+      };
 
 
+      this.hide = function() {
+        $mdDialog.hide();
+      };
+
+      this.cancel = function() {
+        $mdDialog.cancel();
+      };
+
+      this.answer = function(answer) {
+        $mdDialog.hide(answer);
+      };
     }
+
   });
