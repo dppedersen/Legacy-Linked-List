@@ -64,6 +64,7 @@ angular.
               <p class="md-subhead contact-info"><md-icon>person</md-icon>{{contact.name}}</p>
               <p class="md-subhead contact-info"><md-icon>phone</md-icon>{{contact.phoneNumber}}</p>
               <p class="md-subhead contact-info"><md-icon>email</md-icon>{{contact.email}}</p>
+              <p class="md-subhead contact-info"><md-icon>share</md-icon>{{contact.handle}}</p>
             </div>
           </md-content>
           </md-tab>
@@ -205,6 +206,13 @@ angular.
                     <md-icon class="material-icons">email</md-icon>
                     <input ng-model="contact.email" type='email'>
                   </md-input-container>
+
+                  <md-input-container flex="30">
+                    <label>Twitter Handle</label>
+                    <md-icon class="material-icons">share</md-icon>
+                    <input ng-model="contact.handle" placeholder="@">
+                  </md-input-container>
+
                 </div>
                 <div layout="row">
                   <span class="md-title">Modify Steps</span>

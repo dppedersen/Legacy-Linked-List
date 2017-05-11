@@ -11,22 +11,26 @@ angular.module('twitterWidget')
       <md-divider></md-divider>
 
       <md-content>
+      {{$ctrl.stuff}}
       </md-content>
     </md-card>
     `
     ,
-    bindings: {
-     data: '='
-    },
-    controller: function($scope, $mdDialog, Tweets) {
-      console.log(this);
-      // let handles = this.data.reduce(function(acc, job) {
-      //   return acc.concat(job.contacts.reduce(function(acc, contact) {
-      //     return acc.concat(contact.handle);
-      //   }, []))
-      // }, [])
-      //
-      // this.tweets = Tweets.getTweets(handles)
+    controller: function($scope, $mdDialog, Tweets, Jobs, InsertFactory) {
 
-    },
+
+      Jobs.get()
+        .then(data=> {
+          // this.jobs = data;
+          console.log(data);
+          let handles = data.reduce(function(acc, job) {
+            return acc.concat(job.contacts.reduce(function(acc, contact) {
+              return acc.concat(contact.handle);
+            }, []))
+          }, [])
+          console.log(handles)
+          this.stuff = Tweets.getTweets(handles)
+        })
+
+    }
   })

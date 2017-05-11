@@ -64,6 +64,16 @@ angular.module('app.services', [])
 	}
 })
 
+.factory('InsertFactory', function(){
+	var obj = {}
+
+	 obj.addTo = function(value) {
+		obj.jobs = value;
+	}
+
+	return obj;
+})
+
 .factory('User', function($http) {
 	return {
 		getAllData: function() {

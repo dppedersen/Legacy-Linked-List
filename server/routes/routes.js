@@ -377,28 +377,36 @@ module.exports = function(app, express) {
 	var twitter = new Twit(config.twitter);
 
 	app.post('/api/twitter', function(req, res) {
+		console.error('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
 		console.log('Req recieved')
-		console.log(req.body.handles)
-		console.log(Array.isArray(req.body.handles));
+		console.log(req.body)
 
 		Promise.all(
-			req.body.handles.forEach(handle => {
+			req.body.forEach(handle => {
 				let params = {
 					screen_name: handle,
 					count: 5,
 					exclude_replies: true
 				}
-
+				console.log(params)
 				twitter.get('statuses/user_timeline', params, function(err, data, response) {
-					if(err) console.error(err);
+					if(err) {
+						console.error('Failed twitter fetch');
+						console.error(err);
+					}
+					console.log(data)
 					return data;
 				})
 			})
 		)
 		.then(data => {
+			console.log('Tweets Recieved', data)
 			res.status(200).send(data);
 		})
-		.catch(err => console.error(err));
+		.catch(err => {
+			console.error('Promise Failed')
+			console.error(err)
+		});
 
 
 
