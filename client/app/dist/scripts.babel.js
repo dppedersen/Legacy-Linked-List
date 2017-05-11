@@ -156,12 +156,21 @@ angular.module('jobWidget').component('jobWidget', {
       var query = JSON.stringify({ _id: job._id });
 
       if ($window.confirm('Are you sure you want to delete this job?')) {
-        Jobs.delete(query).then(function (res) {
-          $route.reload();
-          $window.alert(res);
-        }).catch(function (err) {
-          console.log(err);
-        });
+        if ($window.confirm('Would you like to add to Your Saved Jobs?')) {
+          Jobs.saveAndDelete(query).then(function (res) {
+            $route.reload();
+            // $window.alert(res);
+          }).catch(function (err) {
+            console.log(err);
+          });
+        } else {
+          Jobs.delete(query).then(function (res) {
+            $route.reload();
+            $window.alert(res);
+          }).catch(function (err) {
+            console.log(err);
+          });
+        }
       }
     };
 
@@ -276,6 +285,79 @@ angular.module('profileWidget').component('profileWidget', {
 
 });
 ;
+angular.module('savedJobsWidget', []);
+
+angular.module('savedJobsWidget').component('savedJobsWidget', {
+  template: '\n    <md-card id="saved-jobs-widget" class=\'widget\'>\n\n      <div style="display: flex; justify-content: space-between">\n        <span></span>\n        <span class="md-headline">Saved Jobs</span>\n        <md-button class="md-icon-button" ng-click="$ctrl.deleteAll()">\n            <md-icon>delete</md-icon>\n        </md-button>\n      </div>\n\n      <md-divider></md-divider>\n\n      <md-content">\n\n        <ul>\n          <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">\n            <b>{{savedJob.company}}</b>\n            <p>{{savedJob.position}}</p>\n            <md-button class="md-primary md-raised" ng-click="showTabDialog($event)" >\n              Details\n            </md-button>\n            <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>\n          </li>\n        </ul>\n\n\n      </md-content>\n    </md-card>\n    ',
+  controller: function controller($log, SavedJobs) {
+
+    this.getSavedJobs = function () {
+      var _this2 = this;
+
+      SavedJobs.get().then(function (data) {
+        console.log(data);
+        _this2.savedJobsList = data || [];
+      });
+    };
+
+    this.getSavedJobs();
+
+    this.toggleDelete = function (savedJob) {
+      savedJob.toDelete = !savedJob.toDelete;
+    };
+
+    this.deleteAll = function () {
+      var _this3 = this;
+
+      this.savedJobsList.forEach(function (savedJob) {
+        if (savedJob.toDelete) {
+          SavedJobs.delete({ _id: savedJob._id }).then(function (res) {
+            _this3.getSavedJobs();
+          });
+        }
+      });
+    };
+
+    //
+    // this.createSavedJob = function(data) {
+    //   if(name && name.length > 0) {
+    //     Tasks.create({ name: name }).then(res => {
+    //       this.getTasks();
+    //     });
+    //   }
+    // }
+    //
+    //
+    // this.deleteSavedJob = function(id) {
+    //   var query = JSON.stringify({ _id: id });
+    //
+    //   Tasks.delete(query).then(res => {
+    //     this.getTasks();
+    //   });
+    // }
+    //
+    //
+    //
+    // this.updateSavedJob = function(id, name, completed) {
+    //
+    //   var query = { _id: id };
+    //   if(name) {
+    //     query.name = name;
+    //   }
+    //
+    //   if(typeof completed === 'boolean') {
+    //     query.completed = completed;
+    //   }
+    //   query = JSON.stringify(query);
+    //
+    //   Tasks.update(query).then(res => {
+    //     this.getTasks();
+    //   });
+    // }
+
+  }
+});
+;
 angular.module('tasksWidget', []);
 
 angular.module('tasksWidget').component('tasksWidget', {
@@ -283,36 +365,36 @@ angular.module('tasksWidget').component('tasksWidget', {
   controller: function controller($log, Tasks) {
 
     this.getTasks = function () {
-      var _this2 = this;
+      var _this4 = this;
 
       Tasks.get().then(function (data) {
-        _this2.tasksList = data || [];
+        _this4.tasksList = data || [];
       });
     };
     this.getTasks();
 
     this.createTask = function (name) {
-      var _this3 = this;
+      var _this5 = this;
 
       if (name && name.length > 0) {
         Tasks.create({ name: name }).then(function (res) {
-          _this3.getTasks();
+          _this5.getTasks();
         });
       }
     };
 
     this.deleteTask = function (id) {
-      var _this4 = this;
+      var _this6 = this;
 
       var query = JSON.stringify({ _id: id });
 
       Tasks.delete(query).then(function (res) {
-        _this4.getTasks();
+        _this6.getTasks();
       });
     };
 
     this.updateTask = function (id, name, completed) {
-      var _this5 = this;
+      var _this7 = this;
 
       var query = { _id: id };
       if (name) {
@@ -325,7 +407,7 @@ angular.module('tasksWidget').component('tasksWidget', {
       query = JSON.stringify(query);
 
       Tasks.update(query).then(function (res) {
-        _this5.getTasks();
+        _this7.getTasks();
       });
     };
 
@@ -334,11 +416,11 @@ angular.module('tasksWidget').component('tasksWidget', {
     };
 
     this.deleteAllCompleted = function () {
-      var _this6 = this;
+      var _this8 = this;
 
       this.tasksList.forEach(function (task) {
         if (task.completed) {
-          _this6.deleteTask(task._id);
+          _this8.deleteTask(task._id);
         }
       });
     };
@@ -346,7 +428,7 @@ angular.module('tasksWidget').component('tasksWidget', {
 });
 ;
 
-angular.module('app.dashboard', ['ngMaterial', 'profileWidget', 'newsWidget', 'calendarWidget', 'jobWidget', 'tasksWidget']).controller('dashboardController', function dashboardController($scope, Companies, User, Jobs, Tasks) {
+angular.module('app.dashboard', ['ngMaterial', 'profileWidget', 'newsWidget', 'calendarWidget', 'jobWidget', 'tasksWidget', 'savedJobsWidget']).controller('dashboardController', function dashboardController($scope, Companies, User, Jobs, Tasks, SavedJobs) {
 
   $scope.getJobs = function () {
 
@@ -381,7 +463,7 @@ angular.module('app.dashboard', ['ngMaterial', 'profileWidget', 'newsWidget', 'c
   };
 });
 ;
-angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputController', function ($scope, $http, $location, News, Companies, Jobs) {
+angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputController', function ($scope, $http, $location, $route, News, Companies, Jobs) {
 
   $scope.job = {
     company: undefined,
@@ -423,6 +505,11 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
     if ($scope.job.contacts[0].name === undefined) {
       $scope.job.contacts = [];
     }
+    //
+    // if ($scope.job.website.slice(0, 7) !== 'http://'
+    //   && $scope.job.website.slice(0, 8) !== 'http://') {
+    //   $scope.job.website = `http://${$scope.job.website}`;
+    // }
 
     Companies.getInfo($scope.job.website).then(function (data) {
       if (data === undefined) return;
@@ -443,6 +530,8 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
         alert(res);
         $location.url('/dashboard');
       });
+    }).catch(function (err) {
+      $route.reload();
     });
   };
 });
@@ -463,7 +552,7 @@ angular.module('app.auth', ['ngMaterial', 'ngMessages', 'signInForm', 'signUpFor
 angular.module('signInForm', []);
 
 angular.module('signInForm').component('signInForm', {
-  template: '\n    <md-card id="signin" class="landingCard" layout-margin>\n      <h2>Please Sign In</h2>\n\n      <form name="signInForm" ng-submit="">\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>User Name</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">account_circle</md-icon>\n            <input ng-model="$ctrl.user.username" ng-required="true">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>Password</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">lock</md-icon>\n            <input ng-model="$ctrl.user.password" ng-required="true" type="password">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>\n        </div>\n        <div class="googleDiv">\n          <a href="/auth/google" class="googleSignIn"></a>\n        </div>\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>\n        </div>\n      </form>\n    </md-card>\n    ',
+  template: '\n    <md-card id="signin" class="landingCard" layout-margin>\n      <h2>Please Sign In</h2>\n\n      <form name="signInForm" ng-submit="">\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>User Name</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">account_circle</md-icon>\n            <input ng-model="$ctrl.user.username" ng-required="true">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>Password</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">lock</md-icon>\n            <input ng-model="$ctrl.user.password" ng-required="true" type="password">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>\n        </div>\n        <h3 style="text-align: center;">Or <br /></h3>\n        <div class="googleDiv">\n          <a href="/auth/google" class="googleSignIn"></a>\n        </div>\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>\n        </div>\n      </form>\n    </md-card>\n    ',
   controller: function controller($rootScope, Auth) {
     this.user = {
       username: undefined,
@@ -523,7 +612,9 @@ angular.module('app.services', []).factory('Companies', function ($http) {
         console.log('$HTTP REQUEST', res.data);
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        alert('Your URL might be wrong! Try Again!');
+        $route.reload();
+        // console.log(err);
       });
     }
   };
@@ -653,6 +744,18 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       });
+    },
+    saveAndDelete: function saveAndDelete(jobData) {
+      return $http({
+        method: 'POST',
+        url: 'api/savedJobs',
+        data: jobData,
+        headers: {
+          'Content-type': 'application/json;charset=utf-8'
+        }
+      }).then(function (res) {
+        return res.data;
+      });
     }
   };
 }).factory('Tasks', function ($http) {
@@ -705,6 +808,60 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       });
     }
   };
+}).factory('SavedJobs', function ($http) {
+  return {
+    get: function get() {
+      return $http({
+        method: 'GET',
+        url: 'api/savedJobs'
+      }).then(function (res) {
+        return res.data;
+      });
+    },
+    delete: function _delete(data) {
+      return $http({
+        method: 'DELETE',
+        url: '/api/savedJobs',
+        data: data,
+        headers: {
+          'Content-type': 'application/json;charset=utf-8'
+        }
+      }).then(function (res) {
+        return res.data;
+      });
+    }
+  };
+  // return {
+  // 	create: function() {
+  // 		return $http({
+  // 			method: 'POST',
+  // 			api: '/api/savedJobs',
+  // 			data: data,
+  // 			headers: {
+  // 				'Content-type': 'application/json;charset=utf-8'
+  // 			}
+  // 		})
+  // 		.then(function(res) {
+  // 			return res.data;
+  // 		});
+  // 	},
+  // ,
+  // 	update: function() {
+  // 		return $http({
+  // 			method: 'PATCH',
+  // 			api: '/api/savedJobs',
+  // 			data: data,
+  // 			headers: {
+  // 				'Content-type': 'application/json;charset=utf-8'
+  // 			}
+  // 		})
+  // 		.then(function(res) {
+  // 			return res.data;
+  // 		});
+  // 	},
+
+  // 	}
+  // }
 }).factory('Auth', function ($http, $location) {
 
   var register = function register(user) {

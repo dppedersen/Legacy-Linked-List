@@ -258,15 +258,26 @@ angular.
       this.deleteJob = function(job) {
         let query = JSON.stringify({_id : job._id});
 
-        if($window.confirm('Are you sure you want to delete this job?')) {
-          Jobs.delete(query)
-          .then(function(res) {
-            $route.reload()
-            $window.alert(res);
-          })
-          .catch(function(err) {
-            console.log(err)
-          })
+        if ($window.confirm('Are you sure you want to delete this job?')) {
+          if ($window.confirm('Would you like to add to Your Saved Jobs?')) {
+            Jobs.saveAndDelete(query)
+              .then(function(res) {
+                $route.reload();
+                // $window.alert(res);
+              })
+              .catch(function(err) {
+                console.log(err);
+              })
+          } else {
+            Jobs.delete(query)
+            .then(function(res) {
+              $route.reload()
+              $window.alert(res);
+            })
+            .catch(function(err) {
+              console.log(err)
+            })
+          }
         }
       }
 
@@ -538,6 +549,111 @@ angular.
 
   });
 ;
+angular.module('savedJobsWidget', []);
+
+angular.
+  module('savedJobsWidget').
+  component('savedJobsWidget', {
+    template:
+    `
+    <md-card id="saved-jobs-widget" class='widget'>
+
+      <div style="display: flex; justify-content: space-between">
+        <span></span>
+        <span class="md-headline">Saved Jobs</span>
+        <md-button class="md-icon-button" ng-click="$ctrl.deleteAll()">
+            <md-icon>delete</md-icon>
+        </md-button>
+      </div>
+
+      <md-divider></md-divider>
+
+      <md-content">
+
+        <ul>
+          <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">
+            <b>{{savedJob.company}}</b>
+            <p>{{savedJob.position}}</p>
+            <md-button class="md-primary md-raised" ng-click="showTabDialog($event)" >
+              Details
+            </md-button>
+            <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
+          </li>
+        </ul>
+
+
+      </md-content>
+    </md-card>
+    `,
+    controller: function($log, SavedJobs) {
+
+      this.getSavedJobs = function() {
+        SavedJobs.get().then(data => {
+          console.log(data);
+          this.savedJobsList = data || [];
+        });
+      };
+
+
+      this.getSavedJobs();
+
+      this.toggleDelete = function(savedJob) {
+        savedJob.toDelete = !savedJob.toDelete;
+      };
+
+      this.deleteAll = function() {
+        this.savedJobsList.forEach(savedJob => {
+          if(savedJob.toDelete) {
+            SavedJobs.delete({ _id: savedJob._id })
+              .then(res => {
+                this.getSavedJobs();
+              });
+          }
+        });
+      };
+
+
+      //
+      // this.createSavedJob = function(data) {
+      //   if(name && name.length > 0) {
+      //     Tasks.create({ name: name }).then(res => {
+      //       this.getTasks();
+      //     });
+      //   }
+      // }
+      //
+      //
+      // this.deleteSavedJob = function(id) {
+      //   var query = JSON.stringify({ _id: id });
+      //
+      //   Tasks.delete(query).then(res => {
+      //     this.getTasks();
+      //   });
+      // }
+      //
+      //
+      //
+      // this.updateSavedJob = function(id, name, completed) {
+      //
+      //   var query = { _id: id };
+      //   if(name) {
+      //     query.name = name;
+      //   }
+      //
+      //   if(typeof completed === 'boolean') {
+      //     query.completed = completed;
+      //   }
+      //   query = JSON.stringify(query);
+      //
+      //   Tasks.update(query).then(res => {
+      //     this.getTasks();
+      //   });
+      // }
+
+
+    }
+  });
+;
 angular.module('tasksWidget', []);
 
 angular.
@@ -650,8 +766,9 @@ angular.module('app.dashboard', [
   'newsWidget',
   'calendarWidget',
   'jobWidget',
-  'tasksWidget'])
-.controller('dashboardController', function dashboardController($scope, Companies, User, Jobs, Tasks){
+  'tasksWidget',
+  'savedJobsWidget'])
+.controller('dashboardController', function dashboardController($scope, Companies, User, Jobs, Tasks, SavedJobs){
 
   $scope.getJobs = function() {
 
@@ -695,7 +812,7 @@ angular.module('app.input', [
   'ngMaterial',
   'ngMessages'
 ])
-.controller('inputController', function($scope, $http, $location, News, Companies, Jobs) {
+.controller('inputController', function($scope, $http, $location, $route, News, Companies, Jobs) {
 
   $scope.job = {
     company: undefined,
@@ -737,6 +854,11 @@ angular.module('app.input', [
     if($scope.job.contacts[0].name === undefined) {
       $scope.job.contacts = [];
     }
+    //
+    // if ($scope.job.website.slice(0, 7) !== 'http://'
+    //   && $scope.job.website.slice(0, 8) !== 'http://') {
+    //   $scope.job.website = `http://${$scope.job.website}`;
+    // }
 
     Companies.getInfo($scope.job.website)
     .then((data)=> {
@@ -763,6 +885,9 @@ angular.module('app.input', [
         alert(res);
         $location.url('/dashboard');
       });
+    })
+    .catch((err) => {
+      $route.reload();
     });
   };
 
@@ -819,6 +944,7 @@ angular.
         <div layout="row">
           <md-button flex='100' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>
         </div>
+        <h3 style="text-align: center;">Or <br /></h3>
         <div class="googleDiv">
           <a href="/auth/google" class="googleSignIn"></a>
         </div>
@@ -961,7 +1087,9 @@ angular.module('app.services', [])
 				return res.data;
 			})
 			.catch(function(err) {
-				console.log(err);
+				alert('Your URL might be wrong! Try Again!');
+				$route.reload();
+				// console.log(err);
 			});
 		}
   };
@@ -1097,7 +1225,20 @@ angular.module('app.services', [])
 				}
 			})
 			.then(function(res) {
-				return res.data
+				return res.data;
+			});
+		},
+		saveAndDelete: function(jobData) {
+			return $http({
+				method: 'POST',
+				url: 'api/savedJobs',
+				data: jobData,
+				headers: {
+					'Content-type': 'application/json;charset=utf-8'
+				}
+			})
+			.then(function(res) {
+				return res.data;
 			})
 		}
 	}
@@ -1160,6 +1301,63 @@ angular.module('app.services', [])
 			})
 		}
 	}
+})
+.factory('SavedJobs', function($http) {
+	return {
+			get: function() {
+				return $http({
+					method: 'GET',
+					url: 'api/savedJobs'
+				})
+				.then(function(res) {
+					return res.data;
+				})
+			},
+			delete: function(data) {
+				return $http({
+					method: 'DELETE',
+					url: '/api/savedJobs',
+					data: data,
+					headers: {
+						'Content-type': 'application/json;charset=utf-8'
+					}
+				})
+				.then(function(res) {
+					return res.data;
+				});
+		}
+	}
+	// return {
+	// 	create: function() {
+	// 		return $http({
+	// 			method: 'POST',
+	// 			api: '/api/savedJobs',
+	// 			data: data,
+	// 			headers: {
+	// 				'Content-type': 'application/json;charset=utf-8'
+	// 			}
+	// 		})
+	// 		.then(function(res) {
+	// 			return res.data;
+	// 		});
+	// 	},
+	// ,
+	// 	update: function() {
+	// 		return $http({
+	// 			method: 'PATCH',
+	// 			api: '/api/savedJobs',
+	// 			data: data,
+	// 			headers: {
+	// 				'Content-type': 'application/json;charset=utf-8'
+	// 			}
+	// 		})
+	// 		.then(function(res) {
+	// 			return res.data;
+	// 		});
+	// 	},
+
+	// 	}
+	// }
 })
 .factory('Auth', ($http, $location) => {
 
