@@ -149,18 +149,7 @@ angular.
           .ok('Yes')
           .cancel('No');
 
-<<<<<<< HEAD
-          $mdDialog.show(confirmDelete).then(function() {
-            $mdDialog.show(confirmSave).then(function() {
-              console.log('saving and deleting');
-              Jobs.saveAndDelete(query)
-                .then(function(res) {
-                  $route.reload();
-                  // $window.alert(res);
-                })
-                .catch(function(err) {
-                  console.log(err);
-=======
+
           var promptForInterviewQuestions = $mdDialog.prompt()
             .title('Were you asked any specific interview questions?')
             .textContent('Write down some you would like to remember!')
@@ -184,7 +173,6 @@ angular.
                     .catch(function(err) {
                       console.log(err);
                     });
->>>>>>> v1.1/feature/save_jobs_prompting
                 });
             }, function() {
               Jobs.delete(query)
