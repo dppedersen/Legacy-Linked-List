@@ -79,47 +79,6 @@ module.exports = function(app, express) {
 				console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
 			} else {
-				var clientSecret = config.googleOAuth.clientSecret;
-				var clientId = config.googleOAuth.clientID;
-				var redirectUrl = config.googleOAuth.callbackURL;
-				var auth = new googleAuth();
-				var calendar = google.calendar('v3');
-				var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
-				oauth2Client.setCredentials({
-  				access_token: username.google.token,
-  				refresh_token: username.google.token,
-  				expiry_date: true
-				});
-
-				username.jobs.forEach(job => {
-					var event = {
-						summary: job.officialName,
-						description: job.currentStep.name,
-						start: {
-							dateTime: job.currentStep.dueDate,
-							timeZone: 'America/New_York'
-						},
-						end: {
-							dateTime: job.currentStep.dueDate,
-							timeZone: 'America/New_York'
-						},
-						attendees: [
-							{'email': username.google.email}
-						]
-					}
-					calendar.events.insert({
-						auth: oauth2Client,
-						calendarId: username.google.email,
-						resource: event,
-					}, function(err, event) {
-						if (err) {
-							console.log('There was an error contacting the Calendar service: ' + err);
-							return;
-						}
-						console.log('Event created: %s', event.htmlLink);
-					});
-
-				});
 				console.log('successful retrieve jobs', username, user[0].jobs.currentStep);
 				res.send(user[0].jobs);
 			}
@@ -140,6 +99,46 @@ module.exports = function(app, express) {
 	        	if(err) {
 	        		res.status(401).send(err);
 	        	} else {
+							var clientSecret = config.googleOAuth.clientSecret;
+							var clientId = config.googleOAuth.clientID;
+							var redirectUrl = config.googleOAuth.callbackURL;
+							var auth = new googleAuth();
+							var calendar = google.calendar('v3');
+							var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
+							oauth2Client.setCredentials({
+			  				access_token: username.google.token,
+			  				refresh_token: username.google.token,
+			  				expiry_date: true
+							});
+
+							username.jobs.forEach(job => {
+								var event = {
+									summary: job.officialName,
+									description: job.currentStep.name,
+									start: {
+										dateTime: job.currentStep.dueDate,
+										timeZone: 'America/New_York'
+									},
+									end: {
+										dateTime: job.currentStep.dueDate,
+										timeZone: 'America/New_York'
+									},
+									attendees: [
+										{'email': username.google.email}
+									]
+								}
+								calendar.events.insert({
+									auth: oauth2Client,
+									calendarId: username.google.email,
+									resource: event,
+								}, function(err, event) {
+									if (err) {
+										console.log('There was an error contacting the Calendar service: ' + err);
+										return;
+									}
+									console.log('Event created: %s', event.htmlLink);
+								});
+							});
 							res.send('New job created');
 	        	}
 	        }

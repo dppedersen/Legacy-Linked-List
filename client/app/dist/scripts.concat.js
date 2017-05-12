@@ -5,6 +5,7 @@ angular.module('app',[
   'app.dashboard',
   'app.auth',
   'app.services',
+  'jkAngularCarousel'
 ])
 .config(function($locationProvider, $routeProvider, $mdThemingProvider, $httpProvider) {
   $locationProvider.hashPrefix('');
@@ -194,6 +195,7 @@ angular.
               <p class="md-subhead contact-info"><md-icon>person</md-icon>{{contact.name}}</p>
               <p class="md-subhead contact-info"><md-icon>phone</md-icon>{{contact.phoneNumber}}</p>
               <p class="md-subhead contact-info"><md-icon>email</md-icon>{{contact.email}}</p>
+              <p class="md-subhead contact-info"><md-icon>share</md-icon>{{contact.handle}}</p>
             </div>
           </md-content>
           </md-tab>
@@ -387,6 +389,13 @@ angular.
                     <md-icon class="material-icons">email</md-icon>
                     <input ng-model="contact.email" type='email'>
                   </md-input-container>
+
+                  <md-input-container flex="30">
+                    <label>Twitter Handle</label>
+                    <md-icon class="material-icons">share</md-icon>
+                    <input ng-model="contact.handle" placeholder="@">
+                  </md-input-container>
+
                 </div>
                 <div layout="row">
                   <span class="md-title">Modify Steps</span>
@@ -441,7 +450,7 @@ angular.
               </form>
             </md-content>
           </md-dialog>`,
-          controller: function DialogController($scope, $mdDialog, Jobs) {
+          controller: function DialogController($scope, $mdDialog, Jobs, $route) {
 
             $scope.addContact = (data) => {
               data.contacts.push({name: undefined,
@@ -458,6 +467,7 @@ angular.
               .then(function(res) {
                 $scope.closeDialog()
                 $window.alert(res)
+                $route.reload();
               })
               .catch(function(err) {
                 console.log(err)
@@ -799,6 +809,66 @@ angular.
     }
   });
 ;
+angular.module('twitterWidget',[
+  'jkAngularCarousel'
+]);
+
+angular.module('twitterWidget')
+  .component('twitterWidget', {
+    template:
+    `
+    <md-card id="twitter-card" class='widget' ng-if="$ctrl.carousel.tweets.length > 0" >
+      <span class="md-headline">
+        See What Your Contacts Are Saying
+      </span>
+      <md-divider></md-divider>
+
+      <jk-carousel data="$ctrl.carousel.tweets" current-index="$ctrl.carousel.currentIndex" item-template-url="'/app/components/twitterCarouselTemplate.html'" width="100%" height="100%" auto-slide="true" auto-slide-time="4000" >
+      </jk-carousel>
+    </md-card>
+    <md-card id="twitter-card" class='widget' ng-if="$ctrl.carousel.tweets.length === 0" >
+      <span class="md-headline" style="font-size: .8em; text-decoration: italic; color: grey;">
+        Connect to your contacts' twitter by updating their info with a valid handle
+      </span>
+    </md-card>
+    `
+    ,
+    controller: function($scope, $mdDialog, $route, Tweets, Jobs) {
+      var pointer = {'tweets' : [], 'currentIndex' : 0}
+      this.carousel = pointer;
+      Jobs.get()
+        .then(data=> {
+          let handles = data.reduce(function(acc, job) {
+            return acc.concat(job.contacts.reduce(function(acc, contact) {
+              return acc.concat(contact.handle);
+            }, []))
+          }, [])
+          Tweets.getTweets(handles)
+            .then(function(tweets) {
+              console.log('rendering tweets')
+              tweets.forEach(tweet => {
+                tweet.created_at = moment(tweet.created_at).fromNow()
+              })
+              tweets = shuffleArray(tweets)
+              pointer.tweets = tweets;
+            })
+            .catch(function(err) {
+              console.error(err);
+            })
+        });
+
+      function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+        }
+      return array;
+    };
+    }
+  })
+;
 
 angular.module('app.dashboard', [
   'ngMaterial',
@@ -807,6 +877,7 @@ angular.module('app.dashboard', [
   'calendarWidget',
   'jobWidget',
   'tasksWidget',
+  'twitterWidget',
   'savedJobsWidget'])
 .controller('dashboardController', function dashboardController($scope, Companies, User, Jobs, Tasks, SavedJobs){
 
@@ -861,7 +932,8 @@ angular.module('app.input', [
     position: undefined,
     contacts: [{name: undefined,
               phoneNumber: undefined,
-              email: undefined}],
+              email: undefined,
+              handle: undefined}],
     link: undefined,
     website: undefined,
     description: undefined,
@@ -1131,6 +1203,7 @@ angular.module('app.services', [])
 		}
   };
 })
+
 .factory('News', ($http) => {
   var getNews = companiesArray => {
     return Promise.all(companiesArray.map(comp => {
@@ -1155,6 +1228,35 @@ angular.module('app.services', [])
   return {
     getNews: getNews
   }
+})
+
+.factory('Tweets', function($http) {
+	var getTweets = function(handlesArray) {
+		return $http.post('/api/twitter', handlesArray)
+			.then(function(res) {
+				console.log("Tweets recieved by factory");
+				//console.log(res.data);
+				return res.data
+			})
+			.catch(function(err) {
+				console.error("Failed Tweets.factory fetching tweets...");
+				console.error(err);
+			});
+	}
+
+	return {
+		getTweets : getTweets
+	}
+})
+
+.factory('InsertFactory', function(){
+	var obj = {}
+
+	 obj.addTo = function(value) {
+		obj.jobs = value;
+	}
+
+	return obj;
 })
 
 .factory('User', function($http) {
@@ -1339,6 +1441,7 @@ angular.module('app.services', [])
 		}
 	}
 })
+
 .factory('SavedJobs', function($http) {
 	return {
 			get: function() {
@@ -1396,6 +1499,7 @@ angular.module('app.services', [])
 	// 	}
 	// }
 })
+
 .factory('Auth', ($http, $location) => {
 
   var register = (user) => {

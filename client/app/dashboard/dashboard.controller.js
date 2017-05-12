@@ -6,7 +6,7 @@ angular.module('app.dashboard', [
   'calendarWidget',
   'jobWidget',
   'tasksWidget',
-  'twitterWidget'
+  'twitterWidget',
   'savedJobsWidget'])
 .controller('dashboardController', function dashboardController($scope, Companies, User, Jobs, Tasks, SavedJobs){
 
