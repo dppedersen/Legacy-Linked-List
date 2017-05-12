@@ -153,25 +153,36 @@ angular.module('jobWidget').component('jobWidget', {
     };
 
     this.deleteJob = function (job) {
-      var query = JSON.stringify({ _id: job._id });
 
-      if ($window.confirm('Are you sure you want to delete this job?')) {
-        if ($window.confirm('Would you like to add to Your Saved Jobs?')) {
-          Jobs.saveAndDelete(query).then(function (res) {
-            $route.reload();
-            // $window.alert(res);
-          }).catch(function (err) {
-            console.log(err);
+      var showConfirm = function showConfirm(ev) {
+        var query = JSON.stringify({ _id: job._id });
+
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirmDelete = $mdDialog.confirm().title('Delete!').textContent('Delete Job?').ariaLabel('Confirm Delete').targetEvent(ev).ok('Yes').cancel('No');
+
+        var confirmSave = $mdDialog.confirm().title('Save!').textContent('Save Job?').ariaLabel('Confirm Save').targetEvent(ev).ok('Yes').cancel('No');
+
+        $mdDialog.show(confirmDelete).then(function () {
+          $mdDialog.show(confirmSave).then(function () {
+            console.log('saving and deleting');
+            Jobs.saveAndDelete(query).then(function (res) {
+              $route.reload();
+              // $window.alert(res);
+            }).catch(function (err) {
+              console.log(err);
+            });
+          }, function () {
+            Jobs.delete(query).then(function (res) {
+              $route.reload();
+              // $window.alert(res);
+            }).catch(function (err) {
+              console.log(err);
+            });
           });
-        } else {
-          Jobs.delete(query).then(function (res) {
-            $route.reload();
-            $window.alert(res);
-          }).catch(function (err) {
-            console.log(err);
-          });
-        }
-      }
+        }, function () {});
+      };
+
+      showConfirm();
     };
 
     this.editJob = function ($event) {
@@ -288,15 +299,17 @@ angular.module('profileWidget').component('profileWidget', {
 angular.module('savedJobsWidget', []);
 
 angular.module('savedJobsWidget').component('savedJobsWidget', {
-  template: '\n    <md-card id="saved-jobs-widget" class=\'widget\'>\n\n      <div style="display: flex; justify-content: space-between">\n        <span></span>\n        <span class="md-headline">Saved Jobs</span>\n        <md-button class="md-icon-button" ng-click="$ctrl.deleteAll()">\n            <md-icon>delete</md-icon>\n        </md-button>\n      </div>\n\n      <md-divider></md-divider>\n\n      <md-content">\n\n        <ul>\n          <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">\n            <b>{{savedJob.company}}</b>\n            <p>{{savedJob.position}}</p>\n            <md-button class="md-primary md-raised" ng-click="showTabDialog($event)" >\n              Details\n            </md-button>\n            <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>\n          </li>\n        </ul>\n\n\n      </md-content>\n    </md-card>\n    ',
-  controller: function controller($log, SavedJobs) {
+  template: '\n    <md-card id="saved-jobs-widget" class=\'widget\'>\n\n      <div style="display: flex; justify-content: space-between">\n        <span></span>\n        <span class="md-headline">Saved Jobs</span>\n        <md-button class="md-icon-button" ng-click="$ctrl.deleteAll()">\n            <md-icon>delete</md-icon>\n        </md-button>\n      </div>\n\n      <md-divider></md-divider>\n\n      <md-content">\n\n        <ul>\n          <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">\n            <div style="display: flex; justify-content: space-around; align-items: center;">\n              <b style="padding-right: 10px">{{savedJob.company}}</b>\n              <p>{{savedJob.position}}</p>\n            </div>\n            <div style="display: flex; justify-content: flex-end; align-items: flex-end;">\n              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog($event)" >\n                Details\n              </md-button>\n              <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>\n            </div>\n          </li>\n        </ul>\n\n\n      </md-content>\n    </md-card>\n    ',
+  controller: function controller($log, $mdDialog, SavedJobs) {
 
     this.getSavedJobs = function () {
       var _this2 = this;
 
       SavedJobs.get().then(function (data) {
         console.log(data);
-        _this2.savedJobsList = data || [];
+        _this2.savedJobsList = data.filter(function (item) {
+          return item !== null;
+        }) || [];
       });
     };
 
@@ -318,44 +331,33 @@ angular.module('savedJobsWidget').component('savedJobsWidget', {
       });
     };
 
-    //
-    // this.createSavedJob = function(data) {
-    //   if(name && name.length > 0) {
-    //     Tasks.create({ name: name }).then(res => {
-    //       this.getTasks();
-    //     });
-    //   }
-    // }
-    //
-    //
-    // this.deleteSavedJob = function(id) {
-    //   var query = JSON.stringify({ _id: id });
-    //
-    //   Tasks.delete(query).then(res => {
-    //     this.getTasks();
-    //   });
-    // }
-    //
-    //
-    //
-    // this.updateSavedJob = function(id, name, completed) {
-    //
-    //   var query = { _id: id };
-    //   if(name) {
-    //     query.name = name;
-    //   }
-    //
-    //   if(typeof completed === 'boolean') {
-    //     query.completed = completed;
-    //   }
-    //   query = JSON.stringify(query);
-    //
-    //   Tasks.update(query).then(res => {
-    //     this.getTasks();
-    //   });
-    // }
+    this.showTabDialog = function (ev) {
+      $mdDialog.show({
+        // controller: this,
+        templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
+        parent: angular.element(document.body),
+        targetEvent: ev,
+        clickOutsideToClose: true
+      }).then(function (answer) {
+        this.status = 'You said the information was "' + answer + '".';
+      }, function () {
+        this.status = 'You cancelled the dialog.';
+      });
+    };
 
+    this.hide = function () {
+      $mdDialog.hide();
+    };
+
+    this.cancel = function () {
+      $mdDialog.cancel();
+    };
+
+    this.answer = function (answer) {
+      $mdDialog.hide(answer);
+    };
   }
+
 });
 ;
 angular.module('tasksWidget', []);
@@ -552,8 +554,7 @@ angular.module('app.auth', ['ngMaterial', 'ngMessages', 'signInForm', 'signUpFor
 angular.module('signInForm', []);
 
 angular.module('signInForm').component('signInForm', {
-  template: '\n    <md-card id="signin" class="landingCard" layout-margin>\n      <h2>Please Sign In</h2>\n\n      <form name="signInForm" ng-submit="">\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>User Name</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">account_circle</md-icon>\n            <input ng-model="$ctrl.user.username" ng-required="true">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>Password</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">lock</md-icon>\n            <input ng-model="$ctrl.user.password" ng-required="true" type="password">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>\n        </div>\n        <h3 style="text-align: center;">Or <br /></h3>\n        <div class="googleDiv">\n          <a href="/auth/google" class="googleSignIn"></a>\n        </div>\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>\n        </div>\n      </form>\n    </md-card>\n    ',
-
+  template: '\n    <md-card id="signin" class="landingCard" layout-margin>\n      <h2>Please Sign In</h2>\n\n      <form name="signInForm" ng-submit="">\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>User Name</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">account_circle</md-icon>\n            <input ng-model="$ctrl.user.username" ng-required="true">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>Password</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">lock</md-icon>\n            <input ng-model="$ctrl.user.password" ng-required="true" type="password">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>\n        </div>\n        <h3 style="text-align: center;">Or <br /></h3>\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>\n        </div>\n      </form>\n    </md-card>\n    ',
   controller: function controller($rootScope, Auth) {
     this.user = {
       username: undefined,

@@ -197,12 +197,10 @@ module.exports = function(app, express) {
 					return job._id.toString() === req.body._id;
 				})[0];
 
-
 				if (jobToSave !== null && jobToSave !== undefined) {
 					jobToSave.interviewQuestions = req.body.question;
 					user[0].savedJobs.push(jobToSave);
 				}
-
 				// console.log('jobtosave:',jobToSave);
 
 
@@ -248,7 +246,7 @@ module.exports = function(app, express) {
 				res.status(400).send('null');
 			} else {
 				user[0].savedJobs = user[0].savedJobs.filter((savedJob) => {
-					return savedJob !== null && savedJob._id != req.body._id;
+					return savedJob._id != req.body._id;
 				});
 
 				User.findOneAndUpdate(
@@ -415,6 +413,7 @@ module.exports = function(app, express) {
 				res.status(400).send('null');
 			} else {
 				console.log('successful retrieve user', username);
+				googleToken = user[0].google.token;
 				var userSteps = [];
 				user[0].jobs.forEach(job => {
 					userSteps = userSteps.concat(job.currentStep);
@@ -424,16 +423,15 @@ module.exports = function(app, express) {
         userSteps = userSteps.filter(step => !!step);
 
 				var dates = userSteps.filter(step => !!step.dueDate);
-				console.log('Dates:', dates);
 				var options = {
-					url: `https://www.googleapis.com/calendar/v3/calendars/${username.google.email}/events?maxResults=2500`,
+					url: `https://www.googleapis.com/calendar/v3/calendars/${username.google.email}/events?maxResults=2000`,
 					method: 'GET',
 					headers: {
 						'User-Agent': 'request',
 						'clientID': config.googleOAuth.clientID,
 						'clientSecret': config.googleOAuth.clientSecret,
 						'scope': 'https://www.googleapis.com/auth/calendar',
-						'Authorization': 'Bearer ' + username.google.token,
+						'Authorization': 'Bearer ' + googleToken,
 					},
 					json: true
 				}
@@ -442,8 +440,9 @@ module.exports = function(app, express) {
 					if(err) {
 						console.log('Calendar Error:', err);
 					} else {
+						console.log('GoogleToken:', googleToken, 'User Token:', username.google.token);
 						body.items.forEach(item => {
-							if(item.created && item.created.slice(0, 4) === '2017') {
+							if(item.summary === 'Arturo') {
 								newTask = new Task({
 									name: item.summary,
 									dueDate: item.end.dateTime,
@@ -461,6 +460,7 @@ module.exports = function(app, express) {
 			}
 		});
 	});
+
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                        News
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -523,12 +523,10 @@ module.exports = function(app, express) {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                    Authentication
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 	app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email', 'https://www.googleapis.com/auth/calendar'] }));
 
 			 // the callback after google has authorized the user
 	app.get('/auth/google/callback', passport.authenticate('google', { successRedirect : '/#/dashboard', failureRedirect : '/'}));
-
 	app.post('/api/register', function(req, res) {
 		console.log('attempting to register', req.body.username, req.body.password);
 	  var newUser = new User({
