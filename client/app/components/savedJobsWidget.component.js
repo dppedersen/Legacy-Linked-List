@@ -26,7 +26,8 @@ angular.
               <p>{{savedJob.position}}</p>
             </div>
             <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
-              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog($event)" >
+
+              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog(savedJob)" >
                 Details
               </md-button>
               <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
@@ -65,33 +66,37 @@ angular.
         });
       };
 
-      this.showTabDialog = function(ev) {
+
+      var that = this;
+      this.showTabDialog = function(savedJob) {
+        console.log(that);
+        console.log('savedJob',savedJob);
         $mdDialog.show({
-          // controller: this,
           templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
           parent: angular.element(document.body),
-          targetEvent: ev,
-          clickOutsideToClose:true
+          clickOutsideToClose:true,
+          locals: { savedJob: savedJob },
+          controller: ['$scope', 'savedJob', function($scope, savedJob) {
+            $scope.savedJob = savedJob;
+          }]
         })
-        .then(function(answer) {
-          this.status = 'You said the information was "' + answer + '".';
-        }, function() {
-          this.status = 'You cancelled the dialog.';
+        .then(function() {
+          return;
         });
       };
 
-
-      this.hide = function() {
-        $mdDialog.hide();
-      };
-
-      this.cancel = function() {
-        $mdDialog.cancel();
-      };
-
-      this.answer = function(answer) {
-        $mdDialog.hide(answer);
-      };
+      //
+      // this.hide = function() {
+      //   $mdDialog.hide();
+      // };
+      //
+      // this.cancel = function() {
+      //   $mdDialog.cancel();
+      // };
+      //
+      // this.answer = function(answer) {
+      //   $mdDialog.hide(answer);
+      // };
     }
 
   });

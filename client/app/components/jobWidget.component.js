@@ -149,16 +149,30 @@ angular.
           .ok('Yes')
           .cancel('No');
 
+
+          var promptForInterviewQuestions = $mdDialog.prompt()
+            .title('Were you asked any specific interview questions?')
+            .textContent('Write down some you would like to remember!')
+            .initialValue('Ex. Balance this search tree!')
+            .ok('Submit');
+
           $mdDialog.show(confirmDelete).then(function() {
             $mdDialog.show(confirmSave).then(function() {
-              console.log('saving and deleting');
-              Jobs.saveAndDelete(query)
-                .then(function(res) {
-                  $route.reload();
-                  // $window.alert(res);
-                })
-                .catch(function(err) {
-                  console.log(err);
+              $mdDialog.show(promptForInterviewQuestions)
+                .then(function(message) {
+                  console.log('message',message)
+                  query = JSON.parse(query);
+                  query.question = message;
+                  query = JSON.stringify(query);
+                  console.log('query',query);
+                  Jobs.saveAndDelete(query)
+                    .then(function(res) {
+                      $route.reload();
+                      // $window.alert(res);
+                    })
+                    .catch(function(err) {
+                      console.log(err);
+                    });
                 });
             }, function() {
               Jobs.delete(query)
