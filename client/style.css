@@ -390,14 +390,24 @@ NEWS WIDGET
 }
 
 /*
-NEWS WIDGET
+TWITTER WIDGET
 */
+
+
+#twitter-card .md-headline {
+  text-align: center !important;
+
+  font-size: 24px !important;
+  font-weight: normal !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
 
 .carousel-container {
    border: 1px solid #DDDDDD;
    position: relative !important;
 }
-.tweet-box {
+.avatar {
   width: 100%;
   height: 100%;
   background-color: black !important;

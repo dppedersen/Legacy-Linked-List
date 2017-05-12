@@ -267,7 +267,7 @@ angular.
               </form>
             </md-content>
           </md-dialog>`,
-          controller: function DialogController($scope, $mdDialog, Jobs) {
+          controller: function DialogController($scope, $mdDialog, Jobs, $route) {
 
             $scope.addContact = (data) => {
               data.contacts.push({name: undefined,
@@ -284,6 +284,7 @@ angular.
               .then(function(res) {
                 $scope.closeDialog()
                 $window.alert(res)
+                $route.reload();
               })
               .catch(function(err) {
                 console.log(err)
