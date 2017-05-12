@@ -131,7 +131,7 @@ angular.
 
 
         var showConfirm = function(ev) {
-          var query = JSON.stringify({_id : job._id});
+          var query = {_id : job._id};
 
           // Appending dialog to document.body to cover sidenav in docs app
           var confirmDelete = $mdDialog.confirm()
@@ -155,21 +155,27 @@ angular.
             .title('Were you asked any specific interview questions?')
             .textContent('Write down some you would like to remember!')
             .initialValue('Ex. Balance this search tree!')
-            .ok('Submit');
+            .ok('Submit')
+            .cancel('Do Not Add');
+
 
           $mdDialog.show(confirmDelete).then(function() {
             $mdDialog.show(confirmSave).then(function() {
               $mdDialog.show(promptForInterviewQuestions)
-                .then(function(message) {
-                  console.log('message',message)
-                  query = JSON.parse(query);
-                  query.question = message;
-                  query = JSON.stringify(query);
-                  console.log('query',query);
-                  Jobs.saveAndDelete(query)
+                .then(function(questions) {
+                  query.questions = questions;
+                  Jobs.saveAndDelete(JSON.stringify(query))
                     .then(function(res) {
                       $route.reload();
-                      // $window.alert(res);
+                    })
+                    .catch(function(err) {
+                      console.log(err);
+                    });
+                }, function() {
+                  query.questions = 'No Questions Added!';
+                  Jobs.saveAndDelete(JSON.stringify(query))
+                    .then(function(res) {
+                      $route.reload();
                     })
                     .catch(function(err) {
                       console.log(err);
@@ -179,7 +185,6 @@ angular.
               Jobs.delete(query)
               .then(function(res) {
                 $route.reload();
-                // $window.alert(res);
               })
               .catch(function(err) {
                 console.log(err);
