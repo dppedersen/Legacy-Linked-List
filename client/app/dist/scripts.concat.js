@@ -256,30 +256,57 @@ angular.
       }
 
       this.deleteJob = function(job) {
-        let query = JSON.stringify({_id : job._id});
 
-        if ($window.confirm('Are you sure you want to delete this job?')) {
-          if ($window.confirm('Would you like to add to Your Saved Jobs?')) {
-            Jobs.saveAndDelete(query)
+
+        var showConfirm = function(ev) {
+          var query = JSON.stringify({_id : job._id});
+
+          // Appending dialog to document.body to cover sidenav in docs app
+          var confirmDelete = $mdDialog.confirm()
+          .title('Delete!')
+          .textContent('Delete Job?')
+          .ariaLabel('Confirm Delete')
+          .targetEvent(ev)
+          .ok('Yes')
+          .cancel('No');
+
+          var confirmSave = $mdDialog.confirm()
+          .title('Save!')
+          .textContent('Save Job?')
+          .ariaLabel('Confirm Save')
+          .targetEvent(ev)
+          .ok('Yes')
+          .cancel('No');
+
+          $mdDialog.show(confirmDelete).then(function() {
+            $mdDialog.show(confirmSave).then(function() {
+              console.log('saving and deleting');
+              Jobs.saveAndDelete(query)
+                .then(function(res) {
+                  $route.reload();
+                  // $window.alert(res);
+                })
+                .catch(function(err) {
+                  console.log(err);
+                });
+            }, function() {
+              Jobs.delete(query)
               .then(function(res) {
                 $route.reload();
                 // $window.alert(res);
               })
               .catch(function(err) {
                 console.log(err);
-              })
-          } else {
-            Jobs.delete(query)
-            .then(function(res) {
-              $route.reload()
-              $window.alert(res);
-            })
-            .catch(function(err) {
-              console.log(err)
-            })
-          }
-        }
-      }
+              });
+            }
+          );
+          }, function() {
+          });
+        };
+
+        showConfirm();
+
+      };
 
       this.editJob = function($event) {
         var parentEl = angular.element(document.body)
@@ -572,12 +599,16 @@ angular.
 
         <ul>
           <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">
-            <b>{{savedJob.company}}</b>
-            <p>{{savedJob.position}}</p>
-            <md-button class="md-primary md-raised" ng-click="showTabDialog($event)" >
-              Details
-            </md-button>
-            <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
+            <div style="display: flex; justify-content: space-around; align-items: center;">
+              <b style="padding-right: 10px">{{savedJob.company}}</b>
+              <p>{{savedJob.position}}</p>
+            </div>
+            <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
+              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog($event)" >
+                Details
+              </md-button>
+              <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
+            </div>
           </li>
         </ul>
 
@@ -585,12 +616,12 @@ angular.
       </md-content>
     </md-card>
     `,
-    controller: function($log, SavedJobs) {
+    controller: function($log, $mdDialog, SavedJobs) {
 
       this.getSavedJobs = function() {
         SavedJobs.get().then(data => {
           console.log(data);
-          this.savedJobsList = data || [];
+          this.savedJobsList = data.filter(item => { return item !== null; }) || [];
         });
       };
 
@@ -612,46 +643,35 @@ angular.
         });
       };
 
-
-      //
-      // this.createSavedJob = function(data) {
-      //   if(name && name.length > 0) {
-      //     Tasks.create({ name: name }).then(res => {
-      //       this.getTasks();
-      //     });
-      //   }
-      // }
-      //
-      //
-      // this.deleteSavedJob = function(id) {
-      //   var query = JSON.stringify({ _id: id });
-      //
-      //   Tasks.delete(query).then(res => {
-      //     this.getTasks();
-      //   });
-      // }
-      //
-      //
-      //
-      // this.updateSavedJob = function(id, name, completed) {
-      //
-      //   var query = { _id: id };
-      //   if(name) {
-      //     query.name = name;
-      //   }
-      //
-      //   if(typeof completed === 'boolean') {
-      //     query.completed = completed;
-      //   }
-      //   query = JSON.stringify(query);
-      //
-      //   Tasks.update(query).then(res => {
-      //     this.getTasks();
-      //   });
-      // }
+      this.showTabDialog = function(ev) {
+        $mdDialog.show({
+          // controller: this,
+          templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose:true
+        })
+        .then(function(answer) {
+          this.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          this.status = 'You cancelled the dialog.';
+        });
+      };
 
 
+      this.hide = function() {
+        $mdDialog.hide();
+      };
+
+      this.cancel = function() {
+        $mdDialog.cancel();
+      };
+
+      this.answer = function(answer) {
+        $mdDialog.hide(answer);
+      };
     }
+
   });
 ;
 angular.module('tasksWidget', []);
@@ -945,7 +965,6 @@ angular.
           <md-button flex='100' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>
         </div>
         <h3 style="text-align: center;">Or <br /></h3>
-        
         <div layout="row">
           <md-button flex='100' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>
         </div>
