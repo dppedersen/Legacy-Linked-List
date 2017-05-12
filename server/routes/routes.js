@@ -3,7 +3,10 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var request = require('request');
 var Twit = require('twit');
-
+var multiparty = require('connect-multiparty');
+var multipartyMiddleware = multiparty();
+var fs = require('fs');
+var textract = require('textract');
 // import mongoose models
 var User = require('../db/models/user.js');
 var Task = require('../db/models/task.js');
@@ -11,6 +14,7 @@ var Step = require('../db/models/step.js');
 var Contact = require('../db/models/contact.js');
 var Job = require('../db/models/job.js');
 var LocalStrategy = require('passport-local').Strategy;
+
 const rp = require('request-promise');
 const config = require('../config/config.js');
 var google = require('googleapis');
@@ -18,18 +22,40 @@ var googleAuth = require('google-auth-library');
 module.exports = function(app, express) {
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//                    File Upload
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	app.post('/api/upload', multipartyMiddleware, function(req, res) {
+		var file = req.files.file;
+		console.log('file.name', file.name);
+		console.log('file.type', file.type);
+		console.log('file.path', file.path);
+		console.log('file', file);
+		// var data = req.files.data;
+		// console.log('data', data);
+		fs.readFile(file.path, function (err, data) {
+			if (err) throw err;
+			textract.fromFileWithPath(file.path, function(err, text) {
+				if (err) throw err;
+				console.log(typeof text);
+				res.send(JSON.stringify(text));
+			});
+		});
+	});
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                    Users
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	app.get('/api/users', function(req, res) {
-		console.log('session info get /api/users', req.session.passport.user);
+		// console.log('session info get /api/users', req.session.passport.user);
 		var username = req.session.passport.user;
-		User.find({ "local.username": username.local.username }).exec(function(err, user){
+		User.find({ 'local.username': username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
-				console.log('unsuccessful retrieve user', username);
+				// console.log('unsuccessful retrieve user', username);
 				res.status(400).send('null');
 			} else {
-				console.log('successful retrieve user', username, user);
+				// console.log('successful retrieve user', username, user);
 				res.send(user[0]);
 			}
 		});
@@ -41,12 +67,12 @@ module.exports = function(app, express) {
 		var body = req.body;
 
 		User.update({ _id: body._id }, body).exec(function(err, user){
-			console.log('updating', err, user, 'with', username, body);
+			// console.log('updating', err, user, 'with', username, body);
 			if(err) {
-				console.log('unsuccessful update user', username, body);
+				// console.log('unsuccessful update user', username, body);
 				res.status(400).send('unsuccessful update');
 			} else {
-				console.log('successful update user', username, user);
+				// console.log('successful update user', username, user);
 				res.send('successful update');
 			}
 		});
@@ -55,12 +81,12 @@ module.exports = function(app, express) {
 	app.delete('/api/users', function(req, res) {
 		var username = req.session.passport.user;
 
-		User.remove({ "local.username": username.local.username }).exec(function(err, user){
+		User.remove({ 'local.username': username.local.username }).exec(function(err, user){
 			if(err) {
-				console.log('unsuccessful remove user', username);
+				// console.log('unsuccessful remove user', username);
 				res.status(400).send('unsuccessful remove');
 			} else {
-				console.log('successful remove user', username);
+				// console.log('successful remove user', username);
 				res.send('successful remove');
 			}
 		});
@@ -71,12 +97,12 @@ module.exports = function(app, express) {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	app.get('/api/jobs', function(req, res) {
-		console.log('session info get /api/jobs', req.session.passport.user);
+		// console.log('session info get /api/jobs', req.session.passport.user);
 		var username = req.session.passport.user;
 
-		User.find({ "local.username": username.local.username }).exec(function(err, user){
+		User.find({ 'local.username': username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
-				console.log('unsuccessful retrieve jobs', username);
+				// console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
 			} else {
 				console.log('successful retrieve jobs', username, user[0].jobs.currentStep);
@@ -87,8 +113,8 @@ module.exports = function(app, express) {
 
 	// body (companyname, position)
 	app.post('/api/jobs', function(req, res) {
-		console.log('session info post /api/jobs', req.session.passport.user);
-		console.log('attempting to create job', req.body);
+		// console.log('session info post /api/jobs', req.session.passport.user);
+		// console.log('attempting to create job', req.body);
 
 		var username = req.session.passport.user;
 		User.findOneAndUpdate(
@@ -150,14 +176,14 @@ module.exports = function(app, express) {
 	// body (_id)  _id is found inside specific job, and any fields to be updated
 	// job array can be retrieved using get /api/jobs
 	app.patch('/api/jobs', function(req, res) {
-		console.log('session info patch /api/jobs', req.session.passport.user);
-		console.log('attempting to patch job', req.body);
+		// console.log('session info patch /api/jobs', req.session.passport.user);
+		// console.log('attempting to patch job', req.body);
 
 		var username = req.session.passport.user;
 
 		User.find({ 'local.username': username.local.username }).lean().exec(function(err, user){
 			if(user.length === 0) {
-				console.log('unsuccessful retrieve jobs', username);
+				// console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
 			} else {
 				user[0].jobs.forEach((job) => {
@@ -169,7 +195,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-			        { "local.username": username.local.username },
+			        { 'local.username': username.local.username },
 			        { $set: user[0] },
 			        { new: true },
 			        function(err, model) {
@@ -187,12 +213,12 @@ module.exports = function(app, express) {
 	// body (_id)  _id is found inside specific job
 	// job array can be retrieved using get /api/jobs
 	app.delete('/api/jobs', function(req, res) {
-		console.log('session info delete /api/jobs', req.session.passport.user);
-		console.log('attempting to delete job', req.body);
+		// console.log('session info delete /api/jobs', req.session.passport.user);
+		// console.log('attempting to delete job', req.body);
 
 		var username = req.session.passport.user;
 
-		User.find({ "local.username": username.local.username }).lean().exec(function(err, user){
+		User.find({ 'local.username': username.local.username }).lean().exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
@@ -202,7 +228,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-			        { "local.username": username.local.username },
+			        { 'local.username': username.local.username },
 			        { $set: user[0] },
 			        { new: true },
 			        function(err, model) {
@@ -223,12 +249,17 @@ module.exports = function(app, express) {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	app.post('/api/savedJobs', function(req, res) {
+		// console.log(req.session);
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).exec(function(err, user){
+		User.find({ 'local.username': username.local.username }).exec(function(err, user){
+			console.log('user',user);
+			if (err) console.log('THERE HAS BEEN AN ERROR');
 			if(user.length === 0) {
+				console.log('ERROR ERROR');
 				res.status(400).send('null');
 			} else {
+				console.log('about to filter');
 				// console.log('user[0].jobs: ',user[0].jobs);
 				// console.log('typeof req.body._id',typeof req.body._id);
 				for (var i = 0; i < user[0].jobs.length; i++) {
@@ -240,19 +271,23 @@ module.exports = function(app, express) {
 				var jobToSave = user[0].jobs.filter((job) => {
 					return job._id.toString() === req.body._id;
 				})[0];
+				console.log('GOT A JOB TO SAVE', jobToSave);
 
 				if (jobToSave !== null && jobToSave !== undefined) {
-					jobToSave.interviewQuestions = req.body.question;
+					jobToSave.interviewQuestions = req.body.questions;
+					jobToSave.comments = req.body.comments;
 					user[0].savedJobs.push(jobToSave);
 				}
+				console.log('USER AFTER SAVING THE saved job', user);
 				// console.log('jobtosave:',jobToSave);
 
 
 				user[0].jobs = user[0].jobs.filter((job) => {
 					return job._id.toString() !== req.body._id;
 				});
+
 				User.findOneAndUpdate(
-					{ username: username },
+					{ 'local.username': username.local.username },
 	        { $set: user[0] },
 	        { new: true },
 	        function(err, model) {
@@ -270,7 +305,7 @@ module.exports = function(app, express) {
 	app.get('/api/savedJobs', function(req, res) {
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).exec(function(err, user){
+		User.find({ 'local.username': username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
 				// console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
@@ -285,7 +320,7 @@ module.exports = function(app, express) {
 
 		var username = req.session.passport.user;
 
-		User.find({ username: username }).exec(function(err, user){
+		User.find({ 'local.username': username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
 				res.status(400).send('null');
 			} else {
@@ -294,7 +329,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-							{ username: username },
+							{ 'local.username': username.local.username },
 							{ $set: user[0] },
 							{ new: true },
 							function(err, model) {
@@ -317,7 +352,7 @@ module.exports = function(app, express) {
 		console.log('session info get /api/tasks', req.session.passport.user);
 		var username = req.session.passport.user;
 
-		User.find({ "local.username": username.local.username }).exec(function(err, user){
+		User.find({ 'local.username': username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve tasks', username);
 				res.status(400).send('null');
@@ -336,7 +371,7 @@ module.exports = function(app, express) {
 		var username = req.session.passport.user;
 
 		User.findOneAndUpdate(
-	        { "local.username": username.local.username },
+	        { 'local.username': username.local.username },
 	        {$push: {"tasks": req.body}},
 	        {safe: true, upsert: true, new: true},
 	        function(err, model) {
@@ -358,7 +393,7 @@ module.exports = function(app, express) {
 
 		var username = req.session.passport.user;
 
-		User.find({ "local.username": username.local.username }).lean().exec(function(err, user){
+		User.find({ 'local.username': username.local.username }).lean().exec(function(err, user){
 			if(user.length === 0) {
 				console.log('unsuccessful retrieve tasks', username);
 				res.status(400).send('null');
@@ -372,7 +407,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-			        { "local.username": username.local.username },
+			        { 'local.username': username.local.username },
 			        { $set: user[0] },
 			        { new: true },
 			        function(err, model) {
@@ -390,9 +425,9 @@ module.exports = function(app, express) {
 	// body (_id)  _id is found inside specific tasks
 	// tasks array can be retrieved using get /api/tasks
 	app.delete('/api/tasks', function(req, res) {
-		console.log('REQ.BODY: ', req.body);
-		console.log('session info delete /api/tasks', req.session.passport.user);
-		console.log('attempting to delete tasks', req.body);
+		// console.log('REQ.BODY: ', req.body);
+		// console.log('session info delete /api/tasks', req.session.passport.user);
+		// console.log('attempting to delete tasks', req.body);
 
 		var username = req.session.passport.user;
 
@@ -406,7 +441,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-			        { username: username.local.username },
+			        { 'local.username': username.local.username },
 			        { $set: user[0] },
 			        { new: true },
 			        function(err, model) {
@@ -426,15 +461,15 @@ module.exports = function(app, express) {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	app.get('/api/companies', function(req, res) {
-		console.log('session info get /api/jobs', req.session.passport.user);
+		// console.log('session info get /api/jobs', req.session.passport.user);
 		var username = req.session.passport.user;
 
 		User.find({ "local.username": username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
-				console.log('unsuccessful retrieve jobs', username);
+				// console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
 			} else {
-				console.log('successful retrieve jobs', username, user[0].jobs);
+				// console.log('successful retrieve jobs', username, user[0].jobs);
 
 				var companies = user[0].jobs.map(obj => obj.company);
 
@@ -448,15 +483,15 @@ module.exports = function(app, express) {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	app.get('/api/dates', function(req, res) {
-		console.log('session info get /api/dates', req.session.passport.user);
+		// console.log('session info get /api/dates', req.session.passport.user);
 		var username = req.session.passport.user;
 
 		User.find({ "local.username": username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
-				console.log('unsuccessful retrieve user', username);
+				// console.log('unsuccessful retrieve user', username);
 				res.status(400).send('null');
 			} else {
-				console.log('successful retrieve user', username);
+				// console.log('successful retrieve user', username);
 				googleToken = user[0].google.token;
 				var userSteps = [];
 				user[0].jobs.forEach(job => {
@@ -622,7 +657,7 @@ module.exports = function(app, express) {
 			 // the callback after google has authorized the user
 	app.get('/auth/google/callback', passport.authenticate('google', { successRedirect : '/#/dashboard', failureRedirect : '/'}));
 	app.post('/api/register', function(req, res) {
-		console.log('attempting to register', req.body.username, req.body.password);
+		// console.log('attempting to register', req.body.username, req.body.password);
 	  var newUser = new User({
 			'local.username': req.body.username,
 			'local.password': req.body.password
@@ -645,14 +680,17 @@ module.exports = function(app, express) {
 	//in req.body: (username: password: )
 	app.post('/api/login', function(req, res, next) {
 	  passport.authenticate('local', function(err, user, info) {
-			console.log('Login Post:', user);
+			// console.log('Login Post:', user);
 	    if (err) {
 	      return next(err);
 	    }
 	    if (!user) {
-	      return res.status(401).json({
-	        err: info
-	      });
+				return res.status(401).json({
+					err: 'Could not log in user'
+				});
+	      // return res.status(401).json({
+	      //   err: info
+	      // });
 	    }
 	    req.logIn(user, function(err) {
 	      if (err) {
