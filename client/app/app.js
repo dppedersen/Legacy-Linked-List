@@ -4,7 +4,8 @@ angular.module('app',[
   'app.input',
   'app.dashboard',
   'app.auth',
-  'app.services'
+  'app.services',
+  'jkAngularCarousel'
 ])
 .config(function($locationProvider, $routeProvider, $mdThemingProvider, $httpProvider) {
   $locationProvider.hashPrefix('');
