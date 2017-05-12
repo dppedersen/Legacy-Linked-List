@@ -198,6 +198,7 @@ module.exports = function(app, express) {
 				})[0];
 
 				if (jobToSave !== null && jobToSave !== undefined) {
+					jobToSave.interviewQuestions = req.body.question;
 					user[0].savedJobs.push(jobToSave);
 				}
 				// console.log('jobtosave:',jobToSave);
@@ -447,7 +448,7 @@ module.exports = function(app, express) {
 									dueDate: item.end.dateTime,
 									dateCreated: item.created
 								});
-								console.log('NEWTASK:', newTask);
+								console.log('This is the New Task:', newTask);
 								dates.push(newTask);
 							}
 						})
@@ -455,7 +456,7 @@ module.exports = function(app, express) {
 				})
 				setTimeout(function() {
 					res.send(dates);
-				}, 1000);
+				}, 750);
 			}
 		});
 	});

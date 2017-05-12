@@ -88,6 +88,7 @@ angular.module('calendarWidget', []).component('calendarWidget', {
     $scope.showPrerenderedDialog = function (ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
       $scope.taskDate = new Date($scope.date);
+      console.log('Scope Task:', $scope.task);
       $scope.task = $scope.taskData.data.filter(function (task) {
         return new Date(task.dueDate).getTime() === $scope.taskDate.getTime();
       });
@@ -162,14 +163,23 @@ angular.module('jobWidget').component('jobWidget', {
 
         var confirmSave = $mdDialog.confirm().title('Save!').textContent('Save Job?').ariaLabel('Confirm Save').targetEvent(ev).ok('Yes').cancel('No');
 
+
+        var promptForInterviewQuestions = $mdDialog.prompt().title('Were you asked any specific interview questions?').textContent('Write down some you would like to remember!').initialValue('Ex. Balance this search tree!').ok('Submit');
+
         $mdDialog.show(confirmDelete).then(function () {
           $mdDialog.show(confirmSave).then(function () {
-            console.log('saving and deleting');
-            Jobs.saveAndDelete(query).then(function (res) {
-              $route.reload();
-              // $window.alert(res);
-            }).catch(function (err) {
-              console.log(err);
+            $mdDialog.show(promptForInterviewQuestions).then(function (message) {
+              console.log('message', message);
+              query = JSON.parse(query);
+              query.question = message;
+              query = JSON.stringify(query);
+              console.log('query', query);
+              Jobs.saveAndDelete(query).then(function (res) {
+                $route.reload();
+                // $window.alert(res);
+              }).catch(function (err) {
+                console.log(err);
+              });
             });
           }, function () {
             Jobs.delete(query).then(function (res) {
@@ -299,7 +309,9 @@ angular.module('profileWidget').component('profileWidget', {
 angular.module('savedJobsWidget', []);
 
 angular.module('savedJobsWidget').component('savedJobsWidget', {
-  template: '\n    <md-card id="saved-jobs-widget" class=\'widget\'>\n\n      <div style="display: flex; justify-content: space-between">\n        <span></span>\n        <span class="md-headline">Saved Jobs</span>\n        <md-button class="md-icon-button" ng-click="$ctrl.deleteAll()">\n            <md-icon>delete</md-icon>\n        </md-button>\n      </div>\n\n      <md-divider></md-divider>\n\n      <md-content">\n\n        <ul>\n          <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">\n            <div style="display: flex; justify-content: space-around; align-items: center;">\n              <b style="padding-right: 10px">{{savedJob.company}}</b>\n              <p>{{savedJob.position}}</p>\n            </div>\n            <div style="display: flex; justify-content: flex-end; align-items: flex-end;">\n              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog($event)" >\n                Details\n              </md-button>\n              <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>\n            </div>\n          </li>\n        </ul>\n\n\n      </md-content>\n    </md-card>\n    ',
+
+  template: '\n    <md-card id="saved-jobs-widget" class=\'widget\'>\n\n      <div style="display: flex; justify-content: space-between">\n        <span></span>\n        <span class="md-headline">Saved Jobs</span>\n        <md-button class="md-icon-button" ng-click="$ctrl.deleteAll()">\n            <md-icon>delete</md-icon>\n        </md-button>\n      </div>\n\n      <md-divider></md-divider>\n\n      <md-content">\n\n        <ul>\n          <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">\n            <div style="display: flex; justify-content: space-around; align-items: center;">\n              <b style="padding-right: 10px">{{savedJob.company}}</b>\n              <p>{{savedJob.position}}</p>\n            </div>\n            <div style="display: flex; justify-content: flex-end; align-items: flex-end;">\n\n              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog(savedJob)" >\n                Details\n              </md-button>\n              <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>\n            </div>\n          </li>\n        </ul>\n\n\n      </md-content>\n    </md-card>\n    ',
+
   controller: function controller($log, $mdDialog, SavedJobs) {
 
     this.getSavedJobs = function () {
@@ -331,31 +343,36 @@ angular.module('savedJobsWidget').component('savedJobsWidget', {
       });
     };
 
-    this.showTabDialog = function (ev) {
+
+    var that = this;
+    this.showTabDialog = function (savedJob) {
+      console.log(that);
+      console.log('savedJob', savedJob);
       $mdDialog.show({
-        // controller: this,
         templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
         parent: angular.element(document.body),
-        targetEvent: ev,
-        clickOutsideToClose: true
-      }).then(function (answer) {
-        this.status = 'You said the information was "' + answer + '".';
-      }, function () {
-        this.status = 'You cancelled the dialog.';
+        clickOutsideToClose: true,
+        locals: { savedJob: savedJob },
+        controller: ['$scope', 'savedJob', function ($scope, savedJob) {
+          $scope.savedJob = savedJob;
+        }]
+      }).then(function () {
+        return;
       });
     };
 
-    this.hide = function () {
-      $mdDialog.hide();
-    };
-
-    this.cancel = function () {
-      $mdDialog.cancel();
-    };
-
-    this.answer = function (answer) {
-      $mdDialog.hide(answer);
-    };
+    //
+    // this.hide = function() {
+    //   $mdDialog.hide();
+    // };
+    //
+    // this.cancel = function() {
+    //   $mdDialog.cancel();
+    // };
+    //
+    // this.answer = function(answer) {
+    //   $mdDialog.hide(answer);
+    // };
   }
 
 });
