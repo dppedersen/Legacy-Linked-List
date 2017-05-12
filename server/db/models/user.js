@@ -46,6 +46,10 @@ var UserSchema = mongoose.Schema({
     	name: {
 				type: String,
 				default: ''
+			},
+			profilePic: {
+				type: String,
+				default: ''
 			}
     },
 		tasks: [Task.schema],

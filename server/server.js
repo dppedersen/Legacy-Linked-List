@@ -91,7 +91,8 @@ passport.use(new GoogleStrategy({
 // facebook will send back the token and profile
 function(req, token, refreshToken, profile, done) {
   process.nextTick(function() {
-    console.log('~~~~~~~~~',req.user.google.token)
+    console.log('~~~~~~~~~',req.user.google.token);
+    console.log('Google Profile', profile._json.image.url);
     // check if the user is already logged in
     if (!req.user) {
 
@@ -113,6 +114,7 @@ function(req, token, refreshToken, profile, done) {
           req.user.google.token = token;
           req.user.google.name = profile.name.givenName + ' ' + profile.name.familyName;
           req.user.google.email = profile.emails[0].value;
+          req.user.google.profilePic = profile._json.image.url;
           req.user.save(function(err) {
             console.log('SAVING THE USER!!!!!!!!!!!!!!!!!!');
       		    if (err) {
@@ -127,7 +129,8 @@ function(req, token, refreshToken, profile, done) {
             'newUser.google.id': profile.id, // set the users facebook id
             'newUser.google.token': token, // we will save the token that facebook provides to the user
             'newUser.google.name': profile.name.givenName + ' ' + profile.name.familyName, // look at the passport user profile to see how names are returned
-            'newUser.google.email': profile.emails[0].value, // facebook can return multiple emails so we'll take the first
+            'newUser.google.email': profile.emails[0].value,
+            'newUser.google.profilePic': profile._json.image.url
           });
 
           // set all of the facebook information in our user model
@@ -152,7 +155,8 @@ function(req, token, refreshToken, profile, done) {
           "google.id": profile.id,
           "google.token": token,
           "google.name": profile.name.givenName + ' ' + profile.name.familyName,
-          "google.email": profile.emails[0].value
+          "google.email": profile.emails[0].value,
+          "google.profilePic": profile._json.image.url,
         }
         },
 
