@@ -99,46 +99,48 @@ module.exports = function(app, express) {
 	        	if(err) {
 	        		res.status(401).send(err);
 	        	} else {
-							var clientSecret = config.googleOAuth.clientSecret;
-							var clientId = config.googleOAuth.clientID;
-							var redirectUrl = config.googleOAuth.callbackURL;
-							var auth = new googleAuth();
-							var calendar = google.calendar('v3');
-							var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
-							oauth2Client.setCredentials({
-			  				access_token: username.google.token,
-			  				refresh_token: username.google.token,
-			  				expiry_date: true
-							});
-
-							username.jobs.forEach(job => {
-								var event = {
-									summary: job.officialName,
-									description: job.currentStep.name,
-									start: {
-										dateTime: job.currentStep.dueDate,
-										timeZone: 'America/New_York'
-									},
-									end: {
-										dateTime: job.currentStep.dueDate,
-										timeZone: 'America/New_York'
-									},
-									attendees: [
-										{'email': username.google.email}
-									]
-								}
-								calendar.events.insert({
-									auth: oauth2Client,
-									calendarId: username.google.email,
-									resource: event,
-								}, function(err, event) {
-									if (err) {
-										console.log('There was an error contacting the Calendar service: ' + err);
-										return;
-									}
-									console.log('Event created: %s', event.htmlLink);
+							if(google.email !== '') {
+								var clientSecret = config.googleOAuth.clientSecret;
+								var clientId = config.googleOAuth.clientID;
+								var redirectUrl = config.googleOAuth.callbackURL;
+								var auth = new googleAuth();
+								var calendar = google.calendar('v3');
+								var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
+								oauth2Client.setCredentials({
+				  				access_token: username.google.token,
+				  				refresh_token: username.google.token,
+				  				expiry_date: true
 								});
-							});
+
+								username.jobs.forEach(job => {
+									var event = {
+										summary: job.officialName,
+										description: job.currentStep.name,
+										start: {
+											dateTime: job.currentStep.dueDate,
+											timeZone: 'America/New_York'
+										},
+										end: {
+											dateTime: job.currentStep.dueDate,
+											timeZone: 'America/New_York'
+										},
+										attendees: [
+											{'email': username.google.email}
+										]
+									}
+									calendar.events.insert({
+										auth: oauth2Client,
+										calendarId: username.google.email,
+										resource: event,
+									}, function(err, event) {
+										if (err) {
+											console.log('There was an error contacting the Calendar service: ' + err);
+											return;
+										}
+										console.log('Event created: %s', event.htmlLink);
+									});
+								});
+							}
 							res.send('New job created');
 	        	}
 	        }
@@ -465,39 +467,41 @@ module.exports = function(app, express) {
         userSteps = userSteps.filter(step => !!step);
 
 				var dates = userSteps.filter(step => !!step.dueDate);
-				var options = {
-					url: `https://www.googleapis.com/calendar/v3/calendars/${username.google.email}/events?maxResults=2500`,
-					method: 'GET',
-					headers: {
-						'User-Agent': 'request',
-						'clientID': config.googleOAuth.clientID,
-						'clientSecret': config.googleOAuth.clientSecret,
-						'scope': 'https://www.googleapis.com/auth/calendar',
-						'Authorization': 'Bearer ' + googleToken,
-					},
-					json: true
-				}
-
-				request(options, (err, res, body) => {
-					if(err) {
-						console.log('Calendar Error:', err);
-					} else {
-						console.log('GoogleToken:', googleToken, 'User Token:', username.google.token);
-						if(body.items){
-							body.items.forEach(item => {
-								if(item.created && item.created.slice(0, 4) === '2017') {
-									newTask = new Task({
-										name: item.summary,
-										dueDate: item.end.dateTime,
-										dateCreated: item.created
-									});
-									console.log('This is the New Task:', newTask);
-									dates.push(newTask);
-								}
-							})
-						}
+				if(google.email !== '') {
+					var options = {
+						url: `https://www.googleapis.com/calendar/v3/calendars/${username.google.email}/events?maxResults=2500`,
+						method: 'GET',
+						headers: {
+							'User-Agent': 'request',
+							'clientID': config.googleOAuth.clientID,
+							'clientSecret': config.googleOAuth.clientSecret,
+							'scope': 'https://www.googleapis.com/auth/calendar',
+							'Authorization': 'Bearer ' + googleToken,
+						},
+						json: true
 					}
-				})
+
+					request(options, (err, res, body) => {
+						if(err) {
+							console.log('Calendar Error:', err);
+						} else {
+							console.log('GoogleToken:', googleToken, 'User Token:', username.google.token);
+							if(body.items){
+								body.items.forEach(item => {
+									if(item.created && item.created.slice(0, 4) === '2017') {
+										newTask = new Task({
+											name: item.summary,
+											dueDate: item.end.dateTime,
+											dateCreated: item.created
+										});
+										console.log('This is the New Task:', newTask);
+										dates.push(newTask);
+									}
+								})
+							}
+						}
+					})
+				}
 				setTimeout(function() {
 					res.send(dates);
 				}, 750);
