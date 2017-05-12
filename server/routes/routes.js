@@ -2,6 +2,10 @@ var db = require('../db/db-config.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var request = require('request');
+var multiparty = require('connect-multiparty');
+var multipartyMiddleware = multiparty();
+var fs = require('fs');
+var textract = require('textract');
 // import mongoose models
 var User = require('../db/models/user.js');
 var Task = require('../db/models/task.js');
@@ -9,8 +13,7 @@ var Step = require('../db/models/step.js');
 var Contact = require('../db/models/contact.js');
 var Job = require('../db/models/job.js');
 var LocalStrategy = require('passport-local').Strategy;
-var multiparty = require('connect-multiparty');
-var multipartyMiddleware = multiparty();
+
 const rp = require('request-promise');
 const config = require('../config/config.js');
 
@@ -25,6 +28,17 @@ module.exports = function(app, express) {
 		console.log('file.name', file.name);
 		console.log('file.type', file.type);
 		console.log('file.path', file.path);
+		console.log('file', file);
+		// var data = req.files.data;
+		// console.log('data', data);
+		fs.readFile(file.path, function (err, data) {
+			if (err) throw err;
+			textract.fromFileWithPath(file.path, function(err, text) {
+				if (err) throw err;
+				console.log(typeof text);
+				res.send(JSON.stringify(text));
+			});
+		});
 	});
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

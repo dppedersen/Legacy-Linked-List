@@ -42,7 +42,8 @@
     "passport-local-mongoose": "^4.0.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.0",
-    "serve-favicon": "^2.4.2"
+    "serve-favicon": "^2.4.2",
+    "textract": "^2.1.2"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
