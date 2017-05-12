@@ -424,7 +424,7 @@ module.exports = function(app, express) {
 
 				var dates = userSteps.filter(step => !!step.dueDate);
 				var options = {
-					url: `https://www.googleapis.com/calendar/v3/calendars/${username.google.email}/events?maxResults=2500`,
+					url: `https://www.googleapis.com/calendar/v3/calendars/${username.google.email}/events?maxResults=2000`,
 					method: 'GET',
 					headers: {
 						'User-Agent': 'request',
@@ -442,7 +442,7 @@ module.exports = function(app, express) {
 					} else {
 						console.log('GoogleToken:', googleToken, 'User Token:', username.google.token);
 						body.items.forEach(item => {
-							if(item.created && item.created.slice(0, 4) === '2017') {
+							if(item.summary === 'Arturo') {
 								newTask = new Task({
 									name: item.summary,
 									dueDate: item.end.dateTime,
