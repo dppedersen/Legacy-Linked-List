@@ -22,6 +22,7 @@ angular.module('calendarWidget', [])
     $scope.showPrerenderedDialog = function(ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
       $scope.taskDate = new Date($scope.date);
+      console.log('Scope Task:', $scope.task);
       $scope.task = $scope.taskData.data.filter(task => new Date(task.dueDate).getTime() === $scope.taskDate.getTime())
 
       $mdDialog.show({

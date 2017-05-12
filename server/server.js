@@ -165,40 +165,11 @@ function(req, token, refreshToken, profile, done) {
                   if (err) {
                     console.log('User Save Error:', err);
                   } else {
-                    var dueDate = req.user.jobs[0].currentStep.dueDate;
-                    var calendarDate = dueDate.slice(0, 10);
-                    console.log('THIS SHIT DUE:', calendarDate);
-                    var options = {
-                      url: `https://www.googleapis.com/calendar/v3/calendars/${req.user.google.email}/events`,
-                      method: 'GET',
-                      headers: {
-                        'User-Agent': 'request',
-                        'clientID': config.googleOAuth.clientID,
-                        'clientSecret': config.googleOAuth.clientSecret,
-                        'scope': 'https://www.googleapis.com/auth/calendar',
-                        'Authorization': 'Bearer ' + req.user.google.token,
-                        'Content-Type': 'application/json',
-                        'end': {
-                            'date': calendarDate
-                          },
-                        'start': {
-                          'date': calendarDate
-                        }
-                      }
-                    };
-
-                    request(options, (err, res, body) => {
-                      if(err) {
-                        console.log('Calendar Error:', err);
-                      } else {
-                        return done(null, body);
-                        console.log('Calendar:', body);
-                      }
-                    })
                     return done(null, user);
                   }
               });
               }
+
             });
       // User.findOneAndUpdate({username: user.local.username, 'user.google.id': profile.id, 'user.google.token': token, 'user.google.name': profile.name.givenName + ' ' + profile.name.familyName, 'user.google.email': profile.emails[0].value},
       // function(err, user) {
