@@ -4,7 +4,7 @@ angular.module('app',[
   'app.input',
   'app.dashboard',
   'app.auth',
-  'app.services'
+  'app.services',
 ])
 .config(function($locationProvider, $routeProvider, $mdThemingProvider, $httpProvider) {
   $locationProvider.hashPrefix('');
@@ -37,7 +37,7 @@ angular.module('app',[
     }
 
     $scope.handleDashboardClick = function() {
-      $location.path('dashboard');
+      $location.path('googleDashboard');
     }
 
     $scope.handleInputClick = function() {
@@ -570,12 +570,12 @@ angular.
     `
     <md-card id="profile-widget" class='widget' layout="row">
       <div class="profile-img-container">
-        <img class="profile-img" src="{{$ctrl.user.local.profilePic}}">
+        <img class="profile-img" ng-src="{{$ctrl.user.google.profilePic === '' ? $ctrl.user.local.profilePic : $ctrl.user.google.profilePic }}">
       </div>
       <div class="profile-data-container">
-        <span class="md-headline">{{$ctrl.user.local.username}}</span>
+        <span class="md-headline">{{$ctrl.user.google.name === '' ? $ctrl.user.local.username : $ctrl.user.google.name}}</span>
+        <p>{{$ctrl.user.google.email === '' ? $ctrl.user.local.email : $ctrl.user.google.email}}</p>
         <p>{{$ctrl.user.local.city}}, {{$ctrl.user.local.state}}</p>
-        <p>{{$ctrl.user.local.email}}</p>
         <p>Active Applications: {{$ctrl.user.jobs.length}}</p>
       </div>
       <!-- <button id="profile-add-job" ng-click="$ctrl.handleAddJobClick()">
@@ -621,7 +621,6 @@ angular.
             <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
 
               <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog(savedJob)" >
-
                 Details
               </md-button>
               <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
@@ -657,21 +656,6 @@ angular.
                 this.getSavedJobs();
               });
           }
-        });
-      };
-
-      this.showTabDialog = function(ev) {
-        $mdDialog.show({
-          // controller: this,
-          templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
-          parent: angular.element(document.body),
-          targetEvent: ev,
-          clickOutsideToClose:true
-        })
-        .then(function(answer) {
-          this.status = 'You said the information was "' + answer + '".';
-        }, function() {
-          this.status = 'You cancelled the dialog.';
         });
       };
 

@@ -58,7 +58,9 @@ passport.use('local', new localStrategy({
   // find a user whose email is the same as the forms email
   // we are checking to see if the user trying to login already exists
 
-  User.findOne({'local.username': req.body.username}, function(err, user) {
+  User.findOne({
+    'local.username': req.body.username
+  }, function(err, user) {
     // if there are any errors, return the error before anything else
     if (err)
       return done(err);
@@ -91,7 +93,6 @@ passport.use(new GoogleStrategy({
 // facebook will send back the token and profile
 function(req, token, refreshToken, profile, done) {
   process.nextTick(function() {
-    console.log('~~~~~~~~~',req.user.google.token)
     // check if the user is already logged in
     if (!req.user) {
 
@@ -105,72 +106,70 @@ function(req, token, refreshToken, profile, done) {
         if (err) {
           console.log('Google UserFindOne Error', err);
           return done(err);
-}
+        }
         // if the user is found, then log them in
         if (req.user.google.id === '') {
           req.user.google.id = profile.id;
-          console.log(req.user.google.id);
           req.user.google.token = token;
           req.user.google.name = profile.name.givenName + ' ' + profile.name.familyName;
           req.user.google.email = profile.emails[0].value;
+          req.user.google.profilePic = profile._json.image.url;
           req.user.save(function(err) {
             console.log('SAVING THE USER!!!!!!!!!!!!!!!!!!');
-      		    if (err) {
-                return res.send(err);
-              } else {
-                return done(null, user);
-              }
-            });
+            if (err) {
+              return res.send(err);
+            } else {
+              return done(null, user);
+            }
+          });
         } else {
           // if there is no user found with that facebook id, create them
           var newUser = new User({
             'newUser.google.id': profile.id, // set the users facebook id
             'newUser.google.token': token, // we will save the token that facebook provides to the user
             'newUser.google.name': profile.name.givenName + ' ' + profile.name.familyName, // look at the passport user profile to see how names are returned
-            'newUser.google.email': profile.emails[0].value, // facebook can return multiple emails so we'll take the first
+            'newUser.google.email': profile.emails[0].value,
+            'newUser.google.profilePic': profile._json.image.url
           });
-
           // set all of the facebook information in our user model
-
           // save our user to the database
           newUser.save(function(err) {
             if (err)
               throw err;
-
             // if successful, return the new user
             return done(null, newUser);
           });
         }
-
       });
-
     } else {
       // user already exists and is logged in, we have to link accounts
       var user = req.user; // pull the user out of the session
-      User.findOneAndUpdate({ "local.username": user.local.username},
-        { $set: {
+      User.findOneAndUpdate({
+        "local.username": user.local.username
+      }, {
+        $set: {
           "google.id": profile.id,
           "google.token": token,
           "google.name": profile.name.givenName + ' ' + profile.name.familyName,
-          "google.email": profile.emails[0].value
+          "google.email": profile.emails[0].value,
+          "google.profilePic": profile._json.image.url
         }
-        },
+      }, {
+        upsert: true
+      }, function(err, user) {
+        if (err) {
+          res.status(401).send(err);
+        } else {
+          user.save(function(err) {
+            if (err) {
+              console.log('User Save Error:', err);
+            } else {
+              return done(null, user);
+            }
+          });
+        }
 
-            { upsert: true },
-            function(err, user) {
-              if(err) {
-                res.status(401).send(err);
-              } else {
-                user.save(function(err) {
-                  if (err) {
-                    console.log('User Save Error:', err);
-                  } else {
-                    return done(null, user);
-                  }
-              });
-              }
-
-            });
+      });
       // User.findOneAndUpdate({username: user.local.username, 'user.google.id': profile.id, 'user.google.token': token, 'user.google.name': profile.name.givenName + ' ' + profile.name.familyName, 'user.google.email': profile.emails[0].value},
       // function(err, user) {
       //   if(err) {
