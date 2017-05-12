@@ -484,7 +484,6 @@ module.exports = function(app, express) {
 						console.log('Calendar Error:', err);
 					} else {
 						console.log('GoogleToken:', googleToken, 'User Token:', username.google.token);
-<<<<<<< HEAD
 						if(body.items){
 							body.items.forEach(item => {
 								if(item.created && item.created.slice(0, 4) === '2017') {
