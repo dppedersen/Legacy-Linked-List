@@ -154,21 +154,32 @@ angular.
             .title('Were you asked any specific interview questions?')
             .textContent('Write down some you would like to remember!')
             .initialValue('Ex. Balance this search tree!')
-            .ok('Submit');
+            .ok('Submit')
+            .cancel('Do Not Add')
+
 
           $mdDialog.show(confirmDelete).then(function() {
             $mdDialog.show(confirmSave).then(function() {
               $mdDialog.show(promptForInterviewQuestions)
                 .then(function(message) {
-                  console.log('message',message)
+                  console.log('message',message);
                   query = JSON.parse(query);
                   query.question = message;
                   query = JSON.stringify(query);
-                  console.log('query',query);
                   Jobs.saveAndDelete(query)
                     .then(function(res) {
                       $route.reload();
-                      // $window.alert(res);
+                    })
+                    .catch(function(err) {
+                      console.log(err);
+                    });
+                }, function() {
+                  query = JSON.parse(query);
+                  query.question = 'No Questions Added!';
+                  query = JSON.stringify(query);
+                  Jobs.saveAndDelete(query)
+                    .then(function(res) {
+                      $route.reload();
                     })
                     .catch(function(err) {
                       console.log(err);
@@ -178,7 +189,6 @@ angular.
               Jobs.delete(query)
               .then(function(res) {
                 $route.reload();
-                // $window.alert(res);
               })
               .catch(function(err) {
                 console.log(err);

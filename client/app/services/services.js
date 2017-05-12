@@ -304,8 +304,9 @@ angular.module('app.services', [])
     .then(res => {
       $location.path('/dashboard')
     }, res => {
-      $location.path('/')
-      alert(res.data.err.message)
+      $location.path('/');
+			console.log(res.data.err.message);
+      alert(res.data.err);
     })
   };
 

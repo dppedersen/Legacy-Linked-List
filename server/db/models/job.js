@@ -55,7 +55,8 @@ var Job = mongoose.model('Job', {
 		default: 'address was not found from website link...'
 	},
 	interviewQuestions: {
-		type: [String]
+		type: String,
+		default: 'No Questions Added!'
 	},
 	currentStep: Step.schema,
 	nextStep: Step.schema
