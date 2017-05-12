@@ -2,7 +2,7 @@ angular.module('app.input', [
   'ngMaterial',
   'ngMessages'
 ])
-.controller('inputController', function($scope, $http, $location, $route, News, Companies, Jobs) {
+.controller('inputController', function($scope, $http, $location, $route, Upload, News, Companies, Jobs) {
 
   $scope.job = {
     company: undefined,
@@ -27,6 +27,24 @@ angular.module('app.input', [
               comments:[],
               dueDate: null}
   };
+
+  $scope.$watch('file', function() {
+    var file = $scope.file;
+    if (!file) {
+      return;
+    }
+    Upload.upload({
+      url: 'api/upload',
+      file: file
+    }).progress(function(evt) {
+      var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+      console.log('progress: ' + progressPercentage + '%' + evt.config.file.name);
+    }).success(function(data, status, headers, config) {
+      console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
+    }).error(function(data, status, headers, config) {
+      console.log('error status: ' + status);
+    })
+  });
 
   $scope.addContact = () => {
     $scope.job.contacts.push({name: undefined,

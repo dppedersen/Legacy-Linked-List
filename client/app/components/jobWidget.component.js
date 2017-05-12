@@ -130,7 +130,7 @@ angular.
 
 
         var showConfirm = function(ev) {
-          var query = JSON.stringify({_id : job._id});
+          var query = {_id : job._id};
 
           // Appending dialog to document.body to cover sidenav in docs app
           var confirmDelete = $mdDialog.confirm()
@@ -155,18 +155,15 @@ angular.
             .textContent('Write down some you would like to remember!')
             .initialValue('Ex. Balance this search tree!')
             .ok('Submit')
-            .cancel('Do Not Add')
+            .cancel('Do Not Add');
 
 
           $mdDialog.show(confirmDelete).then(function() {
             $mdDialog.show(confirmSave).then(function() {
               $mdDialog.show(promptForInterviewQuestions)
-                .then(function(message) {
-                  console.log('message',message);
-                  query = JSON.parse(query);
-                  query.question = message;
-                  query = JSON.stringify(query);
-                  Jobs.saveAndDelete(query)
+                .then(function(questions) {
+                  query.questions = questions;
+                  Jobs.saveAndDelete(JSON.stringify(query))
                     .then(function(res) {
                       $route.reload();
                     })
@@ -174,10 +171,8 @@ angular.
                       console.log(err);
                     });
                 }, function() {
-                  query = JSON.parse(query);
-                  query.question = 'No Questions Added!';
-                  query = JSON.stringify(query);
-                  Jobs.saveAndDelete(query)
+                  query.questions = 'No Questions Added!';
+                  Jobs.saveAndDelete(JSON.stringify(query))
                     .then(function(res) {
                       $route.reload();
                     })

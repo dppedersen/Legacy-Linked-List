@@ -56,7 +56,9 @@ var Job = mongoose.model('Job', {
 	},
 	interviewQuestions: {
 		type: String,
-		default: 'No Questions Added!'
+	},
+	comments: {
+		type: String
 	},
 	currentStep: Step.schema,
 	nextStep: Step.schema

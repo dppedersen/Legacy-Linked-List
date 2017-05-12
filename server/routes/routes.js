@@ -9,10 +9,23 @@ var Step = require('../db/models/step.js');
 var Contact = require('../db/models/contact.js');
 var Job = require('../db/models/job.js');
 var LocalStrategy = require('passport-local').Strategy;
+var multiparty = require('connect-multiparty');
+var multipartyMiddleware = multiparty();
 const rp = require('request-promise');
 const config = require('../config/config.js');
 
 module.exports = function(app, express) {
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//                    File Upload
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	app.post('/api/upload', multipartyMiddleware, function(req, res) {
+		var file = req.files.file;
+		console.log('file.name', file.name);
+		console.log('file.type', file.type);
+		console.log('file.path', file.path);
+	});
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//                    Users
@@ -204,7 +217,8 @@ module.exports = function(app, express) {
 				console.log('GOT A JOB TO SAVE', jobToSave);
 
 				if (jobToSave !== null && jobToSave !== undefined) {
-					jobToSave.interviewQuestions = req.body.question;
+					jobToSave.interviewQuestions = req.body.questions;
+					jobToSave.comments = req.body.comments;
 					user[0].savedJobs.push(jobToSave);
 				}
 				console.log('USER AFTER SAVING THE saved job', user);
@@ -258,7 +272,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-							{ username: username },
+							{ 'local.username': username.local.username },
 							{ $set: user[0] },
 							{ new: true },
 							function(err, model) {
@@ -370,7 +384,7 @@ module.exports = function(app, express) {
 				});
 
 				User.findOneAndUpdate(
-			        { username: username.local.username },
+			        { 'local.username': username.local.username },
 			        { $set: user[0] },
 			        { new: true },
 			        function(err, model) {

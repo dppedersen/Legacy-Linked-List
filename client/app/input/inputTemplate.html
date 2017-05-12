@@ -48,6 +48,7 @@
           <input ng-model="job.website" required>
           <!-- <input ng-model="job.website" required type="url"> -->
         </md-input-container>
+
       </div>
 
       <div layout="row">
@@ -79,6 +80,17 @@
           <i class="material-icons"  style="margin-top:15px">add</i>
           <md-tooltip>Add Contact</md-tooltip>
         </md-button>
+      </div>
+
+
+      <div layout="row">
+        <span class="md-title">Resume</span>
+      </div>
+
+      <div layout="row" layout-padding>
+        <!-- <input data-my-Directive type="file" name="file"> -->
+        <button type="button" class="btn btn-default" ngf-select ng-model="file">Upload</button>
+        <!-- <input "ng-hide"  id="input-file-id" type="file" /> -->
       </div>
 
       <div layout="row">
@@ -136,6 +148,9 @@
           <textarea ng-model="job.nextStep.comments[0]" md-maxlength="150" rows="1" md-select-on-focus></textarea>
         </md-input-container>
       </div>
+
+
+
 
       <md-button type="submit" class="md-primary md-raised">Add New Job</md-button>
     </form>

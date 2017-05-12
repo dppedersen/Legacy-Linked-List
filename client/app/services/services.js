@@ -255,38 +255,10 @@ angular.module('app.services', [])
 				});
 		}
 	}
-	// return {
-	// 	create: function() {
-	// 		return $http({
-	// 			method: 'POST',
-	// 			api: '/api/savedJobs',
-	// 			data: data,
-	// 			headers: {
-	// 				'Content-type': 'application/json;charset=utf-8'
-	// 			}
-	// 		})
-	// 		.then(function(res) {
-	// 			return res.data;
-	// 		});
-	// 	},
-	// ,
-	// 	update: function() {
-	// 		return $http({
-	// 			method: 'PATCH',
-	// 			api: '/api/savedJobs',
-	// 			data: data,
-	// 			headers: {
-	// 				'Content-type': 'application/json;charset=utf-8'
-	// 			}
-	// 		})
-	// 		.then(function(res) {
-	// 			return res.data;
-	// 		});
-	// 	},
-
-	// 	}
-	// }
 })
+// .factory('FileUpload', function ($http) {
+//
+// }
 .factory('Auth', ($http, $location) => {
 
   var register = (user) => {

@@ -1,6 +1,7 @@
 angular.module('app',[
   'ngRoute',
   'ngMaterial',
+  'ngFileUpload',
   'app.input',
   'app.dashboard',
   'app.auth',
