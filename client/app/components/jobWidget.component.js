@@ -154,7 +154,7 @@ angular.
           var promptForInterviewQuestions = $mdDialog.prompt()
             .title('Were you asked any specific interview questions?')
             .textContent('Write down some you would like to remember!')
-            .initialValue('Ex. Balance this search tree!')
+            .placeholder('Ex. Balance this search tree!')
             .ok('Submit')
             .cancel('Do Not Add');
 
