@@ -4,7 +4,7 @@ angular.module('app',[
   'app.input',
   'app.dashboard',
   'app.auth',
-  'app.services',
+  'app.services'
 ])
 .config(function($locationProvider, $routeProvider, $mdThemingProvider, $httpProvider) {
   $locationProvider.hashPrefix('');
@@ -37,7 +37,7 @@ angular.module('app',[
     }
 
     $scope.handleDashboardClick = function() {
-      $location.path('googleDashboard');
+      $location.path('dashboard');
     }
 
     $scope.handleInputClick = function() {
