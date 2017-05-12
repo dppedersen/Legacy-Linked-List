@@ -101,6 +101,7 @@ angular.module('calendarWidget', [])
     $scope.showPrerenderedDialog = function(ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
       $scope.taskDate = new Date($scope.date);
+      console.log('Scope Task:', $scope.task);
       $scope.task = $scope.taskData.data.filter(task => new Date(task.dueDate).getTime() === $scope.taskDate.getTime())
 
       $mdDialog.show({
@@ -278,16 +279,30 @@ angular.
           .ok('Yes')
           .cancel('No');
 
+
+          var promptForInterviewQuestions = $mdDialog.prompt()
+            .title('Were you asked any specific interview questions?')
+            .textContent('Write down some you would like to remember!')
+            .initialValue('Ex. Balance this search tree!')
+            .ok('Submit');
+
           $mdDialog.show(confirmDelete).then(function() {
             $mdDialog.show(confirmSave).then(function() {
-              console.log('saving and deleting');
-              Jobs.saveAndDelete(query)
-                .then(function(res) {
-                  $route.reload();
-                  // $window.alert(res);
-                })
-                .catch(function(err) {
-                  console.log(err);
+              $mdDialog.show(promptForInterviewQuestions)
+                .then(function(message) {
+                  console.log('message',message)
+                  query = JSON.parse(query);
+                  query.question = message;
+                  query = JSON.stringify(query);
+                  console.log('query',query);
+                  Jobs.saveAndDelete(query)
+                    .then(function(res) {
+                      $route.reload();
+                      // $window.alert(res);
+                    })
+                    .catch(function(err) {
+                      console.log(err);
+                    });
                 });
             }, function() {
               Jobs.delete(query)
@@ -604,7 +619,8 @@ angular.
               <p>{{savedJob.position}}</p>
             </div>
             <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
-              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog($event)" >
+
+              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog(savedJob)" >
                 Details
               </md-button>
               <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>
@@ -643,33 +659,37 @@ angular.
         });
       };
 
-      this.showTabDialog = function(ev) {
+
+      var that = this;
+      this.showTabDialog = function(savedJob) {
+        console.log(that);
+        console.log('savedJob',savedJob);
         $mdDialog.show({
-          // controller: this,
           templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
           parent: angular.element(document.body),
-          targetEvent: ev,
-          clickOutsideToClose:true
+          clickOutsideToClose:true,
+          locals: { savedJob: savedJob },
+          controller: ['$scope', 'savedJob', function($scope, savedJob) {
+            $scope.savedJob = savedJob;
+          }]
         })
-        .then(function(answer) {
-          this.status = 'You said the information was "' + answer + '".';
-        }, function() {
-          this.status = 'You cancelled the dialog.';
+        .then(function() {
+          return;
         });
       };
 
-
-      this.hide = function() {
-        $mdDialog.hide();
-      };
-
-      this.cancel = function() {
-        $mdDialog.cancel();
-      };
-
-      this.answer = function(answer) {
-        $mdDialog.hide(answer);
-      };
+      //
+      // this.hide = function() {
+      //   $mdDialog.hide();
+      // };
+      //
+      // this.cancel = function() {
+      //   $mdDialog.cancel();
+      // };
+      //
+      // this.answer = function(answer) {
+      //   $mdDialog.hide(answer);
+      // };
     }
 
   });

@@ -424,7 +424,7 @@ module.exports = function(app, express) {
 
 				var dates = userSteps.filter(step => !!step.dueDate);
 				var options = {
-					url: `https://www.googleapis.com/calendar/v3/calendars/${username.google.email}/events?maxResults=2000`,
+					url: `https://www.googleapis.com/calendar/v3/calendars/${username.google.email}/events?maxResults=2500`,
 					method: 'GET',
 					headers: {
 						'User-Agent': 'request',
@@ -442,13 +442,13 @@ module.exports = function(app, express) {
 					} else {
 						console.log('GoogleToken:', googleToken, 'User Token:', username.google.token);
 						body.items.forEach(item => {
-							if(item.summary === 'Arturo') {
+							if(item.created && item.created.slice(0, 4) === '2017') {
 								newTask = new Task({
 									name: item.summary,
 									dueDate: item.end.dateTime,
 									dateCreated: item.created
 								});
-								console.log('NEWTASK:', newTask);
+								console.log('This is the New Task:', newTask);
 								dates.push(newTask);
 							}
 						})
@@ -456,7 +456,7 @@ module.exports = function(app, express) {
 				})
 				setTimeout(function() {
 					res.send(dates);
-				}, 1000);
+				}, 750);
 			}
 		});
 	});
