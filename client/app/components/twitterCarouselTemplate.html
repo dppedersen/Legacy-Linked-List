@@ -1,0 +1,18 @@
+<div class="carousel-container" style="width: 100%; min-height:350px; background-image:url('{{slideItem.user.profile_background_image_url}}'); display: flex;
+  justify-content: center;
+  align-items: center; ">
+
+  <div class="tweet-container" style="background-color: white; width: 500px; height: 250px; margin: auto; border-radius: 5px;">
+    <div class="handle" style="display: flex; justify-content: center; align-items: center; height: 3em; background-color: #3498db; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+      <span ><a href="slideItem.user.url" style="text-decoration: none; color: white;"><h2>@{{slideItem.user.screen_name}}</h2></a></span>
+    </div>
+    <div class="tweet-box" style="display:flex; align-items: center; height: 80%;">
+      <div class="avatar" style="flex:0 0 80px; height: 80px; margin-left: 15px; background-image:url('{{slideItem.user.profile_image_url}}'); background-repeat: no-repeat; background-size: cover; display: inline-block;"></div>
+      <div class="tweet" style="flex: 75%; margin-left: 15px;">
+        <span><p style="color: grey; font-size: .8em; font-style: italic;">{{slideItem.created_at}}</p></span>
+        <span>{{slideItem.text}}</span>
+      </div>
+    </div>
+  </div>
+
+</div>
