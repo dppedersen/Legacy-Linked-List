@@ -24,7 +24,7 @@ angular.module('app', ['ngRoute', 'ngMaterial', 'app.input', 'app.dashboard', 'a
   };
 
   $scope.handleDashboardClick = function () {
-    $location.path('dashboard');
+    $location.path('googleDashboard');
   };
 
   $scope.handleInputClick = function () {
