@@ -10,7 +10,10 @@ angular.
         <img class="profile-img" ng-src="{{$ctrl.user.google.profilePic === '' ? $ctrl.user.local.profilePic : $ctrl.user.google.profilePic }}">
       </div>
       <div class="profile-data-container">
-        <span class="md-headline">{{$ctrl.user.google.name === '' ? $ctrl.user.local.username : $ctrl.user.google.name}}</span>
+        <div>
+          <span class="md-headline" ng-if="$ctrl.user.google.id === ''">{{$ctrl.user.local.username}}</span>
+          <span class="md-headline" ng-if="$ctrl.user.google.id !== ''">{{$ctrl.user.google.name}}</span>
+        </div>
         <p>{{$ctrl.user.google.email === '' ? $ctrl.user.local.email : $ctrl.user.google.email}}</p>
         <p>{{$ctrl.user.local.city}}, {{$ctrl.user.local.state}}</p>
         <p>Active Applications: {{$ctrl.user.jobs.length}}</p>

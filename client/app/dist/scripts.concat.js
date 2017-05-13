@@ -589,7 +589,10 @@ angular.
         <img class="profile-img" ng-src="{{$ctrl.user.google.profilePic === '' ? $ctrl.user.local.profilePic : $ctrl.user.google.profilePic }}">
       </div>
       <div class="profile-data-container">
-        <span class="md-headline">{{$ctrl.user.google.name === '' ? $ctrl.user.local.username : $ctrl.user.google.name}}</span>
+        <div>
+          <span class="md-headline" ng-if="$ctrl.user.google.id === ''">{{$ctrl.user.local.username}}</span>
+          <span class="md-headline" ng-if="$ctrl.user.google.id !== ''">{{$ctrl.user.google.name}}</span>
+        </div>
         <p>{{$ctrl.user.google.email === '' ? $ctrl.user.local.email : $ctrl.user.google.email}}</p>
         <p>{{$ctrl.user.local.city}}, {{$ctrl.user.local.state}}</p>
         <p>Active Applications: {{$ctrl.user.jobs.length}}</p>
@@ -1108,8 +1111,8 @@ angular.
         </div>
 
         <h3 style="text-align: center;">Or <br /></h3>
-        <div style="display: flex; justify-content: center; align-items: center;" class="googleDiv">
-          <a href="/auth/google" class="googleSignIn"><img src="../assets/google-button.png" style="outline: 0;" /></a>
+        <div class="googleDiv">
+          <a href="/auth/google" class="googleSignIn"></a>
         </div>
         <div layout="row">
           <md-button flex='100' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>
