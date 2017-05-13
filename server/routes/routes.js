@@ -359,10 +359,9 @@ module.exports = function(app, express) {
 					var jobToSave = user.jobs.filter((job) => {
 						return job._id.toString() === req.body._id;
 					})[0];
-					//
+
 					if (jobToSave !== null && jobToSave !== undefined) {
-						console.log('JOB TO SAVE:', req.body);
-						jobToSave.interviewQuestions = req.body.questions;
+						jobToSave.interviewQuestions = req.body.question;
 						user.savedJobs.push(jobToSave);
 					}
 
@@ -803,7 +802,7 @@ module.exports = function(app, express) {
 					}
 					setTimeout(function() {
 						res.send(dates);
-					}, 2000);
+					}, 750);
 				}
 			})
 		} else {
@@ -838,29 +837,27 @@ module.exports = function(app, express) {
 
 		let companyName = req.query.company;
 
-			let options = {
-				uri: "https://api.cognitive.microsoft.com/bing/v5.0/news/search?",
-				qs: {
-					q: companyName,
-					count: 10,
-					offset: 0,
-					mkt: 'en-us',
-					safeSearch: 'Moderate'
-				},
-				headers: {
-					'Ocp-Apim-Subscription-Key': config.apiKeys.bingSearch
-				},
-				json: true
-			};
-			var stories;
-			request(options, (err, res, body) => {
-				if(err) {
-					console.log('Error Getting News (Routes:856)', err);
-				} else {
-					stories = body;
-				}
-			});
+		let options = {
+			uri: "https://api.cognitive.microsoft.com/bing/v5.0/news/search?",
+			qs: {
+				q: companyName,
+				count: 10,
+				offset: 0,
+				mkt: 'en-us',
+				safeSearch: 'Moderate'
+			},
+			headers: {
+				'Ocp-Apim-Subscription-Key': config.apiKeys.bingSearch
+			},
+			json: true
+		};
+		rp(options)
+		.then(function(stories) {
 			res.status(200).send(stories);
+		})
+		.catch(function(err) {
+			console.log('API call failed!');
+		});
 	});
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
