@@ -867,9 +867,6 @@ module.exports = function(app, express) {
 	var twitter = new Twit(config.twitter);
 
 	app.post('/api/twitter', function(req, res) {
-		console.error('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-		console.log('Req recieved');
-		console.log(req.body);
 		return Promise.all(req.body.map(handle => {
 				return new Promise((resolve, reject) => {
 					let params = {
@@ -893,7 +890,6 @@ module.exports = function(app, express) {
 			data = data.reduce((acc, item) => {
 				return acc.concat(item)
 			},[])
-			console.log(data);
 			res.status(200).send(JSON.stringify(data));
 		})
 		.catch(err => {
