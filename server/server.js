@@ -86,6 +86,7 @@ passport.use(new GoogleStrategy({
   clientID: config.googleOAuth.clientID,
   clientSecret: config.googleOAuth.clientSecret,
   callbackURL: config.googleOAuth.callbackURL,
+  scope: config.googleOAuth.scope,
   passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
 },
@@ -113,8 +114,8 @@ function(req, token, refreshToken, profile, done) {
                 console.log(`Welcome back, ${user.google.name}! Updating your access token...`);
                 user.google.token = token;
                 console.log('Logging in as', user.google.name);
-                return done(null, user);
               }
+              return done(null, user);
             }
             var newUser = new User({
               "google.id": profile.id,
@@ -135,6 +136,8 @@ function(req, token, refreshToken, profile, done) {
           });
         }
       })
+    } else {
+      return done(null, req.user);
     }
   })
 }));

@@ -792,6 +792,7 @@ module.exports = function(app, express) {
 												dateCreated: item.created
 											});
 											console.log('This is the New Task:', newTask);
+											console.log('Dates Length:', dates.length);
 											dates.push(newTask);
 										}
 									})
