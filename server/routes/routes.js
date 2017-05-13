@@ -817,7 +817,7 @@ module.exports = function(app, express) {
 				} else {
 					console.log('Successfully Retrieved User!');
 					var userSteps = [];
-					user[0].jobs.forEach(job => {
+					user.jobs.forEach(job => {
 						userSteps = userSteps.concat(job.currentStep);
 						userSteps = userSteps.concat(job.nextStep);
 					});

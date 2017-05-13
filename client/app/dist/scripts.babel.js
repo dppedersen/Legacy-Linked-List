@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('app', ['ngRoute', 'ngMaterial', 'app.input', 'app.dashboard', 'app.auth', 'app.services', 'jkAngularCarousel']).config(function ($locationProvider, $routeProvider, $mdThemingProvider, $httpProvider) {
+angular.module('app', ['ngRoute', 'ngMaterial', 'ngFileUpload', 'app.input', 'app.dashboard', 'app.auth', 'app.services', 'jkAngularCarousel']).config(function ($locationProvider, $routeProvider, $mdThemingProvider, $httpProvider) {
   $locationProvider.hashPrefix('');
   $mdThemingProvider.theme('default').primaryPalette('teal').accentPalette('blue');
   $routeProvider.when('/', {
@@ -156,26 +156,28 @@ angular.module('jobWidget').component('jobWidget', {
     this.deleteJob = function (job) {
 
       var showConfirm = function showConfirm(ev) {
-        var query = JSON.stringify({ _id: job._id });
+        var query = { _id: job._id };
 
         // Appending dialog to document.body to cover sidenav in docs app
         var confirmDelete = $mdDialog.confirm().title('Delete!').textContent('Delete Job?').ariaLabel('Confirm Delete').targetEvent(ev).ok('Yes').cancel('No');
 
         var confirmSave = $mdDialog.confirm().title('Save!').textContent('Save Job?').ariaLabel('Confirm Save').targetEvent(ev).ok('Yes').cancel('No');
 
-        var promptForInterviewQuestions = $mdDialog.prompt().title('Were you asked any specific interview questions?').textContent('Write down some you would like to remember!').initialValue('Ex. Balance this search tree!').ok('Submit');
+        var promptForInterviewQuestions = $mdDialog.prompt().title('Were you asked any specific interview questions?').textContent('Write down some you would like to remember!').placeholder('Ex. Balance this search tree!').ok('Submit').cancel('Do Not Add');
 
         $mdDialog.show(confirmDelete).then(function () {
           $mdDialog.show(confirmSave).then(function () {
-            $mdDialog.show(promptForInterviewQuestions).then(function (message) {
-              console.log('message', message);
-              query = JSON.parse(query);
-              query.question = message;
-              query = JSON.stringify(query);
-              console.log('query', query);
-              Jobs.saveAndDelete(query).then(function (res) {
+            $mdDialog.show(promptForInterviewQuestions).then(function (questions) {
+              query.questions = questions;
+              Jobs.saveAndDelete(JSON.stringify(query)).then(function (res) {
                 $route.reload();
-                // $window.alert(res);
+              }).catch(function (err) {
+                console.log(err);
+              });
+            }, function () {
+              query.questions = 'No Questions Added!';
+              Jobs.saveAndDelete(JSON.stringify(query)).then(function (res) {
+                $route.reload();
               }).catch(function (err) {
                 console.log(err);
               });
@@ -183,7 +185,6 @@ angular.module('jobWidget').component('jobWidget', {
           }, function () {
             Jobs.delete(query).then(function (res) {
               $route.reload();
-              // $window.alert(res);
             }).catch(function (err) {
               console.log(err);
             });
@@ -516,7 +517,7 @@ angular.module('app.dashboard', ['ngMaterial', 'profileWidget', 'newsWidget', 'c
   };
 });
 ;
-angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputController', function ($scope, $http, $location, $route, News, Companies, Jobs) {
+angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputController', function ($scope, $http, $location, $route, Upload, News, Companies, Jobs) {
 
   $scope.job = {
     company: undefined,
@@ -540,8 +541,38 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
       dueDate: null },
     nextStep: { name: undefined,
       comments: [],
-      dueDate: null }
+      dueDate: null },
+    resume: undefined
   };
+
+  $scope.fileAdded = false;
+  console.log($scope.fileAdded);
+
+  $scope.$watch('file', function () {
+    var file = $scope.file;
+    if (!file) {
+      return;
+    }
+    $scope.fileAdded = true;
+  });
+  // Upload.upload({
+  //   url: 'api/upload',
+  //   file: file
+  // })
+  // .progress(function(evt) {
+  //   var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+  //   console.log('progress: ' + progressPercentage + '%' + evt.config.file.name);
+  // }).success(function(data, status, headers, config) {
+  //   console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
+  // }).error(function(data, status, headers, config) {
+  //   console.log('error status: ' + status);
+  // })
+  //   .then(function(res) {
+  //     $scope.fileAdded = true;
+  //     console.log($scope.fileAdded);
+  //     console.log('response!', res);
+  //   })
+  // });
 
   $scope.addContact = function () {
     $scope.job.contacts.push({ name: undefined,
@@ -550,7 +581,9 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
   };
 
   $scope.submitJob = function (data) {
-    console.log($scope.job);
+
+    console.log('$SCOPE.JOB', $scope.job);
+    console.log('SUBMITTING JOB, $SCOPE.FILE: ', $scope.file);
 
     if ($scope.job.nextStep.name === undefined) {
       $scope.job.nextStep = null;
@@ -580,12 +613,23 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
       if (addr.code) {
         $scope.job.address = addr.addressLine1 + ", " + addr.locality + ", " + addr.region.code + ", " + addr.postalCode + ", " + addr.country.code;
       }
-      Jobs.create($scope.job).then(function (res) {
-        alert(res);
-        $location.url('/dashboard');
+      Upload.upload({
+        url: 'api/upload',
+        file: $scope.file || ''
+      }).then(function (res) {
+        console.log(res.data);
+        console.log('THIS IS IN SUBMIT JOBS');
+        $scope.job.resume = res.data;
+        Jobs.create($scope.job).then(function (res) {
+          alert(res);
+          $location.url('/dashboard');
+        }).catch(function (err) {
+          console.log('error creating job');
+          $route.reload();
+        });
+      }).catch(function (err) {
+        $route.reload();
       });
-    }).catch(function (err) {
-      $route.reload();
     });
   };
 });
@@ -908,37 +952,6 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       });
     }
   };
-  // return {
-  // 	create: function() {
-  // 		return $http({
-  // 			method: 'POST',
-  // 			api: '/api/savedJobs',
-  // 			data: data,
-  // 			headers: {
-  // 				'Content-type': 'application/json;charset=utf-8'
-  // 			}
-  // 		})
-  // 		.then(function(res) {
-  // 			return res.data;
-  // 		});
-  // 	},
-  // ,
-  // 	update: function() {
-  // 		return $http({
-  // 			method: 'PATCH',
-  // 			api: '/api/savedJobs',
-  // 			data: data,
-  // 			headers: {
-  // 				'Content-type': 'application/json;charset=utf-8'
-  // 			}
-  // 		})
-  // 		.then(function(res) {
-  // 			return res.data;
-  // 		});
-  // 	},
-
-  // 	}
-  // }
 }).factory('Auth', function ($http, $location) {
 
   var register = function register(user) {
@@ -955,7 +968,8 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       $location.path('/dashboard');
     }, function (res) {
       $location.path('/');
-      alert(res.data.err.message);
+      console.log(res.data.err.message);
+      alert(res.data.err);
     });
   };
 
