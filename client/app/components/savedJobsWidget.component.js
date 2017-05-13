@@ -26,7 +26,6 @@ angular.
               <p>{{savedJob.position}}</p>
             </div>
             <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
-
               <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog(savedJob)" >
                 Details
               </md-button>
@@ -43,7 +42,6 @@ angular.
 
       this.getSavedJobs = function() {
         SavedJobs.get().then(data => {
-          console.log(data);
           this.savedJobsList = data.filter(item => { return item !== null; }) || [];
         });
       };
@@ -67,10 +65,7 @@ angular.
       };
 
 
-      var that = this;
       this.showTabDialog = function(savedJob) {
-        console.log(that);
-        console.log('savedJob',savedJob);
         $mdDialog.show({
           templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
           parent: angular.element(document.body),
@@ -84,19 +79,6 @@ angular.
           return;
         });
       };
-
-      //
-      // this.hide = function() {
-      //   $mdDialog.hide();
-      // };
-      //
-      // this.cancel = function() {
-      //   $mdDialog.cancel();
-      // };
-      //
-      // this.answer = function(answer) {
-      //   $mdDialog.hide(answer);
-      // };
     }
 
   });

@@ -27,17 +27,10 @@ module.exports = function(app, express) {
 
 	app.post('/api/upload', multipartyMiddleware, function(req, res) {
 		var file = req.files.file;
-		console.log('file.name', file.name);
-		console.log('file.type', file.type);
-		console.log('file.path', file.path);
-		console.log('file', file);
-		// var data = req.files.data;
-		// console.log('data', data);
 		fs.readFile(file.path, function (err, data) {
 			if (err) throw err;
 			textract.fromFileWithPath(file.path, function(err, text) {
 				if (err) throw err;
-				console.log(typeof text);
 				res.send(JSON.stringify(text));
 			});
 		});
@@ -249,27 +242,21 @@ module.exports = function(app, express) {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	app.post('/api/savedJobs', function(req, res) {
-		// console.log(req.session);
 		var username = req.session.passport.user;
 
 		User.find({ 'local.username': username.local.username }).exec(function(err, user){
-			console.log('user',user);
 			if(user.length === 0) {
 				res.status(400).send('null');
 			} else {
 				var jobToSave = user[0].jobs.filter((job) => {
 					return job._id.toString() === req.body._id;
-				})[0];
-				console.log('GOT A JOB TO SAVE', jobToSave);
+			})[0];
 
 				if (jobToSave !== null && jobToSave !== undefined) {
 					jobToSave.interviewQuestions = req.body.questions;
 					jobToSave.comments = req.body.comments;
 					user[0].savedJobs.push(jobToSave);
 				}
-				console.log('USER AFTER SAVING THE saved job', user);
-				// console.log('jobtosave:',jobToSave);
-
 
 				user[0].jobs = user[0].jobs.filter((job) => {
 					return job._id.toString() !== req.body._id;
@@ -296,10 +283,8 @@ module.exports = function(app, express) {
 
 		User.find({ 'local.username': username.local.username }).exec(function(err, user){
 			if(user.length === 0) {
-				// console.log('unsuccessful retrieve jobs', username);
 				res.status(400).send('null');
 			} else {
-				// console.log('successful retrieve jobs', username, user[0].savedJobs);
 				res.send(user[0].savedJobs);
 			}
 		});
