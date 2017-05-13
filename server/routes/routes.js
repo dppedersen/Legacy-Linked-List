@@ -351,7 +351,7 @@ module.exports = function(app, express) {
 		var username = req.session.passport.user;
 
 		if(username.google.id !== '') {
-			User.findOne({ "google.name": username.google.name }).exec((err, user) => {
+			User.findOne({ "google.id": username.google.id }).exec((err, user) => {
 				if(err) {
 					console.log('Error Saving Jobs (Routes:344):', err);
 					res.status(400).send('null');
@@ -370,7 +370,7 @@ module.exports = function(app, express) {
 					});
 
 					User.findOneAndUpdate(
-						{ "google.name": username.google.name },
+						{ "google.id": username.google.id },
 		        { $set: user },
 		        { new: true },
 		        (err, model) => {
@@ -405,7 +405,7 @@ module.exports = function(app, express) {
 					});
 
 					User.findOneAndUpdate(
-						{ "local.name": username.local.username },
+						{ "local.username": username.local.username },
 		        { $set: user },
 		        { new: true },
 		        (err, model) => {
@@ -426,7 +426,7 @@ module.exports = function(app, express) {
 		var username = req.session.passport.user;
 
 		if(username.google.id !== '') {
-			User.findOne({ "google.name": username.google.name }).exec((err, user) => {
+			User.findOne({ "google.id": username.google.id }).exec((err, user) => {
 				if(err) {
 					console.log('Error Retrieving Saved Jobs (Routes:417):', err);
 					res.status(400).send('null');
@@ -463,7 +463,7 @@ module.exports = function(app, express) {
 					});
 
 					User.findOneAndUpdate(
-						{ "google.name": username.google.name },
+						{ "google.id": username.google.id },
 						{ $set: user },
 						{ new: true },
 						(err, model) => {
@@ -662,7 +662,7 @@ module.exports = function(app, express) {
 					});
 
 					User.findOneAndUpdate(
-		        { "google.name": username.google.name },
+		        { "google.id": username.google.id },
 		        { $set: user },
 		        { new: true },
 		        (err, model) => {
