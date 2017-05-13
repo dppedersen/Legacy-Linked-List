@@ -24,7 +24,7 @@ angular.module('app', ['ngRoute', 'ngMaterial', 'app.input', 'app.dashboard', 'a
   };
 
   $scope.handleDashboardClick = function () {
-    $location.path('googleDashboard');
+    $location.path('dashboard');
   };
 
   $scope.handleInputClick = function () {
@@ -606,7 +606,7 @@ angular.module('app.auth', ['ngMaterial', 'ngMessages', 'signInForm', 'signUpFor
 angular.module('signInForm', []);
 
 angular.module('signInForm').component('signInForm', {
-  template: '\n    <md-card id="signin" class="landingCard" layout-margin>\n      <h2>Please Sign In</h2>\n\n      <form name="signInForm" ng-submit="">\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>User Name</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">account_circle</md-icon>\n            <input ng-model="$ctrl.user.username" ng-required="true">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>Password</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">lock</md-icon>\n            <input ng-model="$ctrl.user.password" ng-required="true" type="password">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>\n        </div>\n        <h3 style="text-align: center;">Or <br /></h3>\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>\n        </div>\n      </form>\n    </md-card>\n    ',
+  template: '\n    <md-card id="signin" class="landingCard" layout-margin>\n      <h2>Please Sign In</h2>\n\n      <form name="signInForm" ng-submit="">\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>User Name</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">account_circle</md-icon>\n            <input ng-model="$ctrl.user.username" ng-required="true">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-input-container flex=\'100\'>\n            <label>Password</label>\n            <md-icon class="material-icons" style="color:rgb(0,150,136)">lock</md-icon>\n            <input ng-model="$ctrl.user.password" ng-required="true" type="password">\n          </md-input-container>\n        </div>\n\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleClick()" class="md-raised md-primary">Sign In</md-button>\n        </div>\n\n        <h3 style="text-align: center;">Or <br /></h3>\n        <div style="display: flex; justify-content: center; align-items: center;" class="googleDiv">\n          <a href="/auth/google" class="googleSignIn"><img src="../assets/google-button.png" style="outline: 0;" /></a>\n        </div>\n        <div layout="row">\n          <md-button flex=\'100\' ng-click="$ctrl.handleGoTo()" class="md-primary">I want to create an account...</md-button>\n        </div>\n      </form>\n    </md-card>\n    ',
   controller: function controller($rootScope, Auth) {
     this.user = {
       username: undefined,
