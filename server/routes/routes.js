@@ -27,17 +27,10 @@ module.exports = function(app, express) {
 
 	app.post('/api/upload', multipartyMiddleware, function(req, res) {
 		var file = req.files.file;
-		console.log('file.name', file.name);
-		console.log('file.type', file.type);
-		console.log('file.path', file.path);
-		console.log('file', file);
-		// var data = req.files.data;
-		// console.log('data', data);
 		fs.readFile(file.path, function (err, data) {
 			if (err) throw err;
 			textract.fromFileWithPath(file.path, function(err, text) {
 				if (err) throw err;
-				console.log(typeof text);
 				res.send(JSON.stringify(text));
 			});
 		});
@@ -357,6 +350,7 @@ module.exports = function(app, express) {
 	app.post('/api/savedJobs', function(req, res) {
 		var username = req.session.passport.user;
 
+<<<<<<< HEAD
 		if(username.google.id !== '') {
 			User.findOne({ "google.name": username.google.name }).exec((err, user) => {
 				if(err) {
@@ -405,6 +399,21 @@ module.exports = function(app, express) {
 						jobToSave.interviewQuestions = req.body.question;
 						user.savedJobs.push(jobToSave);
 					}
+=======
+		User.find({ 'local.username': username.local.username }).exec(function(err, user){
+			if(user.length === 0) {
+				res.status(400).send('null');
+			} else {
+				var jobToSave = user[0].jobs.filter((job) => {
+					return job._id.toString() === req.body._id;
+			})[0];
+
+				if (jobToSave !== null && jobToSave !== undefined) {
+					jobToSave.interviewQuestions = req.body.questions;
+					jobToSave.comments = req.body.comments;
+					user[0].savedJobs.push(jobToSave);
+				}
+>>>>>>> v1.1/fix/cleanup
 
 					user.jobs = user.jobs.filter((job) => {
 						return job._id.toString() !== req.body._id;
@@ -431,6 +440,7 @@ module.exports = function(app, express) {
 	app.get('/api/savedJobs', function(req, res) {
 		var username = req.session.passport.user;
 
+<<<<<<< HEAD
 		if(username.google.id !== '') {
 			User.findOne({ "google.name": username.google.name }).exec((err, user) => {
 				if(err) {
@@ -452,6 +462,15 @@ module.exports = function(app, express) {
 				}
 			})
 		}
+=======
+		User.find({ 'local.username': username.local.username }).exec(function(err, user){
+			if(user.length === 0) {
+				res.status(400).send('null');
+			} else {
+				res.send(user[0].savedJobs);
+			}
+		});
+>>>>>>> v1.1/fix/cleanup
 	});
 
 	app.delete('/api/savedJobs', function(req, res) {
