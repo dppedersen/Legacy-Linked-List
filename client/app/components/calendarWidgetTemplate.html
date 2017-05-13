@@ -1,8 +1,10 @@
 <md-calendar flex='noshrink' class="jobCalWidget" ng-if='dates.length>0' ng-click="showPrerenderedDialog($event)" ng-model="date" md-min-date="today" md-max-date="maxDate" md-date-filter="filterDates">
 </md-calendar>
-<div style="display: flex; justify-content: center; width: 390px;">
+<div style="display: flex; justify-content: center; width: 340px;">
   <h1 style="color: white;">Integrate With</h1>
-  <a href="/auth/google"><img src="../../assets/google-calendar.png" /></a>
+</div>
+<div style="display: flex; justify-content: center; width: 340px;">
+  <a href="/auth/google"><img src="../../assets/gCal.png" /></a>
 </div>
 <!-- below is the dialog that pops up upon clicking a date -->
 <div style="visibility: hidden">
