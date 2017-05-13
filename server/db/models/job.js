@@ -60,6 +60,9 @@ var Job = mongoose.model('Job', {
 	comments: {
 		type: String
 	},
+	resume: {
+		type: String
+	},
 	currentStep: Step.schema,
 	nextStep: Step.schema
 });

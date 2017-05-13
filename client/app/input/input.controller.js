@@ -26,18 +26,24 @@ angular.module('app.input', [
               dueDate: null},
     nextStep: {name: undefined,
               comments:[],
-              dueDate: null}
+              dueDate: null},
+    resume: undefined
   };
+
+  $scope.fileAdded = false;
+  console.log($scope.fileAdded);
 
   $scope.$watch('file', function() {
     var file = $scope.file;
     if (!file) {
       return;
     }
-    Upload.upload({
-      url: 'api/upload',
-      file: file
-    })
+    $scope.fileAdded = true;
+  });
+    // Upload.upload({
+    //   url: 'api/upload',
+    //   file: file
+    // })
     // .progress(function(evt) {
     //   var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
     //   console.log('progress: ' + progressPercentage + '%' + evt.config.file.name);
@@ -46,10 +52,12 @@ angular.module('app.input', [
     // }).error(function(data, status, headers, config) {
     //   console.log('error status: ' + status);
     // })
-    .then(function(res) {
-      console.log('response!', res);
-    })
-  });
+  //   .then(function(res) {
+  //     $scope.fileAdded = true;
+  //     console.log($scope.fileAdded);
+  //     console.log('response!', res);
+  //   })
+  // });
 
   $scope.addContact = () => {
     $scope.job.contacts.push({name: undefined,
@@ -58,7 +66,9 @@ angular.module('app.input', [
   }
 
   $scope.submitJob = function(data){
-    console.log($scope.job);
+
+    console.log('$SCOPE.JOB', $scope.job);
+    console.log('SUBMITTING JOB, $SCOPE.FILE: ', $scope.file);
 
     if($scope.job.nextStep.name === undefined) {
       $scope.job.nextStep = null;
@@ -93,15 +103,27 @@ angular.module('app.input', [
         + addr.postalCode + ", "
         + addr.country.code;
       }
-      Jobs.create($scope.job)
-        .then((res) => {
-        alert(res);
-        $location.url('/dashboard');
-      });
-    })
+      Upload.upload({
+        url: 'api/upload',
+        file: $scope.file || ''
+      }).then(function(res) {
+        console.log(res.data);
+        console.log('THIS IS IN SUBMIT JOBS');
+        $scope.job.resume = res.data;
+        Jobs.create($scope.job)
+          .then((res) => {
+          alert(res);
+          $location.url('/dashboard');
+        })
+        .catch(function(err) {
+          console.log('error creating job');
+          $route.reload();
+        })
+      })
     .catch((err) => {
       $route.reload();
     });
-  };
+  });
 
+  };
 });
