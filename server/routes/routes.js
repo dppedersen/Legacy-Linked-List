@@ -254,20 +254,9 @@ module.exports = function(app, express) {
 
 		User.find({ 'local.username': username.local.username }).exec(function(err, user){
 			console.log('user',user);
-			if (err) console.log('THERE HAS BEEN AN ERROR');
 			if(user.length === 0) {
-				console.log('ERROR ERROR');
 				res.status(400).send('null');
 			} else {
-				console.log('about to filter');
-				// console.log('user[0].jobs: ',user[0].jobs);
-				// console.log('typeof req.body._id',typeof req.body._id);
-				for (var i = 0; i < user[0].jobs.length; i++) {
-					if (user[0].jobs[i]._id.toString() === req.body._id) {
-						// console.log('ITS A MATCH', user[0].jobs[i]);
-					}
-				}
-
 				var jobToSave = user[0].jobs.filter((job) => {
 					return job._id.toString() === req.body._id;
 				})[0];

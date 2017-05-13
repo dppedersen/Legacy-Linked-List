@@ -102,9 +102,11 @@
         <span class="md-title">Resume</span>
       </div>
 
-      <div layout="row" layout-padding>
+      <div layout="row" layout-padding style="display: flex; justify-content: flex-start; align-items: center">
         <!-- <input data-my-Directive type="file" name="file"> -->
-        <button type="button" class="btn btn-default" ngf-select ng-model="file">Upload</button>
+        <button type="button" class="btn btn-default" ngf-select ng-model="file">Click to Upload!</button>
+        <b ng-show="fileAdded" class="ng-hide">Resume Added!</b>
+        <p ng-show="fileAdded" class="ng-hide" ng-click="fileAdded=!fileAdded">Click to Remove Resume</p>
         <!-- <input "ng-hide"  id="input-file-id" type="file" /> -->
       </div>
 
