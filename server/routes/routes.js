@@ -877,7 +877,7 @@ module.exports = function(app, express) {
 		return Promise.all(req.body.map(handle => {
 				return new Promise((resolve, reject) => {
 					let params = {
-						screen_name: handle,
+						screen_name: handle || '',
 						count: 5,
 						exclude_replies: true
 					};

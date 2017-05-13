@@ -204,3 +204,5 @@ app.use(function(err, req, res) {
 app.listen(port);
 console.log('server listening on port ' + port);
 console.log('serving static files from' + __dirname + '/../client');
+
+module.exports = app;
