@@ -332,7 +332,7 @@ angular.
       };
 
       this.editJob = function($event) {
-        var parentEl = angular.element(document.body)
+        var parentEl = angular.element(document.body);
         $mdDialog.show({
           parent: parentEl,
           targetEvent: $event,
@@ -462,26 +462,26 @@ angular.
               data.contacts.push({name: undefined,
                          phoneNumber: undefined,
                          email: undefined
-              })
-            }
+              });
+            };
 
             $scope.closeDialog = function() {
               $mdDialog.hide();
-            }
+            };
             $scope.updateJob = function(job) {
               Jobs.update(JSON.stringify(job))
               .then(function(res) {
-                $scope.closeDialog()
-                $window.alert(res)
+                $scope.closeDialog();
+                $window.alert(res);
                 $route.reload();
               })
               .catch(function(err) {
-                console.log(err)
-              })
-            }
+                console.log(err);
+              });
+            };
           }
-        })
-      }
+        });
+      };
     }
   });
 ;
@@ -638,7 +638,6 @@ angular.
               <p>{{savedJob.position}}</p>
             </div>
             <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
-
               <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog(savedJob)" >
                 Details
               </md-button>
@@ -655,7 +654,6 @@ angular.
 
       this.getSavedJobs = function() {
         SavedJobs.get().then(data => {
-          console.log(data);
           this.savedJobsList = data.filter(item => { return item !== null; }) || [];
         });
       };
@@ -679,10 +677,7 @@ angular.
       };
 
 
-      var that = this;
       this.showTabDialog = function(savedJob) {
-        console.log(that);
-        console.log('savedJob',savedJob);
         $mdDialog.show({
           templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
           parent: angular.element(document.body),
@@ -696,19 +691,6 @@ angular.
           return;
         });
       };
-
-      //
-      // this.hide = function() {
-      //   $mdDialog.hide();
-      // };
-      //
-      // this.cancel = function() {
-      //   $mdDialog.cancel();
-      // };
-      //
-      // this.answer = function(answer) {
-      //   $mdDialog.hide(answer);
-      // };
     }
 
   });
@@ -970,24 +952,6 @@ angular.module('app.input', [
     }
     $scope.fileAdded = true;
   });
-    // Upload.upload({
-    //   url: 'api/upload',
-    //   file: file
-    // })
-    // .progress(function(evt) {
-    //   var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-    //   console.log('progress: ' + progressPercentage + '%' + evt.config.file.name);
-    // }).success(function(data, status, headers, config) {
-    //   console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
-    // }).error(function(data, status, headers, config) {
-    //   console.log('error status: ' + status);
-    // })
-  //   .then(function(res) {
-  //     $scope.fileAdded = true;
-  //     console.log($scope.fileAdded);
-  //     console.log('response!', res);
-  //   })
-  // });
 
   $scope.addContact = () => {
     $scope.job.contacts.push({name: undefined,
@@ -997,9 +961,6 @@ angular.module('app.input', [
 
   $scope.submitJob = function(data){
 
-    console.log('$SCOPE.JOB', $scope.job);
-    console.log('SUBMITTING JOB, $SCOPE.FILE: ', $scope.file);
-
     if($scope.job.nextStep.name === undefined) {
       $scope.job.nextStep = null;
     }
@@ -1007,11 +968,6 @@ angular.module('app.input', [
     if($scope.job.contacts[0].name === undefined) {
       $scope.job.contacts = [];
     }
-    //
-    // if ($scope.job.website.slice(0, 7) !== 'http://'
-    //   && $scope.job.website.slice(0, 8) !== 'http://') {
-    //   $scope.job.website = `http://${$scope.job.website}`;
-    // }
 
     Companies.getInfo($scope.job.website)
     .then((data)=> {
@@ -1032,13 +988,12 @@ angular.module('app.input', [
         + addr.region.code + ", "
         + addr.postalCode + ", "
         + addr.country.code;
-      }
+        }
+  if ($scope.file) {
       Upload.upload({
         url: 'api/upload',
         file: $scope.file || ''
       }).then(function(res) {
-        console.log(res.data);
-        console.log('THIS IS IN SUBMIT JOBS');
         $scope.job.resume = res.data;
         Jobs.create($scope.job)
           .then((res) => {
@@ -1046,13 +1001,26 @@ angular.module('app.input', [
           $location.url('/dashboard');
         })
         .catch(function(err) {
-          console.log('error creating job');
+          console.err(err);
           $route.reload();
         })
       })
+      .catch(function(err) {
+        console.err(err);
+        $route.reload();
+      });
+  } else {
+    Jobs.create($scope.job)
+      .then((res) => {
+      alert(res);
+      $location.url('/dashboard');
+    })
     .catch((err) => {
+      console.err(err);
       $route.reload();
     });
+  }
+
   });
 
   };

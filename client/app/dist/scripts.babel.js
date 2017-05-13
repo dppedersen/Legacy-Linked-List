@@ -310,14 +310,13 @@ angular.module('profileWidget').component('profileWidget', {
 angular.module('savedJobsWidget', []);
 
 angular.module('savedJobsWidget').component('savedJobsWidget', {
-  template: '\n    <md-card id="saved-jobs-widget" class=\'widget\'>\n\n      <div style="display: flex; justify-content: space-between">\n        <span></span>\n        <span class="md-headline">Saved Jobs</span>\n        <md-button class="md-icon-button" ng-click="$ctrl.deleteAll()">\n            <md-icon>delete</md-icon>\n        </md-button>\n      </div>\n\n      <md-divider></md-divider>\n\n      <md-content">\n\n        <ul>\n          <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">\n            <div style="display: flex; justify-content: space-around; align-items: center;">\n              <b style="padding-right: 10px">{{savedJob.company}}</b>\n              <p>{{savedJob.position}}</p>\n            </div>\n            <div style="display: flex; justify-content: flex-end; align-items: flex-end;">\n\n              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog(savedJob)" >\n                Details\n              </md-button>\n              <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>\n            </div>\n          </li>\n        </ul>\n\n\n      </md-content>\n    </md-card>\n    ',
+  template: '\n    <md-card id="saved-jobs-widget" class=\'widget\'>\n\n      <div style="display: flex; justify-content: space-between">\n        <span></span>\n        <span class="md-headline">Saved Jobs</span>\n        <md-button class="md-icon-button" ng-click="$ctrl.deleteAll()">\n            <md-icon>delete</md-icon>\n        </md-button>\n      </div>\n\n      <md-divider></md-divider>\n\n      <md-content">\n\n        <ul>\n          <li ng-repeat="savedJob in $ctrl.savedJobsList" style="display: flex; justify-content: space-between; align-items: center">\n            <div style="display: flex; justify-content: space-around; align-items: center;">\n              <b style="padding-right: 10px">{{savedJob.company}}</b>\n              <p>{{savedJob.position}}</p>\n            </div>\n            <div style="display: flex; justify-content: flex-end; align-items: flex-end;">\n              <md-button class="md-primary md-raised" ng-click="$ctrl.showTabDialog(savedJob)" >\n                Details\n              </md-button>\n              <md-checkbox ng-checked="savedJob.toDelete" ng-click="$ctrl.toggleDelete(savedJob)"></md-checkbox>\n            </div>\n          </li>\n        </ul>\n\n\n      </md-content>\n    </md-card>\n    ',
   controller: function controller($log, $mdDialog, SavedJobs) {
 
     this.getSavedJobs = function () {
       var _this2 = this;
 
       SavedJobs.get().then(function (data) {
-        console.log(data);
         _this2.savedJobsList = data.filter(function (item) {
           return item !== null;
         }) || [];
@@ -342,10 +341,7 @@ angular.module('savedJobsWidget').component('savedJobsWidget', {
       });
     };
 
-    var that = this;
     this.showTabDialog = function (savedJob) {
-      console.log(that);
-      console.log('savedJob', savedJob);
       $mdDialog.show({
         templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
         parent: angular.element(document.body),
@@ -358,19 +354,6 @@ angular.module('savedJobsWidget').component('savedJobsWidget', {
         return;
       });
     };
-
-    //
-    // this.hide = function() {
-    //   $mdDialog.hide();
-    // };
-    //
-    // this.cancel = function() {
-    //   $mdDialog.cancel();
-    // };
-    //
-    // this.answer = function(answer) {
-    //   $mdDialog.hide(answer);
-    // };
   }
 
 });
@@ -555,24 +538,6 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
     }
     $scope.fileAdded = true;
   });
-  // Upload.upload({
-  //   url: 'api/upload',
-  //   file: file
-  // })
-  // .progress(function(evt) {
-  //   var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-  //   console.log('progress: ' + progressPercentage + '%' + evt.config.file.name);
-  // }).success(function(data, status, headers, config) {
-  //   console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
-  // }).error(function(data, status, headers, config) {
-  //   console.log('error status: ' + status);
-  // })
-  //   .then(function(res) {
-  //     $scope.fileAdded = true;
-  //     console.log($scope.fileAdded);
-  //     console.log('response!', res);
-  //   })
-  // });
 
   $scope.addContact = function () {
     $scope.job.contacts.push({ name: undefined,
@@ -582,9 +547,6 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
 
   $scope.submitJob = function (data) {
 
-    console.log('$SCOPE.JOB', $scope.job);
-    console.log('SUBMITTING JOB, $SCOPE.FILE: ', $scope.file);
-
     if ($scope.job.nextStep.name === undefined) {
       $scope.job.nextStep = null;
     }
@@ -592,11 +554,6 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
     if ($scope.job.contacts[0].name === undefined) {
       $scope.job.contacts = [];
     }
-    //
-    // if ($scope.job.website.slice(0, 7) !== 'http://'
-    //   && $scope.job.website.slice(0, 8) !== 'http://') {
-    //   $scope.job.website = `http://${$scope.job.website}`;
-    // }
 
     Companies.getInfo($scope.job.website).then(function (data) {
       if (data === undefined) return;
@@ -613,23 +570,32 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
       if (addr.code) {
         $scope.job.address = addr.addressLine1 + ", " + addr.locality + ", " + addr.region.code + ", " + addr.postalCode + ", " + addr.country.code;
       }
-      Upload.upload({
-        url: 'api/upload',
-        file: $scope.file || ''
-      }).then(function (res) {
-        console.log(res.data);
-        console.log('THIS IS IN SUBMIT JOBS');
-        $scope.job.resume = res.data;
+      if ($scope.file) {
+        Upload.upload({
+          url: 'api/upload',
+          file: $scope.file || ''
+        }).then(function (res) {
+          $scope.job.resume = res.data;
+          Jobs.create($scope.job).then(function (res) {
+            alert(res);
+            $location.url('/dashboard');
+          }).catch(function (err) {
+            console.err(err);
+            $route.reload();
+          });
+        }).catch(function (err) {
+          console.err(err);
+          $route.reload();
+        });
+      } else {
         Jobs.create($scope.job).then(function (res) {
           alert(res);
           $location.url('/dashboard');
         }).catch(function (err) {
-          console.log('error creating job');
+          console.err(err);
           $route.reload();
         });
-      }).catch(function (err) {
-        $route.reload();
-      });
+      }
     });
   };
 });
