@@ -5,7 +5,6 @@ var config = require('../server/config/config.js');
 var app = require('../server/server.js');
 var mongoose = require('mongoose')
 
-
 describe('Persistent Node Server', function() {
     var server;
     before(function() {
