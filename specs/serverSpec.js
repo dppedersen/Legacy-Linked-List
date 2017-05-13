@@ -3,14 +3,14 @@ var request = require('request'); // You might need to npm install the request m
 var expect = require('chai').expect;
 var config = require('../server/config/config.js');
 var app = require('../server/server.js');
+var mongoose = require('mongoose')
 
 
 describe('Persistent Node Server', function() {
-    var dbConnection;
     var server;
     before(function() {
-      server = app.listen(8080, function() {
-        console.log('Testing on port 8080');
+      server = app.listen(4000, function() {
+        console.log('Testing on port 4000');
       });
     });
 
@@ -18,13 +18,6 @@ describe('Persistent Node Server', function() {
       server.close();
     })
 
-    beforeEach(function(done) {
-
-      var dbURI = 'mongodb://europa:europa@ds161487.mlab.com:61487/legacy_ganymede';
-
-      mongoose.connect(dbURI);
-      dbConnection = mongoose.connection;
-    });
 
     beforeEach(function(done) {
       // Login Test account
@@ -34,23 +27,40 @@ describe('Persistent Node Server', function() {
         json: { username: 'Test', password: 'test' }
       }, function(err, res, body) {
         console.log(body);
+        done()
       })
     });
 
-    afterEach(function() {
-      dbConnection.end()
-    });
 
     it('Should return twitter messages for empty array', function(done) {
        // make twitter request
+       console.log('requesting twitter')
        request({
          method: 'POST',
-         uri: 'http://127.0.0.1:8080/api/login',
+         uri: 'http://127.0.0.1:8080/api/twitter',
          json: ['']
        }, (err, res, body) => {
          console.log(err);
 
-         expect(res.status).to.equal(200);
+
+         expect(res.statusCode).to.equal(200);
+         done()
+       });
+    });
+
+    it('Should return twitter messages for array of handles', function(done) {
+       // make twitter request
+       console.log('requesting twitter')
+       request({
+         method: 'POST',
+         uri: 'http://127.0.0.1:8080/api/twitter',
+         json: ['twitterdev, TheDailyShow']
+       }, (err, res, body) => {
+         console.log(err);
+
+
+         expect(res.statusCode).to.equal(200);
+         done()
        });
     })
 })
