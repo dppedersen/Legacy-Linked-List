@@ -90,86 +90,89 @@ passport.use(new GoogleStrategy({
 
 },
 
-// facebook will send back the token and profile
+// Google will send back the token and profile
 function(req, token, refreshToken, profile, done) {
   process.nextTick(function() {
     // check if the user is already logged in
     if (!req.user) {
 
-      // find the user in the database based on their facebook id
-      User.findOne({
-        'google.id': profile.id
-      }, function(err, user) {
-
+      // find the user in the database based on their Google id
+      User.findOne({ 'google.id': profile.id }, function(err, user) {
         // if there is an error, stop everything and return that
         // ie an error connecting to the database
         if (err) {
-          console.log('Google UserFindOne Error', err);
+          console.log('Goole Authentication Error:', err);
           return done(err);
-        }
-        // if the user is found, then log them in
-        if (req.user.google.id === '') {
-          req.user.google.id = profile.id;
-          req.user.google.token = token;
-          req.user.google.name = profile.name.givenName + ' ' + profile.name.familyName;
-          req.user.google.email = profile.emails[0].value;
-          req.user.google.profilePic = profile._json.image.url;
-          req.user.save(function(err) {
-            console.log('SAVING THE USER!!!!!!!!!!!!!!!!!!');
-            if (err) {
-              return res.send(err);
-            } else {
-              return done(null, user);
-            }
-          });
         } else {
-          // if there is no user found with that facebook id, create them
-          var newUser = new User({
-            'newUser.google.id': profile.id, // set the users facebook id
-            'newUser.google.token': token, // we will save the token that facebook provides to the user
-            'newUser.google.name': profile.name.givenName + ' ' + profile.name.familyName, // look at the passport user profile to see how names are returned
-            'newUser.google.email': profile.emails[0].value,
-            'newUser.google.profilePic': profile._json.image.url
-          });
-          // set all of the facebook information in our user model
-          // save our user to the database
-          newUser.save(function(err) {
-            if (err)
-              throw err;
-            // if successful, return the new user
-            return done(null, newUser);
-          });
-        }
-      });
-    } else {
-      // user already exists and is logged in, we have to link accounts
-      var user = req.user; // pull the user out of the session
-      User.findOneAndUpdate({
-        "local.username": user.local.username
-      }, {
-        $set: {
-          "google.id": profile.id,
-          "google.token": token,
-          "google.name": profile.name.givenName + ' ' + profile.name.familyName,
-          "google.email": profile.emails[0].value,
-          "google.profilePic": profile._json.image.url
-        }
-      }, {
-        upsert: true
-      }, function(err, user) {
-        if (err) {
-          res.status(401).send(err);
-        } else {
-          user.save(function(err) {
-            if (err) {
-              console.log('User Save Error:', err);
-            } else {
-              return done(null, user);
+          User.findOne({ "google.id": profile.id }, (err, user) => {
+            if(err) {
+              console.log('Error Finding Google User (Server:109):', err);
             }
+            if(user) {
+              if(user.google.id !== '') {
+                console.log(`Welcome back, ${user.google.name}! Updating your access token...`);
+                user.google.token = token;
+                console.log('Logging in as', user.google.name);
+                return done(null, user);
+              }
+            }
+            var newUser = new User({
+              "google.id": profile.id,
+              "google.token": token,
+              "google.name": `${profile.name.givenName} ${profile.name.familyName}`,
+              "google.email": profile.emails[0].value,
+              "google.profilePic": profile._json.image.url
+            });
+            newUser.save(err => {
+              console.log('Saving New User...');
+              if(err) {
+                console.log('Error Saving New User (Server:124):', err);
+              } else {
+                console.log(`Account Created! Logging in as ${newUser.google.name}`);
+              }
+              return done(null, newUser);
+            });
           });
         }
+      })
+    }
+  })
+}));
+    // } else {
+    //   // user already exists and is logged in, we have to link accounts
+    //   var user = req.user; // pull the user out of the session
+    //   User.findOne({ 'google.email': profile.emails[0].value}, (err, user) => {
+    //     if(err) {
+    //       console.log('Google User Error (147):', err);
+    //     }
+    //     if(user) {
+    //       console.log('Google User (150):', user);
+    //     }
+    //   })
+    //   User.findOneAndUpdate({ "local.username": user.local.username }, {
+    //     $set: {
+    //       "google.id": profile.id,
+    //       "google.token": token,
+    //       "google.name": profile.name.givenName + ' ' + profile.name.familyName,
+    //       "google.email": profile.emails[0].value,
+    //       "google.profilePic": profile._json.image.url
+    //     }
+    //   }, {
+    //     upsert: true
+    //   }, function(err, user) {
+    //     if (err) {
+    //       res.status(401).send(err);
+    //     } else {
+    //       user.save(function(err) {
+    //         if (err) {
+    //           console.log('User Save Error:', err);
+    //         } else {
+    //           return done(null, user);
+    //         }
+    //       });
+    //     }
 
-      });
+
       // User.findOneAndUpdate({username: user.local.username, 'user.google.id': profile.id, 'user.google.token': token, 'user.google.name': profile.name.givenName + ' ' + profile.name.familyName, 'user.google.email': profile.emails[0].value},
       // function(err, user) {
       //   if(err) {
@@ -181,9 +184,7 @@ function(req, token, refreshToken, profile, done) {
       //   });
       //   }
       // });
-    }
-  });
-}));
+
 //set up routes
 var routes = require('./routes/routes.js')(app, express);
 
