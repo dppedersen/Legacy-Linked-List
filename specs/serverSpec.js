@@ -23,7 +23,7 @@ describe('Persistent Node Server', function() {
       // Login Test account
       request({
         method: 'POST',
-        uri: 'http://127.0.0.1:8080/api/login',
+        uri: 'http://127.0.0.1:4000/api/login',
         json: { username: 'Test', password: 'test' }
       }, function(err, res, body) {
         console.log(body);
@@ -37,7 +37,7 @@ describe('Persistent Node Server', function() {
        console.log('requesting twitter')
        request({
          method: 'POST',
-         uri: 'http://127.0.0.1:8080/api/twitter',
+         uri: 'http://127.0.0.1:4000/api/twitter',
          json: ['']
        }, (err, res, body) => {
          console.log(err);
@@ -53,7 +53,7 @@ describe('Persistent Node Server', function() {
        console.log('requesting twitter')
        request({
          method: 'POST',
-         uri: 'http://127.0.0.1:8080/api/twitter',
+         uri: 'http://127.0.0.1:4000/api/twitter',
          json: ['twitterdev, TheDailyShow']
        }, (err, res, body) => {
          console.log(err);
@@ -63,4 +63,26 @@ describe('Persistent Node Server', function() {
          done()
        });
     })
+
+    it('Should return Jobs', function(done) {
+      request({
+        method: 'GET',
+        uri: 'http://127.0.0.1:4000/api/jobs'
+      }, (err, res, body) => {
+        console.log(body);
+        expect(body).to.not.equal(undefined);
+        done();
+      });
+    });
+
+    it('Should return SavedJobs', function(done) {
+      request({
+        method: 'GET',
+        uri: 'http://127.0.0.1:4000/api/savedJobs'
+      }, (err, res, body) => {
+        console.log(body);
+        expect(body).to.not.equal(undefined);
+        done();
+      });
+    });
 })
