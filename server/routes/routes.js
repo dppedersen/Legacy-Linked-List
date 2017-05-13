@@ -27,17 +27,10 @@ module.exports = function(app, express) {
 
 	app.post('/api/upload', multipartyMiddleware, function(req, res) {
 		var file = req.files.file;
-		console.log('file.name', file.name);
-		console.log('file.type', file.type);
-		console.log('file.path', file.path);
-		console.log('file', file);
-		// var data = req.files.data;
-		// console.log('data', data);
 		fs.readFile(file.path, function (err, data) {
 			if (err) throw err;
 			textract.fromFileWithPath(file.path, function(err, text) {
 				if (err) throw err;
-				console.log(typeof text);
 				res.send(JSON.stringify(text));
 			});
 		});
@@ -406,6 +399,7 @@ module.exports = function(app, express) {
 						user.savedJobs.push(jobToSave);
 					}
 
+
 					user.jobs = user.jobs.filter((job) => {
 						return job._id.toString() !== req.body._id;
 					});
@@ -452,6 +446,7 @@ module.exports = function(app, express) {
 				}
 			})
 		}
+
 	});
 
 	app.delete('/api/savedJobs', function(req, res) {
