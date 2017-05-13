@@ -76,8 +76,8 @@ angular.module('app.input', [
         + addr.region.code + ", "
         + addr.postalCode + ", "
         + addr.country.code;
-      }
-
+        }
+  if ($scope.file) {
       Upload.upload({
         url: 'api/upload',
         file: $scope.file || ''
@@ -93,10 +93,22 @@ angular.module('app.input', [
           $route.reload();
         })
       })
+      .catch(function(err) {
+        console.err(err);
+        $route.reload();
+      });
+  } else {
+    Jobs.create($scope.job)
+      .then((res) => {
+      alert(res);
+      $location.url('/dashboard');
+    })
     .catch((err) => {
       console.err(err);
       $route.reload();
     });
+  }
+
   });
 
   };
