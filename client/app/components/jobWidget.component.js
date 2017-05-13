@@ -200,7 +200,7 @@ angular.
       };
 
       this.editJob = function($event) {
-        var parentEl = angular.element(document.body)
+        var parentEl = angular.element(document.body);
         $mdDialog.show({
           parent: parentEl,
           targetEvent: $event,
@@ -330,25 +330,25 @@ angular.
               data.contacts.push({name: undefined,
                          phoneNumber: undefined,
                          email: undefined
-              })
-            }
+              });
+            };
 
             $scope.closeDialog = function() {
               $mdDialog.hide();
-            }
+            };
             $scope.updateJob = function(job) {
               Jobs.update(JSON.stringify(job))
               .then(function(res) {
-                $scope.closeDialog()
-                $window.alert(res)
+                $scope.closeDialog();
+                $window.alert(res);
                 $route.reload();
               })
               .catch(function(err) {
-                console.log(err)
-              })
-            }
+                console.log(err);
+              });
+            };
           }
-        })
-      }
+        });
+      };
     }
   });

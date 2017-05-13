@@ -27,17 +27,10 @@ module.exports = function(app, express) {
 
 	app.post('/api/upload', multipartyMiddleware, function(req, res) {
 		var file = req.files.file;
-		console.log('file.name', file.name);
-		console.log('file.type', file.type);
-		console.log('file.path', file.path);
-		console.log('file', file);
-		// var data = req.files.data;
-		// console.log('data', data);
 		fs.readFile(file.path, function (err, data) {
 			if (err) throw err;
 			textract.fromFileWithPath(file.path, function(err, text) {
 				if (err) throw err;
-				console.log(typeof text);
 				res.send(JSON.stringify(text));
 			});
 		});
@@ -358,7 +351,7 @@ module.exports = function(app, express) {
 		var username = req.session.passport.user;
 
 		if(username.google.id !== '') {
-			User.findOne({ "google.name": username.google.name }).exec((err, user) => {
+			User.findOne({ "google.id": username.google.id }).exec((err, user) => {
 				if(err) {
 					console.log('Error Saving Jobs (Routes:344):', err);
 					res.status(400).send('null');
@@ -377,7 +370,7 @@ module.exports = function(app, express) {
 					});
 
 					User.findOneAndUpdate(
-						{ "google.name": username.google.name },
+						{ "google.id": username.google.id },
 		        { $set: user },
 		        { new: true },
 		        (err, model) => {
@@ -406,12 +399,13 @@ module.exports = function(app, express) {
 						user.savedJobs.push(jobToSave);
 					}
 
+
 					user.jobs = user.jobs.filter((job) => {
 						return job._id.toString() !== req.body._id;
 					});
 
 					User.findOneAndUpdate(
-						{ "local.name": username.local.username },
+						{ "local.username": username.local.username },
 		        { $set: user },
 		        { new: true },
 		        (err, model) => {
@@ -432,7 +426,7 @@ module.exports = function(app, express) {
 		var username = req.session.passport.user;
 
 		if(username.google.id !== '') {
-			User.findOne({ "google.name": username.google.name }).exec((err, user) => {
+			User.findOne({ "google.id": username.google.id }).exec((err, user) => {
 				if(err) {
 					console.log('Error Retrieving Saved Jobs (Routes:417):', err);
 					res.status(400).send('null');
@@ -452,6 +446,7 @@ module.exports = function(app, express) {
 				}
 			})
 		}
+
 	});
 
 	app.delete('/api/savedJobs', function(req, res) {
@@ -468,7 +463,7 @@ module.exports = function(app, express) {
 					});
 
 					User.findOneAndUpdate(
-						{ "google.name": username.google.name },
+						{ "google.id": username.google.id },
 						{ $set: user },
 						{ new: true },
 						(err, model) => {
@@ -667,7 +662,7 @@ module.exports = function(app, express) {
 					});
 
 					User.findOneAndUpdate(
-		        { "google.name": username.google.name },
+		        { "google.id": username.google.id },
 		        { $set: user },
 		        { new: true },
 		        (err, model) => {

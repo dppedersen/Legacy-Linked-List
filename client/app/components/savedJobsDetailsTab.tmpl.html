@@ -1,8 +1,7 @@
-<md-dialog aria-label="Mango (Fruit)">
+<md-dialog aria-label="">
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-
         <h2>{{savedJob.company}}: {{savedJob.position}}</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="cancel()">
@@ -14,22 +13,16 @@
       <md-tabs md-dynamic-height md-border-bottom>
         <md-tab label="Job Details and Salary">
           <md-content class="md-padding" style="padding-left: 10px;">
-            <!-- <b>Job Details:</b> -->
-            <!-- <p>None Yet!</p> -->
-            <b>Salary: </b>
-            <p>${{savedJob.salary}}</p>
+            <b>Salary ($): </b>
+            <p ng-show="savedJob.salary">{{savedJob.salary}}</p>
+            <p ng-hide="savedJob.salary">No Salary Added!</p>
           </md-content>
         </md-tab>
-        <!-- <md-tab label="Application Process">
-          <md-content class="md-padding" style="padding-left: 10px">
-            <b>Steps:</b>
-            <p>No Steps Added!</p>
-          </md-content>
-        </md-tab> -->
         <md-tab label="Interview Questions">
           <md-content class="md-padding" style="padding-left: 10px">
             <b>Interview Questions:</b>
             <p>{{savedJob.interviewQuestions}}</p>
+
           </md-content>
         </md-tab>
         <md-tab label="Resume">
@@ -37,12 +30,6 @@
             <b>Documents</b>
             <p>{{savedJob.resume}}</p>
           </md-content>
-        </md-tab>
-        <!-- <md-tab label="Comments">
-          <md-content class="md-padding" style="padding-left: 10px">
-            <b>Comments:</b>
-            <p>{{savedJob.comments}}</p>
-          </md-content> -->
         </md-tab>
       </md-tabs>
     </md-dialog-content>
