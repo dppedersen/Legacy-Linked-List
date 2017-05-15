@@ -361,7 +361,7 @@ module.exports = function(app, express) {
 					})[0];
 
 					if (jobToSave !== null && jobToSave !== undefined) {
-						jobToSave.interviewQuestions = req.body.question;
+						jobToSave.interviewQuestions = req.body.questions;
 						user.savedJobs.push(jobToSave);
 					}
 
@@ -395,7 +395,7 @@ module.exports = function(app, express) {
 					})[0];
 
 					if (jobToSave !== null && jobToSave !== undefined) {
-						jobToSave.interviewQuestions = req.body.question;
+						jobToSave.interviewQuestions = req.body.questions;
 						user.savedJobs.push(jobToSave);
 					}
 
