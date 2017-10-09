@@ -2,8 +2,8 @@ angular.module('app.input', [
   'ngMaterial',
   'ngMessages'
 ])
-.controller('inputController', function($scope, $http, $location, News, Companies, Jobs) {
-  
+.controller('inputController', function($scope, $http, $location, $route, Upload, News, Companies, Jobs) {
+
   $scope.job = {
     company: undefined,
     salary: undefined,
@@ -11,7 +11,8 @@ angular.module('app.input', [
     position: undefined,
     contacts: [{name: undefined,
               phoneNumber: undefined,
-              email: undefined}],
+              email: undefined,
+              handle: undefined}],
     link: undefined,
     website: undefined,
     description: undefined,
@@ -22,11 +23,23 @@ angular.module('app.input', [
     address: undefined,
     currentStep: {name: undefined,
               comments:[],
-              dueDate: null}, 
+              dueDate: null},
     nextStep: {name: undefined,
               comments:[],
-              dueDate: null}
+              dueDate: null},
+    resume: undefined
   };
+
+  $scope.fileAdded = false;
+  //console.log($scope.fileAdded);
+
+  $scope.$watch('file', function() {
+    var file = $scope.file;
+    if (!file) {
+      return;
+    }
+    $scope.fileAdded = true;
+  });
 
   $scope.addContact = () => {
     $scope.job.contacts.push({name: undefined,
@@ -35,7 +48,6 @@ angular.module('app.input', [
   }
 
   $scope.submitJob = function(data){
-    console.log($scope.job);
 
     if($scope.job.nextStep.name === undefined) {
       $scope.job.nextStep = null;
@@ -45,9 +57,10 @@ angular.module('app.input', [
       $scope.job.contacts = [];
     }
 
-    Companies.getInfo($scope.job.website).then((data)=> {
-
+    Companies.getInfo($scope.job.website)
+    .then((data)=> {
       if(data === undefined) return;
+      //console.log(data);
 
       $scope.job.imageUrl = data.logo;
       $scope.job.description = data.organization.overview;
@@ -57,17 +70,46 @@ angular.module('app.input', [
 
       var addr = data.organization.contactInfo.addresses[0];
 
+      if(addr.code) {
       $scope.job.address = addr.addressLine1 + ", "
         + addr.locality + ", "
         + addr.region.code + ", "
         + addr.postalCode + ", "
         + addr.country.code;
-
-      Jobs.create($scope.job).then((res) => {
-        alert(res);
-        $location.url('/dashboard');
+        }
+  if ($scope.file) {
+      Upload.upload({
+        url: 'api/upload',
+        file: $scope.file || ''
+      }).then(function(res) {
+        $scope.job.resume = res.data;
+        Jobs.create($scope.job)
+          .then((res) => {
+          alert(res);
+          $location.url('/dashboard');
+        })
+        .catch(function(err) {
+          //console.err(err);
+          $route.reload();
+        })
+      })
+      .catch(function(err) {
+        //console.err(err);
+        $route.reload();
       });
+  } else {
+    Jobs.create($scope.job)
+      .then((res) => {
+      alert(res);
+      $location.url('/dashboard');
+    })
+    .catch((err) => {
+      //console.err(err);
+      $route.reload();
     });
   }
 
-})
+  });
+
+  };
+});

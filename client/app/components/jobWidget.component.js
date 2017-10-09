@@ -1,10 +1,7 @@
-angular.module('jobWidget', []);
+angular.module("jobWidget", []);
 
-angular.
-  module('jobWidget').
-  component('jobWidget', {
-    template:
-    `
+angular.module("jobWidget").component("jobWidget", {
+  template: `
     <md-card class="job-card">
       <md-card-header style="display:flex; align-items:center">
         <md-card-avatar class="job-widget-image" style="{{$ctrl.imageStyle($ctrl.data.imageUrl)}}"></md-card-avatar>
@@ -64,6 +61,7 @@ angular.
               <p class="md-subhead contact-info"><md-icon>person</md-icon>{{contact.name}}</p>
               <p class="md-subhead contact-info"><md-icon>phone</md-icon>{{contact.phoneNumber}}</p>
               <p class="md-subhead contact-info"><md-icon>email</md-icon>{{contact.email}}</p>
+              <p class="md-subhead contact-info"><md-icon>share</md-icon>{{contact.handle}}</p>
             </div>
           </md-content>
           </md-tab>
@@ -93,66 +91,127 @@ angular.
 
     </md-card>
     `,
-    bindings: {
-     data: '='
-    },
-    controller: function($window, $scope, $route, $mdDialog, Jobs) {
-      // favorite icon
-      this.favorite = false;
+  bindings: {
+    data: "="
+  },
+  controller: function($window, $scope, $route, $mdDialog, Jobs) {
+    // favorite icon
+    this.favorite = false;
 
-      Jobs.get().then(function(data) {
-        $scope.jobs = data;
-      });
+    Jobs.get().then(function(data) {
+      $scope.jobs = data;
+    });
 
-      this.toggleFavorite = function() {
-        this.favorite = !this.favorite;
-      }
+    this.toggleFavorite = function() {
+      this.favorite = !this.favorite;
+    };
 
-      this.renderFavoriteIcon = function() {
-        return this.favorite ? 'star' : 'star_border';
-      }
+    this.renderFavoriteIcon = function() {
+      return this.favorite ? "star" : "star_border";
+    };
 
-      // parse the style string for setting the logo image
-      // parse the style string for setting the logo image
-      this.imageStyle = function(imageUrl) {
-        return `background-image:url('${imageUrl}');width:120px;background-repeat: no-repeat;background-size:cover;margin-right:10px`;
+    // parse the style string for setting the logo image
+    // parse the style string for setting the logo image
+    this.imageStyle = function(imageUrl) {
+      return `background-image:url('${imageUrl}');width:120px;background-repeat: no-repeat;background-size:cover;margin-right:10px`;
+    };
+
+    // use moment.js to parse de date data in a user-friendly format
+    this.parseDate = function(applicationDate) {
+      var date = new Date(applicationDate);
+      var dateFormated = moment(date).format("MMM Do YY");
+      var dateFromNow = moment(date).fromNow();
+      return `${dateFromNow} on ${dateFormated}`;
+    };
+
+    this.deleteJob = function(job) {
+      var showConfirm = function(ev) {
+        var query = { _id: job._id };
+
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirmDelete = $mdDialog
+          .confirm()
+          .title("Delete!")
+          .textContent("Delete Job?")
+          .ariaLabel("Confirm Delete")
+          .targetEvent(ev)
+          .ok("Yes")
+          .cancel("No");
+
+        var confirmSave = $mdDialog
+          .confirm()
+          .title("Save!")
+          .textContent("Save Job?")
+          .ariaLabel("Confirm Save")
+          .targetEvent(ev)
+          .ok("Yes")
+          .cancel("No");
+
+        var promptForInterviewQuestions = $mdDialog
+          .prompt()
+          .title("Were you asked any specific interview questions?")
+          .textContent("Write down some you would like to remember!")
+          .placeholder("Ex. Balance this search tree!")
+          .ok("Submit")
+          .cancel("Do Not Add");
+
+        $mdDialog.show(confirmDelete).then(
+          function() {
+            $mdDialog.show(confirmSave).then(
+              function() {
+                $mdDialog.show(promptForInterviewQuestions).then(
+                  function(questions) {
+                    query.questions = questions;
+                    Jobs.saveAndDelete(JSON.stringify(query))
+                      .then(function(res) {
+                        $route.reload();
+                      })
+                      .catch(function(err) {
+                        //console.log(err);
+                      });
+                  },
+                  function() {
+                    query.questions = "No Questions Added!";
+                    Jobs.saveAndDelete(JSON.stringify(query))
+                      .then(function(res) {
+                        $route.reload();
+                      })
+                      .catch(function(err) {
+                        //console.log(err);
+                      });
+                  }
+                );
+              },
+              function() {
+                Jobs.delete(query)
+                  .then(function(res) {
+                    $route.reload();
+                  })
+                  .catch(function(err) {
+                    //console.log(err);
+                  });
+              }
+            );
+          },
+          function() {}
+        );
       };
 
-      // use moment.js to parse de date data in a user-friendly format
-      this.parseDate = function(applicationDate) {
-        var date = new Date(applicationDate);
-        var dateFormated = moment(date).format("MMM Do YY");
-        var dateFromNow = moment(date).fromNow();
-        return `${dateFromNow} on ${dateFormated}`;
-      }
+      showConfirm();
+    };
 
-      this.deleteJob = function(job) {
-        let query = JSON.stringify({_id : job._id});
-
-        if($window.confirm('Are you sure you want to delete this job?')) {
-          Jobs.delete(query)
-          .then(function(res) {
-            $route.reload()
-            $window.alert(res);
-          })
-          .catch(function(err) {
-            console.log(err)
-          })
-        }
-      }
-
-      this.editJob = function($event) {
-        var parentEl = angular.element(document.body)
-        $mdDialog.show({
-          parent: parentEl,
-          targetEvent: $event,
-          locals: {
-            jobs: $scope.jobs
-          },
-          clickOutsideToClose: true,
-          scope: $scope,
-          preserveScope: true,
-          template: `
+    this.editJob = function($event) {
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        parent: parentEl,
+        targetEvent: $event,
+        locals: {
+          jobs: $scope.jobs
+        },
+        clickOutsideToClose: true,
+        scope: $scope,
+        preserveScope: true,
+        template: `
           <md-dialog>
             <md-content layout-padding>
               <div layout="row">
@@ -177,9 +236,16 @@ angular.
                     <input ng-model="$ctrl.data.link" type="url">
                   </md-input-container>
                 </div>
-                <div layout="row">
-                  <span class="md-title">Contacts</span>
+                <div layout="row" layout-align="start center">
+                  <span flex class="md-title">Contacts</span>
+
+                  <md-button flex="none" ng-hide="$index>0" ng-click="addContact($ctrl.data)" class="md-fab md-mini" aria-label="Edit contact">
+                  <md-icon class="ng-scope material-icons" role="img" aria-hidden="true">add</md-icon>
+                  <md-tooltip>Add Contact</md-tooltip>
+                  </md-button>
+
                 </div>
+
                 <div layout="row" layout-padding ng-repeat="contact in $ctrl.data.contacts track by $index">
                   <md-input-container flex="35">
                     <label>Name</label>
@@ -198,10 +264,13 @@ angular.
                     <md-icon class="material-icons">email</md-icon>
                     <input ng-model="contact.email" type='email'>
                   </md-input-container>
-                  <md-button ng-hide="$index>0" ng-click="addContact($ctrl.data)" class="md-fab" aria-label="Edit contact">
-                    <i class="material-icons">add</i>
-                    <md-tooltip>Add Contact</md-tooltip>
-                  </md-button>
+
+                  <md-input-container flex="30">
+                    <label>Twitter Handle</label>
+                    <md-icon class="material-icons">share</md-icon>
+                    <input ng-model="contact.handle" placeholder="@">
+                  </md-input-container>
+
                 </div>
                 <div layout="row">
                   <span class="md-title">Modify Steps</span>
@@ -256,30 +325,31 @@ angular.
               </form>
             </md-content>
           </md-dialog>`,
-          controller: function DialogController($scope, $mdDialog, Jobs) {
+        controller: function DialogController($scope, $mdDialog, Jobs, $route) {
+          $scope.addContact = data => {
+            data.contacts.push({
+              name: undefined,
+              phoneNumber: undefined,
+              email: undefined
+            });
+          };
 
-            $scope.addContact = (data) => {
-              data.contacts.push({name: undefined,
-                         phoneNumber: undefined,
-                         email: undefined
-              })
-            }
-
-            $scope.closeDialog = function() {
-              $mdDialog.hide();
-            }
-            $scope.updateJob = function(job) {
-              Jobs.update(JSON.stringify(job))
+          $scope.closeDialog = function() {
+            $mdDialog.hide();
+          };
+          $scope.updateJob = function(job) {
+            Jobs.update(JSON.stringify(job))
               .then(function(res) {
-                $scope.closeDialog()
-                $window.alert(res)
+                $scope.closeDialog();
+                $window.alert(res);
+                $route.reload();
               })
               .catch(function(err) {
-                console.log(err)
-              })
-            }
-          }
-        })
-      }
-    }
-  });
+                //console.log(err);
+              });
+          };
+        }
+      });
+    };
+  }
+});

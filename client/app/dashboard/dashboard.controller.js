@@ -5,8 +5,10 @@ angular.module('app.dashboard', [
   'newsWidget',
   'calendarWidget',
   'jobWidget',
-  'tasksWidget'])
-.controller('dashboardController', function dashboardController($scope, Companies, User, Jobs, Tasks){
+  'tasksWidget',
+  'twitterWidget',
+  'savedJobsWidget'])
+.controller('dashboardController', function dashboardController($scope, Companies, User, Jobs, Tasks, SavedJobs){
 
   $scope.getJobs = function() {
 
@@ -15,7 +17,7 @@ angular.module('app.dashboard', [
       $scope.jobs = data
     })
     .catch(function(err) {
-      console.log(err)
+      //console.log(err)
     })
   }
   $scope.getJobs()

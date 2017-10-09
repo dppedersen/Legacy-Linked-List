@@ -14,8 +14,11 @@
     <!-- STYLESHEETS -->
     <!-- <link rel="stylesheet" href="lib/angular-material/angular-material.min.css"> -->
     <link rel="stylesheet" href="app/dist/style.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="lib/angular-jk-carousel/dist/jk-carousel.css" rel="stylesheet" type="text/css" />
 
     <!-- ANGULAR -->
+
     <script type="text/javascript" src="lib/moment/moment.js"></script>
     <script type="text/javascript" src="lib/angular/angular.min.js"></script>
     <script type="text/javascript" src="lib/angular-route/angular-route.min.js"></script>
@@ -24,6 +27,8 @@
     <script type="text/javascript" src="lib/angular-messages/angular-messages.min.js"></script>
     <script type="text/javascript" src="lib/angular-mocks/angular-mocks.js"></script>
     <script type="text/javascript" src="lib/angular-material/angular-material.min.js"></script>
+    <script src="lib/angular-jk-carousel/dist/jk-carousel.js"></script>
+    <script src="http://rawgit.com/danialfarid/ng-file-upload/master/dist/ng-file-upload.min.js"></script>
 
     <title>Job Search Tool</title>
   </head>
@@ -49,6 +54,23 @@
     </md-toolbar>
     <div class="wrapper container" ng-view></div>
 
-    <script type="text/javascript" src="app/dist/scripts.concat.js"></script>
+
+    <!-- <script type="text/javascript" src="app/dist/scripts.concat.js"></script> -->
+
+    <script type="text/javascript" src="app/app.js"></script>
+    <script type="text/javascript" src="app/components/savedJobsWidget.component.js"></script>
+    <script type="text/javascript" src="app/components/calendarWidget.component.js"></script>
+    <script type="text/javascript" src="app/components/jobWidget.component.js"></script>
+    <script type="text/javascript" src="app/components/newsWidget.component.js"></script>
+    <script type="text/javascript" src="app/components/profileWidget.component.js"></script>
+    <script type="text/javascript" src="app/components/tasksWidget.component.js"></script>
+    <script type="text/javascript" src="app/components/twitterWidget.component.js"></script>
+    <script type="text/javascript" src="app/dashboard/dashboard.controller.js"></script>
+    <script type="text/javascript" src="app/input/input.controller.js"></script>
+    <script type="text/javascript" src="app/landing/auth.controller.js"></script>
+    <script type="text/javascript" src="app/landing/signin.component.js"></script>
+    <script type="text/javascript" src="app/landing/signup.component.js"></script>
+    <script type="text/javascript" src="app/services/services.js"></script>
+
   </body>
 </html>

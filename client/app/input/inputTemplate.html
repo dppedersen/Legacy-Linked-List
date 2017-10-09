@@ -45,32 +45,49 @@
         <md-input-container flex="50">
           <label>Company Website</label>
           <md-icon class="material-icons">web</md-icon>
-          <input ng-model="job.website" required type="url">
+          <input ng-model="job.website" required>
+          <!-- <input ng-model="job.website" required type="url"> -->
         </md-input-container>
+
       </div>
 
       <div layout="row">
-        <span class="md-title">Contact Information</span>
+        <span class="md-title" flex>Contact Information</span>
+        <md-button  flex = none style="margin-right:40px" ng-hide="$index>0" ng-click="addContact()" class="md-fab" aria-label="Add contact">
+          <i class="material-icons"  style="margin-top:15px">add</i>
+          <md-tooltip>Add Contact</md-tooltip>
+        </md-button>
       </div>
 
       <div layout="row" layout-padding ng-repeat="contact in job.contacts track by $index" layout-wrap>
-        <md-input-container flex="35">
-          <label>Contact's Name</label>
-          <md-icon class="material-icons">contacts</md-icon>
-          <input ng-model="contact.name">
-        </md-input-container>
+        <div layout="row"  style="width: 100%">
+          <md-input-container flex="50">
+            <label>Contact's Name</label>
+            <md-icon class="material-icons">contacts</md-icon>
+            <input ng-model="contact.name">
+          </md-input-container>
 
-        <md-input-container flex="30">
-          <label>Contact's Phone Number</label>
-          <md-icon class="material-icons">call</md-icon>
-          <input ng-model="contact.phoneNumber" type="tel">
-        </md-input-container>
+          <md-input-container flex="50" >
+            <label>Contact's Phone Number</label>
+            <md-icon class="material-icons">call</md-icon>
+            <input ng-model="contact.phoneNumber" type="tel">
+          </md-input-container>
+        </div>
 
-        <md-input-container flex="30">
-          <label>Contact's E-mail </label>
-          <md-icon class="material-icons">email</md-icon>
-          <input ng-model="contact.email" type='email'>
-        </md-input-container>
+        <div layout="row" style="width: 100%">
+          <md-input-container flex="50">
+            <label>Contact's E-mail </label>
+            <md-icon class="material-icons">email</md-icon>
+            <input ng-model="contact.email" type='email'>
+          </md-input-container>
+
+          <md-input-container flex="50">
+            <label>Handle    @ </label>
+            <md-icon class="material-icons">share</md-icon>
+            <input ng-model="contact.handle">
+          </md-input-container>
+        </div>
+
       </div>
 
       <div layout="row" layout-align="end end"style="margin-top:-40px;margin-bottom:20px">
@@ -78,7 +95,20 @@
           <i class="material-icons"  style="margin-top:15px">add</i>
           <md-tooltip>Add Contact</md-tooltip>
         </md-button>
-      </div> 
+      </div>
+
+
+      <div layout="row">
+        <span class="md-title">Resume</span>
+      </div>
+
+      <div layout="row" layout-padding style="display: flex; justify-content: flex-start; align-items: center">
+        <!-- <input data-my-Directive type="file" name="file"> -->
+        <button type="button" class="btn btn-default" ngf-select ng-model="file">Click to Upload!</button>
+        <b ng-show="fileAdded" class="ng-hide">Resume Added!</b>
+        <p ng-show="fileAdded" class="ng-hide" ng-click="fileAdded=!fileAdded">Click to Remove Resume</p>
+        <!-- <input "ng-hide"  id="input-file-id" type="file" /> -->
+      </div>
 
       <div layout="row">
         <span class="md-title">Application Steps</span>
@@ -135,6 +165,9 @@
           <textarea ng-model="job.nextStep.comments[0]" md-maxlength="150" rows="1" md-select-on-focus></textarea>
         </md-input-container>
       </div>
+
+
+
 
       <md-button type="submit" class="md-primary md-raised">Add New Job</md-button>
     </form>

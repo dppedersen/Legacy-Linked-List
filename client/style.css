@@ -288,7 +288,7 @@ TASKS WIDGET
 }
 
 #tasks-widget md-content {
-  /*border-top: 1px solid lightgray;*/
+  border-top: 1px solid lightgray;
   background-color: white;
 }
 
@@ -309,6 +309,67 @@ TASKS WIDGET
 #tasks-widget md-checkbox {
   display: block;
 }
+
+/*
+SAVED JOBS WIDGET
+*/
+
+#saved-jobs-widget {
+  padding: 10px;
+
+  text-align: center;
+}
+
+#saved-jobs-widget .md-headline{
+  margin-bottom: 10px;
+}
+
+#saved-jobs-widget .input-container {
+  display: flex;
+
+  margin-top: 16px;
+  margin-bottom: 16px;
+
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#saved-jobs-widget input {
+  width: 75%;
+  height: 36px;
+  margin: auto;
+
+  text-align: center;
+
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+}
+
+#saved-jobs-widget md-content {
+  /*border-top: 1px solid lightgray;*/
+  background-color: white;
+}
+
+#saved-jobs-widget ul {
+  text-align: left;
+}
+
+#saved-jobs-widget .task-container {
+  display: flex;
+
+  align-items: top;
+}
+
+#saved-jobs-widget li {
+  list-style: none;
+}
+
+#saved-jobs-widget md-checkbox {
+
+  display: flex;
+}
+
 
 /*
 NEWS WIDGET
@@ -376,17 +437,43 @@ NEWS WIDGET
 
   font-size: 9pt;
 }
-
+body > div > div > div.flex-order-gt-md--1.flex-gt-md-33.flex-100 > div:nth-child(4) > calendar-widget > md-calendar > div {
+  min-width: 500px;
+}
 .jobCalWidget .md-calendar-date:not(.md-disabled) .md-calendar-date-selection-indicator {
   color: white;
   border-radius: 50%;
   background-color: rgb(0,150,136);
-
   font-weight: bold;
 }
 
 .md-calendar-date:not(.md-disabled) .md-calendar-date-selection-indicator:hover{
   background-color: rgb(50,200,170);
+}
+
+/*
+TWITTER WIDGET
+*/
+
+
+#twitter-card .md-headline {
+  text-align: center !important;
+
+  font-size: 24px !important;
+  font-weight: normal !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.carousel-container {
+   border: 1px solid #DDDDDD;
+   position: relative !important;
+}
+.avatar {
+  width: 100%;
+  height: 100%;
+  background-color: black !important;
+  color: white;
 }
 
 /*
@@ -441,4 +528,37 @@ DASHBOARD
 
 .job-card contact-divider {
   padding-left: 0;
+}
+
+.googleCalendar {
+  display: flex !important;
+  color: white !important;
+  justify-content: center !important;
+}
+.googleDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+}
+.googleSignIn {
+  background: url('../../assets/google-button.png') no-repeat 0 0;
+  background-size: contain;
+  outline: 0 !important;
+  width: 200px;
+  height: 48px;
+}
+
+.googleSignIn:hover {
+  background: url('../../assets/google-button-focus.png') no-repeat 0 0;
+  background-size: contain;
+  outline: 0 !important;
+  border-radius: 5px;
+}
+
+.googleSignIn:active {
+  background: url('../../assets/google-button-pressed.png') no-repeat 0 0;
+  background-size: contain;
+  outline: 0 !important;
 }

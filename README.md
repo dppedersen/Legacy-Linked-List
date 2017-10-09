@@ -6,8 +6,12 @@ Job seekers can use this dashboard to plan and manage the entire job application
 
 # Live Demo
 
+<<<<<<< HEAD
 http://linkedlist-io.herokuapp.com
 
+=======
+linkedlist-io.herokuapp.com
+>>>>>>> dev
 
 ## Table of Contents
 
