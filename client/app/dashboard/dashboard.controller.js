@@ -17,7 +17,7 @@ angular.module('app.dashboard', [
       $scope.jobs = data
     })
     .catch(function(err) {
-      console.log(err)
+      //console.log(err)
     })
   }
   $scope.getJobs()

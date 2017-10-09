@@ -10,7 +10,7 @@ describe('Persistent Node Server', function() {
     var server;
     before(function() {
       server = app.listen(4000, function() {
-        console.log('Testing on port 4000');
+        //console.log('Testing on port 4000');
       });
     });
 
@@ -26,7 +26,7 @@ describe('Persistent Node Server', function() {
         uri: 'http://127.0.0.1:4000/api/login',
         json: { username: 'Test', password: 'test' }
       }, function(err, res, body) {
-        console.log(body);
+        //console.log(body);
         done()
       })
     });
@@ -34,13 +34,13 @@ describe('Persistent Node Server', function() {
 
     it('Should return twitter messages for empty array', function(done) {
        // make twitter request
-       console.log('requesting twitter')
+       //console.log('requesting twitter')
        request({
          method: 'POST',
          uri: 'http://127.0.0.1:4000/api/twitter',
          json: ['']
        }, (err, res, body) => {
-         console.log(err);
+         //console.log(err);
 
 
          expect(res.statusCode).to.equal(200);
@@ -50,13 +50,13 @@ describe('Persistent Node Server', function() {
 
     it('Should return twitter messages for array of handles', function(done) {
        // make twitter request
-       console.log('requesting twitter')
+       //console.log('requesting twitter')
        request({
          method: 'POST',
          uri: 'http://127.0.0.1:4000/api/twitter',
          json: ['twitterdev, TheDailyShow']
        }, (err, res, body) => {
-         console.log(err);
+         //console.log(err);
 
 
          expect(res.statusCode).to.equal(200);
@@ -69,7 +69,7 @@ describe('Persistent Node Server', function() {
         method: 'GET',
         uri: 'http://127.0.0.1:4000/api/jobs'
       }, (err, res, body) => {
-        console.log(body);
+        //console.log(body);
         expect(body).to.not.equal(undefined);
         done();
       });
@@ -80,7 +80,7 @@ describe('Persistent Node Server', function() {
         method: 'GET',
         uri: 'http://127.0.0.1:4000/api/savedJobs'
       }, (err, res, body) => {
-        console.log(body);
+        //console.log(body);
         expect(body).to.not.equal(undefined);
         done();
       });

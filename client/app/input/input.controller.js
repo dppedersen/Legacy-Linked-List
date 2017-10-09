@@ -31,7 +31,7 @@ angular.module('app.input', [
   };
 
   $scope.fileAdded = false;
-  console.log($scope.fileAdded);
+  //console.log($scope.fileAdded);
 
   $scope.$watch('file', function() {
     var file = $scope.file;
@@ -60,7 +60,7 @@ angular.module('app.input', [
     Companies.getInfo($scope.job.website)
     .then((data)=> {
       if(data === undefined) return;
-      console.log(data);
+      //console.log(data);
 
       $scope.job.imageUrl = data.logo;
       $scope.job.description = data.organization.overview;
@@ -89,12 +89,12 @@ angular.module('app.input', [
           $location.url('/dashboard');
         })
         .catch(function(err) {
-          console.err(err);
+          //console.err(err);
           $route.reload();
         })
       })
       .catch(function(err) {
-        console.err(err);
+        //console.err(err);
         $route.reload();
       });
   } else {
@@ -104,7 +104,7 @@ angular.module('app.input', [
       $location.url('/dashboard');
     })
     .catch((err) => {
-      console.err(err);
+      //console.err(err);
       $route.reload();
     });
   }

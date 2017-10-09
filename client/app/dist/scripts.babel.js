@@ -76,7 +76,7 @@ angular.module('calendarWidget', []).component('calendarWidget', {
 
     $http.get('/api/dates').then(function (data) {
       $scope.taskData = data;
-      console.log('API/DATES DATA:', $scope.taskData);
+      //console.log('API/DATES DATA:', $scope.taskData);
       var jsDates = data.data.map(function (date) {
         return new Date(date.dueDate);
       });
@@ -88,7 +88,7 @@ angular.module('calendarWidget', []).component('calendarWidget', {
     $scope.showPrerenderedDialog = function (ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
       $scope.taskDate = new Date($scope.date);
-      console.log('Scope Task:', $scope.task);
+      //console.log('Scope Task:', $scope.task);
       $scope.task = $scope.taskData.data.filter(function (task) {
         return new Date(task.dueDate).getTime() === $scope.taskDate.getTime();
       });
@@ -172,21 +172,21 @@ angular.module('jobWidget').component('jobWidget', {
               Jobs.saveAndDelete(JSON.stringify(query)).then(function (res) {
                 $route.reload();
               }).catch(function (err) {
-                console.log(err);
+                //console.log(err);
               });
             }, function () {
               query.questions = 'No Questions Added!';
               Jobs.saveAndDelete(JSON.stringify(query)).then(function (res) {
                 $route.reload();
               }).catch(function (err) {
-                console.log(err);
+                //console.log(err);
               });
             });
           }, function () {
             Jobs.delete(query).then(function (res) {
               $route.reload();
             }).catch(function (err) {
-              console.log(err);
+              //console.log(err);
             });
           });
         }, function () {});
@@ -225,7 +225,7 @@ angular.module('jobWidget').component('jobWidget', {
               $window.alert(res);
               $route.reload();
             }).catch(function (err) {
-              console.log(err);
+              //console.log(err);
             });
           };
         }
@@ -317,7 +317,7 @@ angular.module('savedJobsWidget').component('savedJobsWidget', {
       var _this2 = this;
 
       SavedJobs.get().then(function (data) {
-        console.log(data);
+        //console.log(data);
         _this2.savedJobsList = data.filter(function (item) {
           return item !== null;
         }) || [];
@@ -344,8 +344,8 @@ angular.module('savedJobsWidget').component('savedJobsWidget', {
 
     var that = this;
     this.showTabDialog = function (savedJob) {
-      console.log(that);
-      console.log('savedJob', savedJob);
+      //console.log(that);
+      //console.log('savedJob', savedJob);
       $mdDialog.show({
         templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
         parent: angular.element(document.body),
@@ -459,14 +459,14 @@ angular.module('twitterWidget').component('twitterWidget', {
         }, []));
       }, []);
       Tweets.getTweets(handles).then(function (tweets) {
-        console.log('rendering tweets');
+        //console.log('rendering tweets');
         tweets.forEach(function (tweet) {
           tweet.created_at = moment(tweet.created_at).fromNow();
         });
         tweets = shuffleArray(tweets);
         pointer.tweets = tweets;
       }).catch(function (err) {
-        console.error(err);
+        //console.error(err);
       });
     });
 
@@ -489,7 +489,7 @@ angular.module('app.dashboard', ['ngMaterial', 'profileWidget', 'newsWidget', 'c
     Jobs.get().then(function (data) {
       $scope.jobs = data;
     }).catch(function (err) {
-      console.log(err);
+      //console.log(err);
     });
   };
   $scope.getJobs();
@@ -546,7 +546,7 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
   };
 
   $scope.fileAdded = false;
-  console.log($scope.fileAdded);
+  //console.log($scope.fileAdded);
 
   $scope.$watch('file', function () {
     var file = $scope.file;
@@ -561,16 +561,16 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
   // })
   // .progress(function(evt) {
   //   var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-  //   console.log('progress: ' + progressPercentage + '%' + evt.config.file.name);
+  //   //console.log('progress: ' + progressPercentage + '%' + evt.config.file.name);
   // }).success(function(data, status, headers, config) {
-  //   console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
+  //   //console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
   // }).error(function(data, status, headers, config) {
-  //   console.log('error status: ' + status);
+  //   //console.log('error status: ' + status);
   // })
   //   .then(function(res) {
   //     $scope.fileAdded = true;
-  //     console.log($scope.fileAdded);
-  //     console.log('response!', res);
+  //     //console.log($scope.fileAdded);
+  //     //console.log('response!', res);
   //   })
   // });
 
@@ -582,8 +582,8 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
 
   $scope.submitJob = function (data) {
 
-    console.log('$SCOPE.JOB', $scope.job);
-    console.log('SUBMITTING JOB, $SCOPE.FILE: ', $scope.file);
+    //console.log('$SCOPE.JOB', $scope.job);
+    //console.log('SUBMITTING JOB, $SCOPE.FILE: ', $scope.file);
 
     if ($scope.job.nextStep.name === undefined) {
       $scope.job.nextStep = null;
@@ -600,7 +600,7 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
 
     Companies.getInfo($scope.job.website).then(function (data) {
       if (data === undefined) return;
-      console.log(data);
+      //console.log(data);
 
       $scope.job.imageUrl = data.logo;
       $scope.job.description = data.organization.overview;
@@ -617,14 +617,14 @@ angular.module('app.input', ['ngMaterial', 'ngMessages']).controller('inputContr
         url: 'api/upload',
         file: $scope.file || ''
       }).then(function (res) {
-        console.log(res.data);
-        console.log('THIS IS IN SUBMIT JOBS');
+        //console.log(res.data);
+        //console.log('THIS IS IN SUBMIT JOBS');
         $scope.job.resume = res.data;
         Jobs.create($scope.job).then(function (res) {
           alert(res);
           $location.url('/dashboard');
         }).catch(function (err) {
-          console.log('error creating job');
+          //console.log('error creating job');
           $route.reload();
         });
       }).catch(function (err) {
@@ -707,12 +707,12 @@ angular.module('app.services', []).factory('Companies', function ($http) {
           domain: companyUrl
         }
       }).then(function (res) {
-        console.log('$HTTP REQUEST', res.data);
+        //console.log('$HTTP REQUEST', res.data);
         return res.data;
       }).catch(function (err) {
         alert('Your URL might be wrong! Try Again!');
         $route.reload();
-        // console.log(err);
+        // //console.log(err);
       });
     }
   };
@@ -744,7 +744,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
         });
       }
     }).catch(function (err) {
-      console.log(err);
+      //console.log(err);
     });
   };
 
@@ -754,12 +754,12 @@ angular.module('app.services', []).factory('Companies', function ($http) {
 }).factory('Tweets', function ($http) {
   var getTweets = function getTweets(handlesArray) {
     return $http.post('/api/twitter', handlesArray).then(function (res) {
-      console.log("Tweets recieved by factory");
-      //console.log(res.data);
+      //console.log("Tweets recieved by factory");
+      ////console.log(res.data);
       return res.data;
     }).catch(function (err) {
-      console.error("Failed Tweets.factory fetching tweets...");
-      console.error(err);
+      //console.error("Failed Tweets.factory fetching tweets...");
+      //console.error(err);
     });
   };
 
@@ -783,7 +783,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
     },
     changeData: function changeData(data) {
@@ -795,7 +795,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
     },
     delete: function _delete() {
@@ -813,7 +813,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
     }
   };
@@ -827,7 +827,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
     },
     get: function get() {
@@ -837,7 +837,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
     },
     update: function update(jobData) {
@@ -851,7 +851,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
     },
     delete: function _delete(jobData) {
@@ -889,7 +889,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
     },
     get: function get() {
@@ -899,7 +899,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
     },
     update: function update(data) {
@@ -913,7 +913,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       }).then(function (res) {
         return res.data;
       }).catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
     },
     delete: function _delete(data) {
@@ -968,7 +968,7 @@ angular.module('app.services', []).factory('Companies', function ($http) {
       $location.path('/dashboard');
     }, function (res) {
       $location.path('/');
-      console.log(res.data.err.message);
+      //console.log(res.data.err.message);
       alert(res.data.err);
     });
   };

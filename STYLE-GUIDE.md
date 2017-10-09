@@ -1273,10 +1273,10 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
       return directive;
 
       function linkFunc(scope, el, attr, ctrl) {
-          console.log('LINK: scope.min = %s *** should be undefined', scope.min);
-          console.log('LINK: scope.max = %s *** should be undefined', scope.max);
-          console.log('LINK: scope.vm.min = %s', scope.vm.min);
-          console.log('LINK: scope.vm.max = %s', scope.vm.max);
+          //console.log('LINK: scope.min = %s *** should be undefined', scope.min);
+          //console.log('LINK: scope.max = %s *** should be undefined', scope.max);
+          //console.log('LINK: scope.vm.min = %s', scope.vm.min);
+          //console.log('LINK: scope.vm.max = %s', scope.vm.max);
       }
   }
 
@@ -1288,10 +1288,10 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
 
       vm.min = 3;
 
-      console.log('CTRL: $scope.vm.min = %s', $scope.vm.min);
-      console.log('CTRL: $scope.vm.max = %s', $scope.vm.max);
-      console.log('CTRL: vm.min = %s', vm.min);
-      console.log('CTRL: vm.max = %s', vm.max);
+      //console.log('CTRL: $scope.vm.min = %s', $scope.vm.min);
+      //console.log('CTRL: $scope.vm.max = %s', $scope.vm.max);
+      //console.log('CTRL: vm.min = %s', vm.min);
+      //console.log('CTRL: vm.max = %s', vm.max);
   }
   ```
 
@@ -1307,10 +1307,10 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
   ```javascript
   // Alternative to above example
   function linkFunc(scope, el, attr, vm) {
-      console.log('LINK: scope.min = %s *** should be undefined', scope.min);
-      console.log('LINK: scope.max = %s *** should be undefined', scope.max);
-      console.log('LINK: vm.min = %s', vm.min);
-      console.log('LINK: vm.max = %s', vm.max);
+      //console.log('LINK: scope.min = %s *** should be undefined', scope.min);
+      //console.log('LINK: scope.max = %s *** should be undefined', scope.max);
+      //console.log('LINK: vm.min = %s', vm.min);
+      //console.log('LINK: vm.max = %s', vm.max);
   }
   ```
 
@@ -1349,8 +1349,8 @@ While this guide explains the *what*, *why* and *how*, I find it helpful to see 
   function ExampleController() {
       var vm = this;
       vm.min = 3;
-      console.log('CTRL: vm.min = %s', vm.min);
-      console.log('CTRL: vm.max = %s', vm.max);
+      //console.log('CTRL: vm.min = %s', vm.min);
+      //console.log('CTRL: vm.max = %s', vm.max);
   }
   ```
 

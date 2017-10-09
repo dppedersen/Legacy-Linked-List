@@ -93,7 +93,7 @@ angular.module('calendarWidget', [])
     $http.get('/api/dates')
     .then(data => {
       $scope.taskData = data;
-      console.log('API/DATES DATA:', $scope.taskData)
+      //console.log('API/DATES DATA:', $scope.taskData)
       var jsDates = data.data.map(date => new Date(date.dueDate));
       $scope.dates = jsDates.map(date=> {
         return [date.getFullYear(), date.getMonth(), date.getDate()]
@@ -103,7 +103,7 @@ angular.module('calendarWidget', [])
     $scope.showPrerenderedDialog = function(ev) {
       $scope.date = ev.target.parentNode.attributes['aria-label'].value;
       $scope.taskDate = new Date($scope.date);
-      console.log('Scope Task:', $scope.task);
+      //console.log('Scope Task:', $scope.task);
       $scope.task = $scope.taskData.data.filter(task => new Date(task.dueDate).getTime() === $scope.taskDate.getTime())
 
       $mdDialog.show({
@@ -301,7 +301,7 @@ angular.
                       $route.reload();
                     })
                     .catch(function(err) {
-                      console.log(err);
+                      //console.log(err);
                     });
                 }, function() {
                   query.questions = 'No Questions Added!';
@@ -310,7 +310,7 @@ angular.
                       $route.reload();
                     })
                     .catch(function(err) {
-                      console.log(err);
+                      //console.log(err);
                     });
                 });
             }, function() {
@@ -319,7 +319,7 @@ angular.
                 $route.reload();
               })
               .catch(function(err) {
-                console.log(err);
+                //console.log(err);
               });
             }
           );
@@ -476,7 +476,7 @@ angular.
                 $route.reload();
               })
               .catch(function(err) {
-                console.log(err)
+                //console.log(err)
               })
             }
           }
@@ -655,7 +655,7 @@ angular.
 
       this.getSavedJobs = function() {
         SavedJobs.get().then(data => {
-          console.log(data);
+          //console.log(data);
           this.savedJobsList = data.filter(item => { return item !== null; }) || [];
         });
       };
@@ -681,8 +681,8 @@ angular.
 
       var that = this;
       this.showTabDialog = function(savedJob) {
-        console.log(that);
-        console.log('savedJob',savedJob);
+        //console.log(that);
+        //console.log('savedJob',savedJob);
         $mdDialog.show({
           templateUrl: 'app/components/savedJobsDetailsTab.tmpl.html',
           parent: angular.element(document.body),
@@ -854,7 +854,7 @@ angular.module('twitterWidget')
           }, [])
           Tweets.getTweets(handles)
             .then(function(tweets) {
-              console.log('rendering tweets')
+              //console.log('rendering tweets')
               tweets.forEach(tweet => {
                 tweet.created_at = moment(tweet.created_at).fromNow()
               })
@@ -862,7 +862,7 @@ angular.module('twitterWidget')
               pointer.tweets = tweets;
             })
             .catch(function(err) {
-              console.error(err);
+              //console.error(err);
             })
         });
 
@@ -897,7 +897,7 @@ angular.module('app.dashboard', [
       $scope.jobs = data
     })
     .catch(function(err) {
-      console.log(err)
+      //console.log(err)
     })
   }
   $scope.getJobs()
@@ -961,7 +961,7 @@ angular.module('app.input', [
   };
 
   $scope.fileAdded = false;
-  console.log($scope.fileAdded);
+  //console.log($scope.fileAdded);
 
   $scope.$watch('file', function() {
     var file = $scope.file;
@@ -976,16 +976,16 @@ angular.module('app.input', [
     // })
     // .progress(function(evt) {
     //   var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-    //   console.log('progress: ' + progressPercentage + '%' + evt.config.file.name);
+    //   //console.log('progress: ' + progressPercentage + '%' + evt.config.file.name);
     // }).success(function(data, status, headers, config) {
-    //   console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
+    //   //console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
     // }).error(function(data, status, headers, config) {
-    //   console.log('error status: ' + status);
+    //   //console.log('error status: ' + status);
     // })
   //   .then(function(res) {
   //     $scope.fileAdded = true;
-  //     console.log($scope.fileAdded);
-  //     console.log('response!', res);
+  //     //console.log($scope.fileAdded);
+  //     //console.log('response!', res);
   //   })
   // });
 
@@ -997,8 +997,8 @@ angular.module('app.input', [
 
   $scope.submitJob = function(data){
 
-    console.log('$SCOPE.JOB', $scope.job);
-    console.log('SUBMITTING JOB, $SCOPE.FILE: ', $scope.file);
+    //console.log('$SCOPE.JOB', $scope.job);
+    //console.log('SUBMITTING JOB, $SCOPE.FILE: ', $scope.file);
 
     if($scope.job.nextStep.name === undefined) {
       $scope.job.nextStep = null;
@@ -1016,7 +1016,7 @@ angular.module('app.input', [
     Companies.getInfo($scope.job.website)
     .then((data)=> {
       if(data === undefined) return;
-      console.log(data);
+      //console.log(data);
 
       $scope.job.imageUrl = data.logo;
       $scope.job.description = data.organization.overview;
@@ -1037,8 +1037,8 @@ angular.module('app.input', [
         url: 'api/upload',
         file: $scope.file || ''
       }).then(function(res) {
-        console.log(res.data);
-        console.log('THIS IS IN SUBMIT JOBS');
+        //console.log(res.data);
+        //console.log('THIS IS IN SUBMIT JOBS');
         $scope.job.resume = res.data;
         Jobs.create($scope.job)
           .then((res) => {
@@ -1046,7 +1046,7 @@ angular.module('app.input', [
           $location.url('/dashboard');
         })
         .catch(function(err) {
-          console.log('error creating job');
+          //console.log('error creating job');
           $route.reload();
         })
       })
@@ -1249,13 +1249,13 @@ angular.module('app.services', [])
 				}
 			})
 			.then(function(res) {
-				console.log('$HTTP REQUEST', res.data);
+				//console.log('$HTTP REQUEST', res.data);
 				return res.data;
 			})
 			.catch(function(err) {
 				alert('Your URL might be wrong! Try Again!');
 				$route.reload();
-				// console.log(err);
+				// //console.log(err);
 			});
 		}
   };
@@ -1278,7 +1278,7 @@ angular.module('app.services', [])
       }
     })
     .catch(function(err) {
-      console.log(err);
+      //console.log(err);
     })
   }
 
@@ -1291,13 +1291,13 @@ angular.module('app.services', [])
 	var getTweets = function(handlesArray) {
 		return $http.post('/api/twitter', handlesArray)
 			.then(function(res) {
-				console.log("Tweets recieved by factory");
-				//console.log(res.data);
+				//console.log("Tweets recieved by factory");
+				////console.log(res.data);
 				return res.data
 			})
 			.catch(function(err) {
-				console.error("Failed Tweets.factory fetching tweets...");
-				console.error(err);
+				//console.error("Failed Tweets.factory fetching tweets...");
+				//console.error(err);
 			});
 	}
 
@@ -1327,7 +1327,7 @@ angular.module('app.services', [])
 				return res.data
 			})
 			.catch(function(err) {
-				console.log(err)
+				//console.log(err)
 			})
 		},
 		changeData: function(data) {
@@ -1341,7 +1341,7 @@ angular.module('app.services', [])
 				return res.data;
 			})
 			.catch(function(err) {
-				console.log(err)
+				//console.log(err)
 			})
 		},
 		delete: function() {
@@ -1362,7 +1362,7 @@ angular.module('app.services', [])
 				return res.data;
 			})
 			.catch(function(err) {
-				console.log(err)
+				//console.log(err)
 			})
 		}
 	}
@@ -1380,7 +1380,7 @@ angular.module('app.services', [])
 				return res.data
 			})
 			.catch(function(err) {
-				console.log(err)
+				//console.log(err)
 			})
 		},
 		get: function() {
@@ -1392,7 +1392,7 @@ angular.module('app.services', [])
 				return res.data
 			})
 			.catch(function(err) {
-				console.log(err)
+				//console.log(err)
 			})
 		},
 		update: function(jobData) {
@@ -1408,7 +1408,7 @@ angular.module('app.services', [])
 				return res.data
 			})
 			.catch(function(err) {
-				console.log(err)
+				//console.log(err)
 			})
 		},
 		delete: function(jobData) {
@@ -1452,7 +1452,7 @@ angular.module('app.services', [])
 				return res.data
 			})
 			.catch(function(err) {
-				console.log(err)
+				//console.log(err)
 			})
 		},
 		get: function() {
@@ -1464,7 +1464,7 @@ angular.module('app.services', [])
 				return res.data
 			})
 			.catch(function(err) {
-				console.log(err)
+				//console.log(err)
 			})
 		},
 		update: function(data) {
@@ -1480,7 +1480,7 @@ angular.module('app.services', [])
 				return res.data
 			})
 			.catch(function(err) {
-				console.log(err)
+				//console.log(err)
 			})
 		},
 		delete: function(data) {
@@ -1543,7 +1543,7 @@ angular.module('app.services', [])
       $location.path('/dashboard')
     }, res => {
       $location.path('/');
-			console.log(res.data.err.message);
+			//console.log(res.data.err.message);
       alert(res.data.err);
     })
   };

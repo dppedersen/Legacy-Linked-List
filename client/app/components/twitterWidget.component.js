@@ -34,7 +34,7 @@ angular.module('twitterWidget')
           }, [])
           Tweets.getTweets(handles)
             .then(function(tweets) {
-              console.log('rendering tweets')
+              //console.log('rendering tweets')
               tweets.forEach(tweet => {
                 tweet.created_at = moment(tweet.created_at).fromNow()
               })
@@ -42,7 +42,7 @@ angular.module('twitterWidget')
               pointer.tweets = tweets;
             })
             .catch(function(err) {
-              console.error(err);
+              //console.error(err);
             })
         });
 
