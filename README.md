@@ -6,13 +6,8 @@ Job seekers can use this dashboard to plan and manage the entire job application
 
 # Live Demo
 
-http://hrnyc7-europa.herokuapp.com
+http://linkedlist-io.herokuapp.com
 
-## Team
-
-  - __Product Owner__: Thomas O'Connor
-  - __Scrum Master__: Willian Hua
-  - __Development Team Members__: Arturo Ruvalcaba, Joel Camacho
 
 ## Table of Contents
 
@@ -54,7 +49,7 @@ Get Bing News API Key and put into /server/config/config.js
 - https://www.microsoft.com/cognitive-services/en-us/bing-news-search-api
 
 Get Full Contact API Key and put into /server/config/config.js
-- https://www.fullcontact.com/developer/docs/company/ 
+- https://www.fullcontact.com/developer/docs/company/
 
 Start mongod service or host mongod on MLabs
 Put URI into /server/db/db-config.js
