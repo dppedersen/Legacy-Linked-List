@@ -1,11 +1,7 @@
-angular.module('twitterWidget',[
-  'jkAngularCarousel'
-]);
+angular.module("twitterWidget", ["jkAngularCarousel"]);
 
-angular.module('twitterWidget')
-  .component('twitterWidget', {
-    template:
-    `
+angular.module("twitterWidget").component("twitterWidget", {
+  template: `
     <md-card id="twitter-card" class='widget' ng-if="$ctrl.carousel.tweets.length > 0" >
       <span class="md-headline">
         See What Your Contacts Are Saying
@@ -20,40 +16,40 @@ angular.module('twitterWidget')
         Connect to your contacts' twitter by updating their info with a valid handle
       </span>
     </md-card>
-    `
-    ,
-    controller: function($scope, $mdDialog, $route, Tweets, Jobs) {
-      var pointer = {'tweets' : [], 'currentIndex' : 0}
-      this.carousel = pointer;
-      Jobs.get()
-        .then(data=> {
-          let handles = data.reduce(function(acc, job) {
-            return acc.concat(job.contacts.reduce(function(acc, contact) {
-              return acc.concat(contact.handle);
-            }, []))
+    `,
+  controller: function($scope, $mdDialog, $route, Tweets, Jobs) {
+    var pointer = { tweets: [], currentIndex: 0 };
+    this.carousel = pointer;
+    Jobs.get().then(data => {
+      let handles = data.reduce(function(acc, job) {
+        return acc.concat(
+          job.contacts.reduce(function(acc, contact) {
+            return acc.concat(contact.handle);
           }, [])
-          Tweets.getTweets(handles)
-            .then(function(tweets) {
-              //console.log('rendering tweets')
-              tweets.forEach(tweet => {
-                tweet.created_at = moment(tweet.created_at).fromNow()
-              })
-              tweets = shuffleArray(tweets)
-              pointer.tweets = tweets;
-            })
-            .catch(function(err) {
-              //console.error(err);
-            })
+        );
+      }, []);
+      Tweets.getTweets(handles)
+        .then(function(tweets) {
+          //console.log('rendering tweets')
+          tweets.forEach(tweet => {
+            tweet.created_at = moment(tweet.created_at).fromNow();
+          });
+          tweets = shuffleArray(tweets);
+          pointer.tweets = tweets;
+        })
+        .catch(function(err) {
+          //console.error(err);
         });
+    });
 
-      function shuffleArray(array) {
-        for (var i = array.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1));
-          var temp = array[i];
-          array[i] = array[j];
-          array[j] = temp;
-        }
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
       return array;
-    };
     }
-  })
+  }
+});
